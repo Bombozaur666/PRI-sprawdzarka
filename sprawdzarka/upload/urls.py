@@ -32,4 +32,4 @@ urlpatterns = [
     path('taskListUpload/',views.task_List_upload),
     path('TaskList/<str:file_to_open>',views.read_file2),
 ]
-]
+
