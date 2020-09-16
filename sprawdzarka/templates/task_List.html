@@ -1,7 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-<head>
+<head>Kabaret Malina
 	<meta charset="utf-8">
 	<title>Sprawdzarka</title>
 	<link rel="stylesheet" type="text/css" href='{% static "css\styles.css" %}'>
@@ -26,16 +26,14 @@
 			<thead>
 			<tr>
 				<th>id |</th>
-				<th>task id |</th>
-				<th>snumber |</th>
+				<th>Teacher name |</th>
 				<th>task</th>
 			</tr>
 			<tbody>
 				{% for data in sended %}
 					<tr>
 						<td>{{data.id}}</td>
-						<td>{{data.taskid}}</td>
-						<td>{{data.snumber}}</td>
+						<td>{{data.tname}}</td>
 						<td>
 							<a href="/{{data.task.name}}" class="btn btn-primary btn-sm" target="_blank">
 								open file
