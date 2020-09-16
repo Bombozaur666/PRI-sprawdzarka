@@ -26,6 +26,10 @@ router.register(r'students', views.StudentViewSet)
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('upload/',views.task_sended_upload),
-    path('SendedTasks/<str:file_to_open>',views.read_file),
+    path('SendedTasks/<str:file_to_open>',views.read_file1),
     path('sendedList/',views.task_sended_list),
+    path('taskList/',views.task_list),
+    path('taskListUpload/',views.task_List_upload),
+    path('TaskList/<str:file_to_open>',views.read_file2),
+]
 ]
