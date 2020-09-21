@@ -19,6 +19,7 @@ class StudentViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = serializers.StudentSerializer
 
+@staff_member_required(login_url='login')
 def task_sended_list(request):
     sended=SendedTasks.objects.all
     return render(request,'upload/task_sended_list.html',{'sended': sended})
@@ -44,7 +45,7 @@ def task_list(request):
     sended=TaskList.objects.all
     return render(request,'upload/task_List.html',{'sended': sended})
 
-@staff_member_required
+@staff_member_required(login_url='login')
 def task_List_upload(request):
     if request.method=='POST':
         form = TasksListForm(request.POST, request.FILES)
@@ -61,7 +62,7 @@ def read_file2(request, file_to_open):
     f.close()
     return HttpResponse(file_content, content_type="text/plain")
 
-@staff_member_required
+@staff_member_required(login_url='login')
 def plagiat(request):
     plagiarism = ProgramFile("Bartłomiej Nowak", "434162", "15")
     file1, file2 = plagiarism.get_file()
@@ -85,14 +86,10 @@ def plagiat(request):
             total = len(text_list2)
             plagiarism_coefficient = round(count_of_the_same_or_similar * 100 / total, 2)
         if plagiarism_coefficient >= 30:
-            file_content ="Oba teksty mają "+ str(plagiarism_coefficient)+ " procent podobnych słów"
-            file_content +="Prace są podobne! Podejrzewam plagiat!!"
-            file_content +="Osoby które dopuściły się plagiatu to:"
-            file_content +=str(name_surname1)+ " o numerze indeksu "+str(nr_index1)
-            file_content +=str(name_surname2) +" o numerze indeksu "+ str(nr_index2)
+            file_content = str(name_surname1)+ " " +str(nr_index1) + " " + str(name_surname2) +" "+ str(nr_index2) + " " + "Procent podobieństwa " + str(plagiarism_coefficient)
         else:
             file_content +="Oba teksty mają "+ str(plagiarism_coefficient) + " procent podobnych słów"
             file_content +="Prace są różne! Nie stwierdzam plagiatu!!"
     else:
         file_content +="Nie można sprawdzić plagiatu dla pustych plików"
-    return HttpResponse(file_content, content_type="text/plain")
+    return render(request,'upload/plagiat.html', {'file_content': file_content})
