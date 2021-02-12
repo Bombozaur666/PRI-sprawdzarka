@@ -6,6 +6,7 @@
 				<th>id </th>
 				<th>Teacher name </th>
 				<th>task</th>
+				<th>Zadaj pytanie</th>
 			</tr>
 			<tbody>
 				{% for data in sended %}
@@ -17,6 +18,7 @@
                                 open file
                             </a>
 						</td>
+						<td><a class="btn btn-outline-info" href="{% url 'ask_question' id=data.id %}">Zadaj pytanie prowadzącemu</a></td>
 					</tr>
 				{% endfor %}
 			</tbody>

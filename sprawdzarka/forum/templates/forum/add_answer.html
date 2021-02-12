@@ -1,0 +1,11 @@
+{% extends "api/base.html" %}
+{% block content %}
+<form method="POST" name='question_choose_form'>
+    {% csrf_token %}
+    <p>Podaj odpowiedź na pytanie</p>
+    <textarea rows="4" cols="50" id="fcontent" name="fcontent">Podaj odpowiedź.</textarea>
+    <br>
+    <br>
+    <input type="submit" class="btn btn-outline-info" value="Dodaj odpowiedź.">
+</form>
+{% endblock %}
