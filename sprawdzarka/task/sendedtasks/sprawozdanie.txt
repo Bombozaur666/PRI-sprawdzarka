@@ -1,0 +1,1000 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sprawozdanie PUBLIC "sprawozdanie" "http://faculty.wmi.amu.edu.pl:20002/zajecia/file-storage/view/sprawozdanie.dtd">
+<sprawozdanie przedmiot="ALR" temat="A">
+<imie_nazwisko>Adam Kwiatkowski</imie_nazwisko>
+<nr_indeksu>426174</nr_indeksu>
+<liczba_pkt>9</liczba_pkt>
+<zadanie nr="-1" pkt="1"></zadanie>
+<zadanie nr="0" pkt="1"></zadanie>
+<zadanie nr="1" pkt="1"></zadanie>
+<zadanie nr="1a" pkt="1"></zadanie>
+<zadanie nr="2" pkt="1"></zadanie>
+<zadanie nr="3" pkt="4"></zadanie>
+</sprawozdanie>
+
+
+
+Zadanie -1 -------------------------------------
+# uruchamianie komendy - Ctrl+Enter
+# (uruchamia sie zaznaczona komenda lub ta na ktorej jest kursor)
+# procedura "_puts" uzywa okienka output
+wm geom .konsola 667x765+637+65; wm geom .output 309x348+265+64; wm withdraw .; kons_font 15
+  #%
+kons_font 16
+  #%
+source symul_lib.tcl
+
+fiber create 3 start
+  # + tworzy 3 fibery: fiber0 fiber1 fiber2,
+  #  ktore rownoczesnie sa interp-ami (logicznymi)
+  # + fibery wykonuja podany w 3 arg. kod tcl-owy,
+  #  w tym wypadku jest to wywolanie proc start
+
+proc Inicjalizacja nr {
+  fiber$nr alias _puts _puts
+  fiber$nr alias maineval eval
+  fiber$nr eval "set nr $nr; set run 1"
+  fiber$nr eval {
+    proc start {} {
+      global nr
+      _puts "$nr: aaaaaaaaa"
+      fiber yield
+      _puts "$nr: bbbbbbbbb"
+    }
+  }
+}
+Inicjalizacja 0
+Inicjalizacja 1
+Inicjalizacja 2
+
+fiber yield
+  #%
+  #%
+  #%
+  #%
+  #%
+  #%
+  # + przalaczenie procesora na fiber0 ...
+
+fiber error
+  #% ended ended ended
+  #% {} {} {}
+  #% {} {} {}
+  #%
+  # + wyswietla stan fiberow
+fiber restart
+  # + restartuje te wstanie "ended"
+fiber delete
+  # + usuwa fibery (wszystkie musza byc "ended")
+
+
+
+exit
+
+
+/// wydruk
+0: aaaaaaaaa
+1: aaaaaaaaa
+2: aaaaaaaaa
+0: bbbbbbbbb
+1: bbbbbbbbb
+2: bbbbbbbbb
+
+
+
+Zadanie 0 -------------------------------------
+
+
+
+
+source symul_lib.tcl; # ladowanie symulatora
+
+# tworzymy graf komunikacyjny (w tym wypadku cykl)
+set liczbaWierz 5
+set sasiedzi(0) {4 1}
+set sasiedzi(1) {0 2}
+set sasiedzi(2) {1 3}
+set sasiedzi(3) {2 4}
+set sasiedzi(4) {3 0}
+
+# główny program na każdym wierzchołku/fiberze...
+fiber create $liczbaWierz {
+
+  if {$id==0} {wyslij 1 0}
+  fiber yield; # oznacza koniec rundy
+
+  while {$run} { # zmienna run pozwala zakonczyć działanie symulacji
+    if {$kom(0)!=""} {
+      set x $kom(0)
+      incr x
+      wyslij 1 $x
+    }
+    fiber yield; # oznacza koniec rundy
+  }
+}
+
+Inicjalizacja; # koniecznie trzeba to wywołać !!!
+
+proc wizualizacja {} {
+  fiber_iterate {_puts "$id: $kom0, $kom1"}
+    # petla fiber_iterate iteruje po wszystkich fiberach
+    # proc wizualizacja wywolujemy z konsoli po kazdej rundzie
+}
+
+# !!! do tego miejsca wszystko wykonać !!!!!!!!!!!!!!!!!!!!!
+
+fiber yield; runda; wizualizacja
+  #%
+  #%
+  #%
+  #%
+  #%
+  #%
+  # wykonuje kolejna runde...
+  # procedura runda dostarcza wysłane komunikaty
+
+
+
+
+/// wydruk
+  1: ,
+  2: 1,
+  3: ,
+  4: ,
+  0: ,
+  1: ,
+  2: ,
+  3: 2,
+  4: ,
+  0: ,
+  1: ,
+  2: ,
+  3: ,
+  4: 3,
+  0: 4,
+  1: ,
+  2: ,
+  3: ,
+  4: ,
+
+
+
+
+Zadanie 1 -------------------------------------
+
+  source symul_lib.tcl; # ladowanie symulatora
+
+# tworzymy graf komunikacyjny (w tym wypadku cykl)
+set liczbaWierz 20
+iterate i $liczbaWierz {
+  let i1 $i-1; if {$i1==-1} {let i1 $liczbaWierz-1}
+  let i2 $i+1; if {$i2==$liczbaWierz} {let i2 0}
+  set sasiedzi($i) "$i1 $i2"
+}
+
+# główny program na każdym wierzchołku/fiberze...
+fiber create $liczbaWierz {
+    set lider {}
+    wyslij 1 "$id_los"
+    fiber yield; #pierwszej rundy
+
+    while {$run} {
+      set id0 [czytaj 0]
+
+      if {$id0>$id_los} {
+        wyslij 1 "$id0"
+      } elseif {$id0==$id_los} {
+        set lider "TAK"; wyslij 1 "-1"
+      } elseif {$id0==-1 && $lider=={}} {
+        set lider "NIE"; wyslij 1 "-1"
+      }
+      fiber yield; # koniec rundy
+    }
+}
+Inicjalizacja;
+
+proc wizualizacja {} {
+_puts "----------------------------------------"
+fiber_iterate {_puts "lider: $lider numer wierzchołka: $id, ID losowe: $id_los; wartosci komunikatow: $kom0, $kom1"}
+}
+
+fiber yield; runda; wizualizacja;
+
+
+
+/// wydruk
+
+----------------------------------------
+lider:  numer wierzchołka: 0, ID losowe: 967; wartosci komunikatow: 231,
+lider:  numer wierzchołka: 1, ID losowe: 844; wartosci komunikatow: 967,
+lider:  numer wierzchołka: 2, ID losowe: 205; wartosci komunikatow: 844,
+lider:  numer wierzchołka: 3, ID losowe: 186; wartosci komunikatow: 205,
+lider:  numer wierzchołka: 4, ID losowe: 504; wartosci komunikatow: 186,
+lider:  numer wierzchołka: 5, ID losowe: 650; wartosci komunikatow: 504,
+lider:  numer wierzchołka: 6, ID losowe: 758; wartosci komunikatow: 650,
+lider:  numer wierzchołka: 7, ID losowe: 743; wartosci komunikatow: 758,
+lider:  numer wierzchołka: 8, ID losowe: 939; wartosci komunikatow: 743,
+lider:  numer wierzchołka: 9, ID losowe: 736; wartosci komunikatow: 939,
+lider:  numer wierzchołka: 10, ID losowe: 773; wartosci komunikatow: 736,
+lider:  numer wierzchołka: 11, ID losowe: 973; wartosci komunikatow: 773,
+lider:  numer wierzchołka: 12, ID losowe: 227; wartosci komunikatow: 973,
+lider:  numer wierzchołka: 13, ID losowe: 524; wartosci komunikatow: 227,
+lider:  numer wierzchołka: 14, ID losowe: 513; wartosci komunikatow: 524,
+lider:  numer wierzchołka: 15, ID losowe: 662; wartosci komunikatow: 513,
+lider:  numer wierzchołka: 16, ID losowe: 578; wartosci komunikatow: 662,
+lider:  numer wierzchołka: 17, ID losowe: 637; wartosci komunikatow: 578,
+lider:  numer wierzchołka: 18, ID losowe: 52; wartosci komunikatow: 637,
+lider:  numer wierzchołka: 19, ID losowe: 231; wartosci komunikatow: 52,
+----------------------------------------
+lider:  numer wierzchołka: 0, ID losowe: 967; wartosci komunikatow: ,
+lider:  numer wierzchołka: 1, ID losowe: 844; wartosci komunikatow: ,
+lider:  numer wierzchołka: 2, ID losowe: 205; wartosci komunikatow: 967,
+lider:  numer wierzchołka: 3, ID losowe: 186; wartosci komunikatow: 844,
+lider:  numer wierzchołka: 4, ID losowe: 504; wartosci komunikatow: 205,
+lider:  numer wierzchołka: 5, ID losowe: 650; wartosci komunikatow: ,
+lider:  numer wierzchołka: 6, ID losowe: 758; wartosci komunikatow: ,
+lider:  numer wierzchołka: 7, ID losowe: 743; wartosci komunikatow: ,
+lider:  numer wierzchołka: 8, ID losowe: 939; wartosci komunikatow: 758,
+lider:  numer wierzchołka: 9, ID losowe: 736; wartosci komunikatow: ,
+lider:  numer wierzchołka: 10, ID losowe: 773; wartosci komunikatow: 939,
+lider:  numer wierzchołka: 11, ID losowe: 973; wartosci komunikatow: ,
+lider:  numer wierzchołka: 12, ID losowe: 227; wartosci komunikatow: ,
+lider:  numer wierzchołka: 13, ID losowe: 524; wartosci komunikatow: 973,
+lider:  numer wierzchołka: 14, ID losowe: 513; wartosci komunikatow: ,
+lider:  numer wierzchołka: 15, ID losowe: 662; wartosci komunikatow: 524,
+lider:  numer wierzchołka: 16, ID losowe: 578; wartosci komunikatow: ,
+lider:  numer wierzchołka: 17, ID losowe: 637; wartosci komunikatow: 662,
+lider:  numer wierzchołka: 18, ID losowe: 52; wartosci komunikatow: ,
+lider:  numer wierzchołka: 19, ID losowe: 231; wartosci komunikatow: 637,
+----------------------------------------
+lider:  numer wierzchołka: 0, ID losowe: 967; wartosci komunikatow: 637,
+lider:  numer wierzchołka: 1, ID losowe: 844; wartosci komunikatow: ,
+lider:  numer wierzchołka: 2, ID losowe: 205; wartosci komunikatow: ,
+lider:  numer wierzchołka: 3, ID losowe: 186; wartosci komunikatow: 967,
+lider:  numer wierzchołka: 4, ID losowe: 504; wartosci komunikatow: 844,
+lider:  numer wierzchołka: 5, ID losowe: 650; wartosci komunikatow: ,
+lider:  numer wierzchołka: 6, ID losowe: 758; wartosci komunikatow: ,
+lider:  numer wierzchołka: 7, ID losowe: 743; wartosci komunikatow: ,
+lider:  numer wierzchołka: 8, ID losowe: 939; wartosci komunikatow: ,
+lider:  numer wierzchołka: 9, ID losowe: 736; wartosci komunikatow: ,
+lider:  numer wierzchołka: 10, ID losowe: 773; wartosci komunikatow: ,
+lider:  numer wierzchołka: 11, ID losowe: 973; wartosci komunikatow: 939,
+lider:  numer wierzchołka: 12, ID losowe: 227; wartosci komunikatow: ,
+lider:  numer wierzchołka: 13, ID losowe: 524; wartosci komunikatow: ,
+lider:  numer wierzchołka: 14, ID losowe: 513; wartosci komunikatow: 973,
+lider:  numer wierzchołka: 15, ID losowe: 662; wartosci komunikatow: ,
+lider:  numer wierzchołka: 16, ID losowe: 578; wartosci komunikatow: ,
+lider:  numer wierzchołka: 17, ID losowe: 637; wartosci komunikatow: ,
+lider:  numer wierzchołka: 18, ID losowe: 52; wartosci komunikatow: 662,
+lider:  numer wierzchołka: 19, ID losowe: 231; wartosci komunikatow: ,
+----------------------------------------
+lider:  numer wierzchołka: 0, ID losowe: 967; wartosci komunikatow: ,
+lider:  numer wierzchołka: 1, ID losowe: 844; wartosci komunikatow: ,
+lider:  numer wierzchołka: 2, ID losowe: 205; wartosci komunikatow: ,
+lider:  numer wierzchołka: 3, ID losowe: 186; wartosci komunikatow: ,
+lider:  numer wierzchołka: 4, ID losowe: 504; wartosci komunikatow: 967,
+lider:  numer wierzchołka: 5, ID losowe: 650; wartosci komunikatow: 844,
+lider:  numer wierzchołka: 6, ID losowe: 758; wartosci komunikatow: ,
+lider:  numer wierzchołka: 7, ID losowe: 743; wartosci komunikatow: ,
+lider:  numer wierzchołka: 8, ID losowe: 939; wartosci komunikatow: ,
+lider:  numer wierzchołka: 9, ID losowe: 736; wartosci komunikatow: ,
+lider:  numer wierzchołka: 10, ID losowe: 773; wartosci komunikatow: ,
+lider:  numer wierzchołka: 11, ID losowe: 973; wartosci komunikatow: ,
+lider:  numer wierzchołka: 12, ID losowe: 227; wartosci komunikatow: ,
+lider:  numer wierzchołka: 13, ID losowe: 524; wartosci komunikatow: ,
+lider:  numer wierzchołka: 14, ID losowe: 513; wartosci komunikatow: ,
+lider:  numer wierzchołka: 15, ID losowe: 662; wartosci komunikatow: 973,
+lider:  numer wierzchołka: 16, ID losowe: 578; wartosci komunikatow: ,
+lider:  numer wierzchołka: 17, ID losowe: 637; wartosci komunikatow: ,
+lider:  numer wierzchołka: 18, ID losowe: 52; wartosci komunikatow: ,
+lider:  numer wierzchołka: 19, ID losowe: 231; wartosci komunikatow: 662,
+----------------------------------------
+.
+.
+.
+----------------------------------------
+lider:  numer wierzchołka: 0, ID losowe: 967; wartosci komunikatow: ,
+lider:  numer wierzchołka: 1, ID losowe: 844; wartosci komunikatow: ,
+lider:  numer wierzchołka: 2, ID losowe: 205; wartosci komunikatow: 973,
+lider:  numer wierzchołka: 3, ID losowe: 186; wartosci komunikatow: ,
+lider:  numer wierzchołka: 4, ID losowe: 504; wartosci komunikatow: ,
+lider:  numer wierzchołka: 5, ID losowe: 650; wartosci komunikatow: ,
+lider:  numer wierzchołka: 6, ID losowe: 758; wartosci komunikatow: ,
+lider:  numer wierzchołka: 7, ID losowe: 743; wartosci komunikatow: ,
+lider:  numer wierzchołka: 8, ID losowe: 939; wartosci komunikatow: ,
+lider:  numer wierzchołka: 9, ID losowe: 736; wartosci komunikatow: ,
+lider:  numer wierzchołka: 10, ID losowe: 773; wartosci komunikatow: ,
+lider:  numer wierzchołka: 11, ID losowe: 973; wartosci komunikatow: 967,
+lider:  numer wierzchołka: 12, ID losowe: 227; wartosci komunikatow: ,
+lider:  numer wierzchołka: 13, ID losowe: 524; wartosci komunikatow: ,
+lider:  numer wierzchołka: 14, ID losowe: 513; wartosci komunikatow: ,
+lider:  numer wierzchołka: 15, ID losowe: 662; wartosci komunikatow: ,
+lider:  numer wierzchołka: 16, ID losowe: 578; wartosci komunikatow: ,
+lider:  numer wierzchołka: 17, ID losowe: 637; wartosci komunikatow: ,
+lider:  numer wierzchołka: 18, ID losowe: 52; wartosci komunikatow: ,
+lider:  numer wierzchołka: 19, ID losowe: 231; wartosci komunikatow: ,
+----------------------------------------
+lider:  numer wierzchołka: 0, ID losowe: 967; wartosci komunikatow: ,
+lider:  numer wierzchołka: 1, ID losowe: 844; wartosci komunikatow: ,
+lider:  numer wierzchołka: 2, ID losowe: 205; wartosci komunikatow: ,
+lider:  numer wierzchołka: 3, ID losowe: 186; wartosci komunikatow: 973,
+lider:  numer wierzchołka: 4, ID losowe: 504; wartosci komunikatow: ,
+lider:  numer wierzchołka: 5, ID losowe: 650; wartosci komunikatow: ,
+lider:  numer wierzchołka: 6, ID losowe: 758; wartosci komunikatow: ,
+lider:  numer wierzchołka: 7, ID losowe: 743; wartosci komunikatow: ,
+lider:  numer wierzchołka: 8, ID losowe: 939; wartosci komunikatow: ,
+lider:  numer wierzchołka: 9, ID losowe: 736; wartosci komunikatow: ,
+lider:  numer wierzchołka: 10, ID losowe: 773; wartosci komunikatow: ,
+lider:  numer wierzchołka: 11, ID losowe: 973; wartosci komunikatow: ,
+lider:  numer wierzchołka: 12, ID losowe: 227; wartosci komunikatow: ,
+lider:  numer wierzchołka: 13, ID losowe: 524; wartosci komunikatow: ,
+lider:  numer wierzchołka: 14, ID losowe: 513; wartosci komunikatow: ,
+lider:  numer wierzchołka: 15, ID losowe: 662; wartosci komunikatow: ,
+lider:  numer wierzchołka: 16, ID losowe: 578; wartosci komunikatow: ,
+lider:  numer wierzchołka: 17, ID losowe: 637; wartosci komunikatow: ,
+lider:  numer wierzchołka: 18, ID losowe: 52; wartosci komunikatow: ,
+lider:  numer wierzchołka: 19, ID losowe: 231; wartosci komunikatow: ,
+----------------------------------------
+.
+.
+.
+----------------------------------------
+lider: NIE numer wierzchołka: 0, ID losowe: 967; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 1, ID losowe: 844; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 2, ID losowe: 205; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 3, ID losowe: 186; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 4, ID losowe: 504; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 5, ID losowe: 650; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 6, ID losowe: 758; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 7, ID losowe: 743; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 8, ID losowe: 939; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 9, ID losowe: 736; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 10, ID losowe: 773; wartosci komunikatow: ,
+lider: TAK numer wierzchołka: 11, ID losowe: 973; wartosci komunikatow: -1,
+lider: NIE numer wierzchołka: 12, ID losowe: 227; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 13, ID losowe: 524; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 14, ID losowe: 513; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 15, ID losowe: 662; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 16, ID losowe: 578; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 17, ID losowe: 637; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 18, ID losowe: 52; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 19, ID losowe: 231; wartosci komunikatow: ,
+----------------------------------------
+lider: NIE numer wierzchołka: 0, ID losowe: 967; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 1, ID losowe: 844; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 2, ID losowe: 205; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 3, ID losowe: 186; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 4, ID losowe: 504; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 5, ID losowe: 650; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 6, ID losowe: 758; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 7, ID losowe: 743; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 8, ID losowe: 939; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 9, ID losowe: 736; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 10, ID losowe: 773; wartosci komunikatow: ,
+lider: TAK numer wierzchołka: 11, ID losowe: 973; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 12, ID losowe: 227; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 13, ID losowe: 524; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 14, ID losowe: 513; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 15, ID losowe: 662; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 16, ID losowe: 578; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 17, ID losowe: 637; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 18, ID losowe: 52; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 19, ID losowe: 231; wartosci komunikatow: ,
+
+
+
+
+Zadanie 1a -------------------------------------
+
+source symul_lib.tcl; # ladowanie symulatora
+
+# tworzymy graf komunikacyjny (w tym wypadku cykl)
+set liczbaWierz 20
+iterate i $liczbaWierz {
+  let i1 $i-1; if {$i1==-1} {let i1 $liczbaWierz-1}
+  let i2 $i+1; if {$i2==$liczbaWierz} {let i2 0}
+  #set sasiedzi($i) "$i1 $i2" albo to
+  #albo to
+  set sasiedzi($i) "$i2 $i1"
+}
+
+# główny program na każdym wierzchołku/fiberze...
+fiber create $liczbaWierz {
+    set lider {}
+    wyslij 1 "$id_los"
+    fiber yield; #pierwszej rundy
+
+    while {$run} {
+      set id0 [czytaj 0]
+      if {$id0>$id_los} {
+        wyslij 1 "$id0"
+      } elseif {$id0==$id_los} {
+        set lider "TAK"; wyslij 1 "-1"
+      } elseif {$id0==-1 && $lider=={}} {
+        set lider "NIE"; wyslij 1 "-1"
+      }
+      fiber yield; # koniec rundy
+    }
+}
+Inicjalizacja;
+
+proc wizualizacja {} {
+_puts "----------------------------------------"
+fiber_iterate {_puts "lider: $lider numer wierzchołka: $id, ID losowe: $id_los; wartosci komunikatow: $kom0, $kom1"}
+}
+
+fiber yield; runda; wizualizacja;
+
+
+
+/// wydruk
+
+----------------------------------------
+lider:  numer wierzchołka: 0, ID losowe: 371; wartosci komunikatow: 348,
+lider:  numer wierzchołka: 1, ID losowe: 348; wartosci komunikatow: 212,
+lider:  numer wierzchołka: 2, ID losowe: 212; wartosci komunikatow: 968,
+lider:  numer wierzchołka: 3, ID losowe: 968; wartosci komunikatow: 790,
+lider:  numer wierzchołka: 4, ID losowe: 790; wartosci komunikatow: 811,
+lider:  numer wierzchołka: 5, ID losowe: 811; wartosci komunikatow: 6,
+lider:  numer wierzchołka: 6, ID losowe: 6; wartosci komunikatow: 180,
+lider:  numer wierzchołka: 7, ID losowe: 180; wartosci komunikatow: 210,
+lider:  numer wierzchołka: 8, ID losowe: 210; wartosci komunikatow: 254,
+lider:  numer wierzchołka: 9, ID losowe: 254; wartosci komunikatow: 669,
+lider:  numer wierzchołka: 10, ID losowe: 669; wartosci komunikatow: 621,
+lider:  numer wierzchołka: 11, ID losowe: 621; wartosci komunikatow: 840,
+lider:  numer wierzchołka: 12, ID losowe: 840; wartosci komunikatow: 878,
+lider:  numer wierzchołka: 13, ID losowe: 878; wartosci komunikatow: 900,
+lider:  numer wierzchołka: 14, ID losowe: 900; wartosci komunikatow: 838,
+lider:  numer wierzchołka: 15, ID losowe: 838; wartosci komunikatow: 903,
+lider:  numer wierzchołka: 16, ID losowe: 903; wartosci komunikatow: 947,
+lider:  numer wierzchołka: 17, ID losowe: 947; wartosci komunikatow: 554,
+lider:  numer wierzchołka: 18, ID losowe: 554; wartosci komunikatow: 820,
+lider:  numer wierzchołka: 19, ID losowe: 820; wartosci komunikatow: 371,
+----------------------------------------
+lider:  numer wierzchołka: 0, ID losowe: 371; wartosci komunikatow: ,
+lider:  numer wierzchołka: 1, ID losowe: 348; wartosci komunikatow: 968,
+lider:  numer wierzchołka: 2, ID losowe: 212; wartosci komunikatow: ,
+lider:  numer wierzchołka: 3, ID losowe: 968; wartosci komunikatow: 811,
+lider:  numer wierzchołka: 4, ID losowe: 790; wartosci komunikatow: ,
+lider:  numer wierzchołka: 5, ID losowe: 811; wartosci komunikatow: 180,
+lider:  numer wierzchołka: 6, ID losowe: 6; wartosci komunikatow: 210,
+lider:  numer wierzchołka: 7, ID losowe: 180; wartosci komunikatow: 254,
+lider:  numer wierzchołka: 8, ID losowe: 210; wartosci komunikatow: 669,
+lider:  numer wierzchołka: 9, ID losowe: 254; wartosci komunikatow: ,
+lider:  numer wierzchołka: 10, ID losowe: 669; wartosci komunikatow: 840,
+lider:  numer wierzchołka: 11, ID losowe: 621; wartosci komunikatow: 878,
+lider:  numer wierzchołka: 12, ID losowe: 840; wartosci komunikatow: 900,
+lider:  numer wierzchołka: 13, ID losowe: 878; wartosci komunikatow: ,
+lider:  numer wierzchołka: 14, ID losowe: 900; wartosci komunikatow: 903,
+lider:  numer wierzchołka: 15, ID losowe: 838; wartosci komunikatow: 947,
+lider:  numer wierzchołka: 16, ID losowe: 903; wartosci komunikatow: ,
+lider:  numer wierzchołka: 17, ID losowe: 947; wartosci komunikatow: 820,
+lider:  numer wierzchołka: 18, ID losowe: 554; wartosci komunikatow: ,
+lider:  numer wierzchołka: 19, ID losowe: 820; wartosci komunikatow: ,
+----------------------------------------
+lider:  numer wierzchołka: 0, ID losowe: 371; wartosci komunikatow: 968,
+lider:  numer wierzchołka: 1, ID losowe: 348; wartosci komunikatow: ,
+lider:  numer wierzchołka: 2, ID losowe: 212; wartosci komunikatow: ,
+lider:  numer wierzchołka: 3, ID losowe: 968; wartosci komunikatow: ,
+lider:  numer wierzchołka: 4, ID losowe: 790; wartosci komunikatow: ,
+lider:  numer wierzchołka: 5, ID losowe: 811; wartosci komunikatow: 210,
+lider:  numer wierzchołka: 6, ID losowe: 6; wartosci komunikatow: 254,
+lider:  numer wierzchołka: 7, ID losowe: 180; wartosci komunikatow: 669,
+lider:  numer wierzchołka: 8, ID losowe: 210; wartosci komunikatow: ,
+lider:  numer wierzchołka: 9, ID losowe: 254; wartosci komunikatow: 840,
+lider:  numer wierzchołka: 10, ID losowe: 669; wartosci komunikatow: 878,
+lider:  numer wierzchołka: 11, ID losowe: 621; wartosci komunikatow: 900,
+lider:  numer wierzchołka: 12, ID losowe: 840; wartosci komunikatow: ,
+lider:  numer wierzchołka: 13, ID losowe: 878; wartosci komunikatow: 903,
+lider:  numer wierzchołka: 14, ID losowe: 900; wartosci komunikatow: 947,
+lider:  numer wierzchołka: 15, ID losowe: 838; wartosci komunikatow: ,
+lider:  numer wierzchołka: 16, ID losowe: 903; wartosci komunikatow: ,
+lider:  numer wierzchołka: 17, ID losowe: 947; wartosci komunikatow: ,
+lider:  numer wierzchołka: 18, ID losowe: 554; wartosci komunikatow: ,
+lider:  numer wierzchołka: 19, ID losowe: 820; wartosci komunikatow: ,
+----------------------------------------
+.
+.
+.
+----------------------------------------
+lider:  numer wierzchołka: 0, ID losowe: 371; wartosci komunikatow: ,
+lider:  numer wierzchołka: 1, ID losowe: 348; wartosci komunikatow: ,
+lider:  numer wierzchołka: 2, ID losowe: 212; wartosci komunikatow: ,
+lider:  numer wierzchołka: 3, ID losowe: 968; wartosci komunikatow: ,
+lider:  numer wierzchołka: 4, ID losowe: 790; wartosci komunikatow: 968,
+lider:  numer wierzchołka: 5, ID losowe: 811; wartosci komunikatow: ,
+lider:  numer wierzchołka: 6, ID losowe: 6; wartosci komunikatow: ,
+lider:  numer wierzchołka: 7, ID losowe: 180; wartosci komunikatow: ,
+lider:  numer wierzchołka: 8, ID losowe: 210; wartosci komunikatow: ,
+lider:  numer wierzchołka: 9, ID losowe: 254; wartosci komunikatow: ,
+lider:  numer wierzchołka: 10, ID losowe: 669; wartosci komunikatow: ,
+lider:  numer wierzchołka: 11, ID losowe: 621; wartosci komunikatow: ,
+lider:  numer wierzchołka: 12, ID losowe: 840; wartosci komunikatow: ,
+lider:  numer wierzchołka: 13, ID losowe: 878; wartosci komunikatow: ,
+lider:  numer wierzchołka: 14, ID losowe: 900; wartosci komunikatow: ,
+lider:  numer wierzchołka: 15, ID losowe: 838; wartosci komunikatow: ,
+lider:  numer wierzchołka: 16, ID losowe: 903; wartosci komunikatow: ,
+lider:  numer wierzchołka: 17, ID losowe: 947; wartosci komunikatow: ,
+lider:  numer wierzchołka: 18, ID losowe: 554; wartosci komunikatow: ,
+lider:  numer wierzchołka: 19, ID losowe: 820; wartosci komunikatow: ,
+----------------------------------------
+lider:  numer wierzchołka: 0, ID losowe: 371; wartosci komunikatow: ,
+lider:  numer wierzchołka: 1, ID losowe: 348; wartosci komunikatow: ,
+lider:  numer wierzchołka: 2, ID losowe: 212; wartosci komunikatow: ,
+lider:  numer wierzchołka: 3, ID losowe: 968; wartosci komunikatow: 968,
+lider:  numer wierzchołka: 4, ID losowe: 790; wartosci komunikatow: ,
+lider:  numer wierzchołka: 5, ID losowe: 811; wartosci komunikatow: ,
+lider:  numer wierzchołka: 6, ID losowe: 6; wartosci komunikatow: ,
+lider:  numer wierzchołka: 7, ID losowe: 180; wartosci komunikatow: ,
+lider:  numer wierzchołka: 8, ID losowe: 210; wartosci komunikatow: ,
+lider:  numer wierzchołka: 9, ID losowe: 254; wartosci komunikatow: ,
+lider:  numer wierzchołka: 10, ID losowe: 669; wartosci komunikatow: ,
+lider:  numer wierzchołka: 11, ID losowe: 621; wartosci komunikatow: ,
+lider:  numer wierzchołka: 12, ID losowe: 840; wartosci komunikatow: ,
+lider:  numer wierzchołka: 13, ID losowe: 878; wartosci komunikatow: ,
+lider:  numer wierzchołka: 14, ID losowe: 900; wartosci komunikatow: ,
+lider:  numer wierzchołka: 15, ID losowe: 838; wartosci komunikatow: ,
+lider:  numer wierzchołka: 16, ID losowe: 903; wartosci komunikatow: ,
+lider:  numer wierzchołka: 17, ID losowe: 947; wartosci komunikatow: ,
+lider:  numer wierzchołka: 18, ID losowe: 554; wartosci komunikatow: ,
+lider:  numer wierzchołka: 19, ID losowe: 820; wartosci komunikatow: ,
+----------------------------------------
+lider:  numer wierzchołka: 0, ID losowe: 371; wartosci komunikatow: ,
+lider:  numer wierzchołka: 1, ID losowe: 348; wartosci komunikatow: ,
+lider:  numer wierzchołka: 2, ID losowe: 212; wartosci komunikatow: -1,
+lider: TAK numer wierzchołka: 3, ID losowe: 968; wartosci komunikatow: ,
+lider:  numer wierzchołka: 4, ID losowe: 790; wartosci komunikatow: ,
+lider:  numer wierzchołka: 5, ID losowe: 811; wartosci komunikatow: ,
+lider:  numer wierzchołka: 6, ID losowe: 6; wartosci komunikatow: ,
+lider:  numer wierzchołka: 7, ID losowe: 180; wartosci komunikatow: ,
+lider:  numer wierzchołka: 8, ID losowe: 210; wartosci komunikatow: ,
+lider:  numer wierzchołka: 9, ID losowe: 254; wartosci komunikatow: ,
+lider:  numer wierzchołka: 10, ID losowe: 669; wartosci komunikatow: ,
+lider:  numer wierzchołka: 11, ID losowe: 621; wartosci komunikatow: ,
+lider:  numer wierzchołka: 12, ID losowe: 840; wartosci komunikatow: ,
+lider:  numer wierzchołka: 13, ID losowe: 878; wartosci komunikatow: ,
+lider:  numer wierzchołka: 14, ID losowe: 900; wartosci komunikatow: ,
+lider:  numer wierzchołka: 15, ID losowe: 838; wartosci komunikatow: ,
+lider:  numer wierzchołka: 16, ID losowe: 903; wartosci komunikatow: ,
+lider:  numer wierzchołka: 17, ID losowe: 947; wartosci komunikatow: ,
+lider:  numer wierzchołka: 18, ID losowe: 554; wartosci komunikatow: ,
+lider:  numer wierzchołka: 19, ID losowe: 820; wartosci komunikatow: ,
+----------------------------------------
+lider:  numer wierzchołka: 0, ID losowe: 371; wartosci komunikatow: ,
+lider:  numer wierzchołka: 1, ID losowe: 348; wartosci komunikatow: -1,
+lider: NIE numer wierzchołka: 2, ID losowe: 212; wartosci komunikatow: ,
+lider: TAK numer wierzchołka: 3, ID losowe: 968; wartosci komunikatow: ,
+lider:  numer wierzchołka: 4, ID losowe: 790; wartosci komunikatow: ,
+lider:  numer wierzchołka: 5, ID losowe: 811; wartosci komunikatow: ,
+lider:  numer wierzchołka: 6, ID losowe: 6; wartosci komunikatow: ,
+lider:  numer wierzchołka: 7, ID losowe: 180; wartosci komunikatow: ,
+lider:  numer wierzchołka: 8, ID losowe: 210; wartosci komunikatow: ,
+lider:  numer wierzchołka: 9, ID losowe: 254; wartosci komunikatow: ,
+lider:  numer wierzchołka: 10, ID losowe: 669; wartosci komunikatow: ,
+lider:  numer wierzchołka: 11, ID losowe: 621; wartosci komunikatow: ,
+lider:  numer wierzchołka: 12, ID losowe: 840; wartosci komunikatow: ,
+lider:  numer wierzchołka: 13, ID losowe: 878; wartosci komunikatow: ,
+lider:  numer wierzchołka: 14, ID losowe: 900; wartosci komunikatow: ,
+lider:  numer wierzchołka: 15, ID losowe: 838; wartosci komunikatow: ,
+lider:  numer wierzchołka: 16, ID losowe: 903; wartosci komunikatow: ,
+lider:  numer wierzchołka: 17, ID losowe: 947; wartosci komunikatow: ,
+lider:  numer wierzchołka: 18, ID losowe: 554; wartosci komunikatow: ,
+lider:  numer wierzchołka: 19, ID losowe: 820; wartosci komunikatow: ,
+----------------------------------------
+.
+.
+.
+----------------------------------------
+lider: NIE numer wierzchołka: 0, ID losowe: 371; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 1, ID losowe: 348; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 2, ID losowe: 212; wartosci komunikatow: ,
+lider: TAK numer wierzchołka: 3, ID losowe: 968; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 4, ID losowe: 790; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 5, ID losowe: 811; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 6, ID losowe: 6; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 7, ID losowe: 180; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 8, ID losowe: 210; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 9, ID losowe: 254; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 10, ID losowe: 669; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 11, ID losowe: 621; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 12, ID losowe: 840; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 13, ID losowe: 878; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 14, ID losowe: 900; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 15, ID losowe: 838; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 16, ID losowe: 903; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 17, ID losowe: 947; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 18, ID losowe: 554; wartosci komunikatow: ,
+lider: NIE numer wierzchołka: 19, ID losowe: 820; wartosci komunikatow: ,
+
+
+
+Zadanie 2 -------------------------------------
+source symul_lib.tcl; # ladowanie symulatora
+
+set obslugaBitow {
+  proc bity x { # postac binarna liczby
+    usun0 [binary scan [binary format I $x] B* x; set x]
+  }
+  proc usun0 x { # usuwa zera poczatkowe z repr bin liczby
+    set x [string trimleft $x 0]
+    if {$x==""} {set x 0}
+    set x
+  }
+  proc porownanieC {cv cu} { # porownuje 2 kolory, zwraca indeks oraz 2 bity...
+    set dlcu [string len $cu]
+    set dlcv [string len $cv]
+    if {$dlcu<$dlcv} {
+      set cu "[string repeat 0 [expr {$dlcv-$dlcu}]]$cu"
+    }
+    if {$dlcu>$dlcv} {
+      set cv "[string repeat 0 [expr {$dlcu-$dlcv}]]$cv"
+    }
+    set dl [string len $cu]
+    iterate i $dl {
+      set i1 [expr {$dl-$i-1}]
+        # KONIECZNIE trzeba numerowac bity od prawej gdyz
+        # dopisuje sie 0 z lewej i wtedy indeksy by sie zmienialy!
+      set bu [string index $cu $i1]
+      set bv [string index $cv $i1]
+      if {$bu != $bv} {return "$i $bv $bu"}
+    }
+    return {-1 ? ?}
+  }
+  proc wyrownaj {L x} { # dodaje 0 z lewej do L-bitow
+    set dl [string len $x]
+    if {$dl>$L} {error "wyrownaj"}
+    return "[string repeat "0" [expr {$L-$dl}]]$x"
+  }
+  proc bin2dec x { # do 32-bitow
+    binary scan [binary form B* [wyrownaj 32 $x]] I y
+    set y
+  }
+  proc iterate {zm liIter kod} { # wygodna petla
+    upvar $zm i
+    for {set i 0} {$i<$liIter} {incr i} {
+      set e [catch {uplevel $kod} x]
+      if {$e!=0} {return -code $e $x}
+    }
+  }
+}
+
+
+
+
+
+set liczbaWierz 10
+set sasiedzi(0) {0 1 2}
+set sasiedzi(1) {0 3 4}
+set sasiedzi(2) {0 5 6}
+set sasiedzi(3) {1 7 8}
+set sasiedzi(4) {1 9}
+set sasiedzi(5) {2}
+set sasiedzi(6) {2}
+set sasiedzi(7) {3}
+set sasiedzi(8) {3}
+set sasiedzi(9) {4}
+# główny program na każdym wierzchołku/fiberze...
+
+fiber create $liczbaWierz {
+  global Cv
+  if {$id == 0} {
+    set Cv [wyrownaj 10 [bity $id]]
+  } else {
+    set Cv [wyrownaj 10 [bity $id_los]]
+  }
+  if {$stopien > 1} {
+    iterate i $stopien {
+      if {$i > 0} {
+      wyslij $i "$Cv"
+    }
+    }
+  }
+
+  fiber yield; #pierwszej rundy
+  while {$run} {
+    set Cp {}
+    set m0 [czytaj 0]
+    if {$m0!=""} {
+      foreach {C} $m0 break
+      set Cp $C
+    }
+    if {$Cp!=""} {
+      set x [porownanieC $Cv $Cp]
+      set dlugosc [expr {[lindex $x 0] + 1}]
+      set zamiana [lindex $x 1]
+      append zamiana [string range $Cv 0 end-$dlugosc]
+      set Cv [usun0 $zamiana]
+      if {$stopien > 1} {
+        iterate i $stopien {
+          if {$i > 0} {
+          wyslij $i "$Cv"
+        }
+}}
+    }
+    fiber yield; #pierwszej rundy
+
+  }
+}
+fiber_iterate $obslugaBitow
+fiber_iterate {
+
+}
+Inicjalizacja;
+proc wizualizacja {} {
+_puts "----------------------------------------"
+fiber_iterate {_puts "$id,   $Cv"}
+}
+
+
+
+fiber yield; runda; wizualizacja;
+
+
+
+/// wydruk
+
+----------------------------------------
+0,   0000000000
+1,   1110110001
+2,   0001111010
+3,   0010101100
+4,   1101011101
+5,   1101011111
+6,   1010011100
+7,   0010111011
+8,   1101010000
+9,   1010000110
+----------------------------------------
+0,   0000000000
+1,   1111011000
+2,   100011110
+3,   1010110
+4,   11101011
+5,   1110101111
+6,   10100111
+7,   1001011101
+8,   1101010
+9,   101000011
+----------------------------------------
+0,   0000000000
+1,   1111011000
+2,   100011110
+3,   110101
+4,   11110101
+5,   1111010111
+6,   11010011
+7,   1100101110
+8,   1101
+9,   10100
+----------------------------------------
+0,   0000000000
+1,   1111011000
+2,   100011110
+3,   110101
+4,   11110101
+5,   1111010111
+6,   11010011
+7,   110010111
+8,   1
+9,   1010
+----------------------------------------
+0,   0000000000
+1,   1111011000
+2,   100011110
+3,   110101
+4,   11110101
+5,   1111010111
+6,   11010011
+7,   110010111
+8,   1
+9,   1010
+
+
+
+
+Zadanie 3 -------------------------------------
+
+source symul_lib.tcl
+
+set liczbaWierz 20
+iterate i $liczbaWierz {
+  let i1 $i-1; if {$i1==-1} {let i1 $liczbaWierz-1}
+  let i2 $i+1; if {$i2==$liczbaWierz} {let i2 0}
+  set sasiedzi($i) "$i1 $i2"
+}
+fiber create $liczbaWierz {
+  set lider {}
+  wyslij 0 "$id_los 0 "
+  wyslij 1 "$id_los 0 "
+  fiber yield
+
+  while {$run} {
+    algorytm [czytaj 0] [czytaj 1]
+    fiber yield
+  }
+}
+Inicjalizacja
+
+fiber_iterate {
+  proc algorytm {m0 m1} {
+    global id id_los stopien lider
+    if {$m0!=""} {
+      foreach {id0} $m0 break
+      wyslij 1 "$id0"
+	  if {$id_los<$id0} {
+		set lider "false"
+	   }
+	   if {$id_los>$id0 && $lider!="false"} {
+		set lider "true"
+	   }
+    }
+    if {$m1!=""} {
+      foreach {id1} $m1 break
+      wyslij 0 "$id1"
+	  if {$id_los<$id1} {
+		    set lider "false"
+	  }
+	   if {$id_los>$id1 && $lider!="false"} {
+		     set lider "true"
+	   }
+    }
+  }
+}
+
+proc wizualizacja {} {
+  _puts ---
+  fiber_iterate {_puts "Nr wierzch: $id   , Id wierzch: $id_los   ,czy lider:      $lider      ;tresc wejscia 0: $kom0    ,tresc wejsca 1:$kom1"}
+}
+fiber yield; runda; wizualizacja;
+
+
+
+/// wydruk
+
+---
+Nr wierzch: 0   , Id wierzch: 325   ,czy lider:            ;tresc wejscia 0: {221 0 }    ,tresc wejsca 1:{560 0 }
+Nr wierzch: 1   , Id wierzch: 560   ,czy lider:            ;tresc wejscia 0: {325 0 }    ,tresc wejsca 1:{27 0 }
+Nr wierzch: 2   , Id wierzch: 27   ,czy lider:            ;tresc wejscia 0: {560 0 }    ,tresc wejsca 1:{157 0 }
+Nr wierzch: 3   , Id wierzch: 157   ,czy lider:            ;tresc wejscia 0: {27 0 }    ,tresc wejsca 1:{551 0 }
+Nr wierzch: 4   , Id wierzch: 551   ,czy lider:            ;tresc wejscia 0: {157 0 }    ,tresc wejsca 1:{558 0 }
+Nr wierzch: 5   , Id wierzch: 558   ,czy lider:            ;tresc wejscia 0: {551 0 }    ,tresc wejsca 1:{257 0 }
+Nr wierzch: 6   , Id wierzch: 257   ,czy lider:            ;tresc wejscia 0: {558 0 }    ,tresc wejsca 1:{18 0 }
+Nr wierzch: 7   , Id wierzch: 18   ,czy lider:            ;tresc wejscia 0: {257 0 }    ,tresc wejsca 1:{893 0 }
+Nr wierzch: 8   , Id wierzch: 893   ,czy lider:            ;tresc wejscia 0: {18 0 }    ,tresc wejsca 1:{511 0 }
+Nr wierzch: 9   , Id wierzch: 511   ,czy lider:            ;tresc wejscia 0: {893 0 }    ,tresc wejsca 1:{957 0 }
+Nr wierzch: 10   , Id wierzch: 957   ,czy lider:            ;tresc wejscia 0: {511 0 }    ,tresc wejsca 1:{713 0 }
+Nr wierzch: 11   , Id wierzch: 713   ,czy lider:            ;tresc wejscia 0: {957 0 }    ,tresc wejsca 1:{484 0 }
+Nr wierzch: 12   , Id wierzch: 484   ,czy lider:            ;tresc wejscia 0: {713 0 }    ,tresc wejsca 1:{713 0 }
+Nr wierzch: 13   , Id wierzch: 713   ,czy lider:            ;tresc wejscia 0: {484 0 }    ,tresc wejsca 1:{264 0 }
+Nr wierzch: 14   , Id wierzch: 264   ,czy lider:            ;tresc wejscia 0: {713 0 }    ,tresc wejsca 1:{156 0 }
+Nr wierzch: 15   , Id wierzch: 156   ,czy lider:            ;tresc wejscia 0: {264 0 }    ,tresc wejsca 1:{959 0 }
+Nr wierzch: 16   , Id wierzch: 959   ,czy lider:            ;tresc wejscia 0: {156 0 }    ,tresc wejsca 1:{238 0 }
+Nr wierzch: 17   , Id wierzch: 238   ,czy lider:            ;tresc wejscia 0: {959 0 }    ,tresc wejsca 1:{354 0 }
+Nr wierzch: 18   , Id wierzch: 354   ,czy lider:            ;tresc wejscia 0: {238 0 }    ,tresc wejsca 1:{221 0 }
+Nr wierzch: 19   , Id wierzch: 221   ,czy lider:            ;tresc wejscia 0: {354 0 }    ,tresc wejsca 1:{325 0 }
+---
+Nr wierzch: 0   , Id wierzch: 325   ,czy lider:      false      ;tresc wejscia 0: 354    ,tresc wejsca 1:27
+Nr wierzch: 1   , Id wierzch: 560   ,czy lider:      true      ;tresc wejscia 0: 221    ,tresc wejsca 1:157
+Nr wierzch: 2   , Id wierzch: 27   ,czy lider:      false      ;tresc wejscia 0: 325    ,tresc wejsca 1:551
+Nr wierzch: 3   , Id wierzch: 157   ,czy lider:      false      ;tresc wejscia 0: 560    ,tresc wejsca 1:558
+Nr wierzch: 4   , Id wierzch: 551   ,czy lider:      false      ;tresc wejscia 0: 27    ,tresc wejsca 1:257
+Nr wierzch: 5   , Id wierzch: 558   ,czy lider:      true      ;tresc wejscia 0: 157    ,tresc wejsca 1:18
+Nr wierzch: 6   , Id wierzch: 257   ,czy lider:      false      ;tresc wejscia 0: 551    ,tresc wejsca 1:893
+Nr wierzch: 7   , Id wierzch: 18   ,czy lider:      false      ;tresc wejscia 0: 558    ,tresc wejsca 1:511
+Nr wierzch: 8   , Id wierzch: 893   ,czy lider:      true      ;tresc wejscia 0: 257    ,tresc wejsca 1:957
+Nr wierzch: 9   , Id wierzch: 511   ,czy lider:      false      ;tresc wejscia 0: 18    ,tresc wejsca 1:713
+Nr wierzch: 10   , Id wierzch: 957   ,czy lider:      true      ;tresc wejscia 0: 893    ,tresc wejsca 1:484
+Nr wierzch: 11   , Id wierzch: 713   ,czy lider:      false      ;tresc wejscia 0: 511    ,tresc wejsca 1:713
+Nr wierzch: 12   , Id wierzch: 484   ,czy lider:      false      ;tresc wejscia 0: 957    ,tresc wejsca 1:264
+Nr wierzch: 13   , Id wierzch: 713   ,czy lider:      true      ;tresc wejscia 0: 713    ,tresc wejsca 1:156
+Nr wierzch: 14   , Id wierzch: 264   ,czy lider:      false      ;tresc wejscia 0: 484    ,tresc wejsca 1:959
+Nr wierzch: 15   , Id wierzch: 156   ,czy lider:      false      ;tresc wejscia 0: 713    ,tresc wejsca 1:238
+Nr wierzch: 16   , Id wierzch: 959   ,czy lider:      true      ;tresc wejscia 0: 264    ,tresc wejsca 1:354
+Nr wierzch: 17   , Id wierzch: 238   ,czy lider:      false      ;tresc wejscia 0: 156    ,tresc wejsca 1:221
+Nr wierzch: 18   , Id wierzch: 354   ,czy lider:      true      ;tresc wejscia 0: 959    ,tresc wejsca 1:325
+Nr wierzch: 19   , Id wierzch: 221   ,czy lider:      false      ;tresc wejscia 0: 238    ,tresc wejsca 1:560
+---
+Nr wierzch: 0   , Id wierzch: 325   ,czy lider:      false      ;tresc wejscia 0: 238    ,tresc wejsca 1:157
+Nr wierzch: 1   , Id wierzch: 560   ,czy lider:      true      ;tresc wejscia 0: 354    ,tresc wejsca 1:551
+Nr wierzch: 2   , Id wierzch: 27   ,czy lider:      false      ;tresc wejscia 0: 221    ,tresc wejsca 1:558
+Nr wierzch: 3   , Id wierzch: 157   ,czy lider:      false      ;tresc wejscia 0: 325    ,tresc wejsca 1:257
+Nr wierzch: 4   , Id wierzch: 551   ,czy lider:      false      ;tresc wejscia 0: 560    ,tresc wejsca 1:18
+Nr wierzch: 5   , Id wierzch: 558   ,czy lider:      true      ;tresc wejscia 0: 27    ,tresc wejsca 1:893
+Nr wierzch: 6   , Id wierzch: 257   ,czy lider:      false      ;tresc wejscia 0: 157    ,tresc wejsca 1:511
+Nr wierzch: 7   , Id wierzch: 18   ,czy lider:      false      ;tresc wejscia 0: 551    ,tresc wejsca 1:957
+Nr wierzch: 8   , Id wierzch: 893   ,czy lider:      false      ;tresc wejscia 0: 558    ,tresc wejsca 1:713
+Nr wierzch: 9   , Id wierzch: 511   ,czy lider:      false      ;tresc wejscia 0: 257    ,tresc wejsca 1:484
+Nr wierzch: 10   , Id wierzch: 957   ,czy lider:      true      ;tresc wejscia 0: 18    ,tresc wejsca 1:713
+Nr wierzch: 11   , Id wierzch: 713   ,czy lider:      false      ;tresc wejscia 0: 893    ,tresc wejsca 1:264
+Nr wierzch: 12   , Id wierzch: 484   ,czy lider:      false      ;tresc wejscia 0: 511    ,tresc wejsca 1:156
+Nr wierzch: 13   , Id wierzch: 713   ,czy lider:      true      ;tresc wejscia 0: 957    ,tresc wejsca 1:959
+Nr wierzch: 14   , Id wierzch: 264   ,czy lider:      false      ;tresc wejscia 0: 713    ,tresc wejsca 1:238
+Nr wierzch: 15   , Id wierzch: 156   ,czy lider:      false      ;tresc wejscia 0: 484    ,tresc wejsca 1:354
+Nr wierzch: 16   , Id wierzch: 959   ,czy lider:      true      ;tresc wejscia 0: 713    ,tresc wejsca 1:221
+Nr wierzch: 17   , Id wierzch: 238   ,czy lider:      false      ;tresc wejscia 0: 264    ,tresc wejsca 1:325
+Nr wierzch: 18   , Id wierzch: 354   ,czy lider:      false      ;tresc wejscia 0: 156    ,tresc wejsca 1:560
+Nr wierzch: 19   , Id wierzch: 221   ,czy lider:      false      ;tresc wejscia 0: 959    ,tresc wejsca 1:27
+---
+Nr wierzch: 0   , Id wierzch: 325   ,czy lider:      false      ;tresc wejscia 0: 959    ,tresc wejsca 1:551
+Nr wierzch: 1   , Id wierzch: 560   ,czy lider:      true      ;tresc wejscia 0: 238    ,tresc wejsca 1:558
+Nr wierzch: 2   , Id wierzch: 27   ,czy lider:      false      ;tresc wejscia 0: 354    ,tresc wejsca 1:257
+Nr wierzch: 3   , Id wierzch: 157   ,czy lider:      false      ;tresc wejscia 0: 221    ,tresc wejsca 1:18
+Nr wierzch: 4   , Id wierzch: 551   ,czy lider:      false      ;tresc wejscia 0: 325    ,tresc wejsca 1:893
+Nr wierzch: 5   , Id wierzch: 558   ,czy lider:      false      ;tresc wejscia 0: 560    ,tresc wejsca 1:511
+Nr wierzch: 6   , Id wierzch: 257   ,czy lider:      false      ;tresc wejscia 0: 27    ,tresc wejsca 1:957
+Nr wierzch: 7   , Id wierzch: 18   ,czy lider:      false      ;tresc wejscia 0: 157    ,tresc wejsca 1:713
+Nr wierzch: 8   , Id wierzch: 893   ,czy lider:      false      ;tresc wejscia 0: 551    ,tresc wejsca 1:484
+Nr wierzch: 9   , Id wierzch: 511   ,czy lider:      false      ;tresc wejscia 0: 558    ,tresc wejsca 1:713
+Nr wierzch: 10   , Id wierzch: 957   ,czy lider:      true      ;tresc wejscia 0: 257    ,tresc wejsca 1:264
+Nr wierzch: 11   , Id wierzch: 713   ,czy lider:      false      ;tresc wejscia 0: 18    ,tresc wejsca 1:156
+Nr wierzch: 12   , Id wierzch: 484   ,czy lider:      false      ;tresc wejscia 0: 893    ,tresc wejsca 1:959
+Nr wierzch: 13   , Id wierzch: 713   ,czy lider:      false      ;tresc wejscia 0: 511    ,tresc wejsca 1:238
+Nr wierzch: 14   , Id wierzch: 264   ,czy lider:      false      ;tresc wejscia 0: 957    ,tresc wejsca 1:354
+Nr wierzch: 15   , Id wierzch: 156   ,czy lider:      false      ;tresc wejscia 0: 713    ,tresc wejsca 1:221
+Nr wierzch: 16   , Id wierzch: 959   ,czy lider:      true      ;tresc wejscia 0: 484    ,tresc wejsca 1:325
+Nr wierzch: 17   , Id wierzch: 238   ,czy lider:      false      ;tresc wejscia 0: 713    ,tresc wejsca 1:560
+Nr wierzch: 18   , Id wierzch: 354   ,czy lider:      false      ;tresc wejscia 0: 264    ,tresc wejsca 1:27
+Nr wierzch: 19   , Id wierzch: 221   ,czy lider:      false      ;tresc wejscia 0: 156    ,tresc wejsca 1:157
+---
+Nr wierzch: 0   , Id wierzch: 325   ,czy lider:      false      ;tresc wejscia 0: 156    ,tresc wejsca 1:558
+Nr wierzch: 1   , Id wierzch: 560   ,czy lider:      true      ;tresc wejscia 0: 959    ,tresc wejsca 1:257
+Nr wierzch: 2   , Id wierzch: 27   ,czy lider:      false      ;tresc wejscia 0: 238    ,tresc wejsca 1:18
+Nr wierzch: 3   , Id wierzch: 157   ,czy lider:      false      ;tresc wejscia 0: 354    ,tresc wejsca 1:893
+Nr wierzch: 4   , Id wierzch: 551   ,czy lider:      false      ;tresc wejscia 0: 221    ,tresc wejsca 1:511
+Nr wierzch: 5   , Id wierzch: 558   ,czy lider:      false      ;tresc wejscia 0: 325    ,tresc wejsca 1:957
+Nr wierzch: 6   , Id wierzch: 257   ,czy lider:      false      ;tresc wejscia 0: 560    ,tresc wejsca 1:713
+Nr wierzch: 7   , Id wierzch: 18   ,czy lider:      false      ;tresc wejscia 0: 27    ,tresc wejsca 1:484
+Nr wierzch: 8   , Id wierzch: 893   ,czy lider:      false      ;tresc wejscia 0: 157    ,tresc wejsca 1:713
+Nr wierzch: 9   , Id wierzch: 511   ,czy lider:      false      ;tresc wejscia 0: 551    ,tresc wejsca 1:264
+Nr wierzch: 10   , Id wierzch: 957   ,czy lider:      true      ;tresc wejscia 0: 558    ,tresc wejsca 1:156
+Nr wierzch: 11   , Id wierzch: 713   ,czy lider:      false      ;tresc wejscia 0: 257    ,tresc wejsca 1:959
+Nr wierzch: 12   , Id wierzch: 484   ,czy lider:      false      ;tresc wejscia 0: 18    ,tresc wejsca 1:238
+Nr wierzch: 13   , Id wierzch: 713   ,czy lider:      false      ;tresc wejscia 0: 893    ,tresc wejsca 1:354
+Nr wierzch: 14   , Id wierzch: 264   ,czy lider:      false      ;tresc wejscia 0: 511    ,tresc wejsca 1:221
+Nr wierzch: 15   , Id wierzch: 156   ,czy lider:      false      ;tresc wejscia 0: 957    ,tresc wejsca 1:325
+Nr wierzch: 16   , Id wierzch: 959   ,czy lider:      true      ;tresc wejscia 0: 713    ,tresc wejsca 1:560
+Nr wierzch: 17   , Id wierzch: 238   ,czy lider:      false      ;tresc wejscia 0: 484    ,tresc wejsca 1:27
+Nr wierzch: 18   , Id wierzch: 354   ,czy lider:      false      ;tresc wejscia 0: 713    ,tresc wejsca 1:157
+Nr wierzch: 19   , Id wierzch: 221   ,czy lider:      false      ;tresc wejscia 0: 264    ,tresc wejsca 1:551
+---
+Nr wierzch: 0   , Id wierzch: 325   ,czy lider:      false      ;tresc wejscia 0: 264    ,tresc wejsca 1:257
+Nr wierzch: 1   , Id wierzch: 560   ,czy lider:      false      ;tresc wejscia 0: 156    ,tresc wejsca 1:18
+Nr wierzch: 2   , Id wierzch: 27   ,czy lider:      false      ;tresc wejscia 0: 959    ,tresc wejsca 1:893
+Nr wierzch: 3   , Id wierzch: 157   ,czy lider:      false      ;tresc wejscia 0: 238    ,tresc wejsca 1:511
+Nr wierzch: 4   , Id wierzch: 551   ,czy lider:      false      ;tresc wejscia 0: 354    ,tresc wejsca 1:957
+Nr wierzch: 5   , Id wierzch: 558   ,czy lider:      false      ;tresc wejscia 0: 221    ,tresc wejsca 1:713
+Nr wierzch: 6   , Id wierzch: 257   ,czy lider:      false      ;tresc wejscia 0: 325    ,tresc wejsca 1:484
+Nr wierzch: 7   , Id wierzch: 18   ,czy lider:      false      ;tresc wejscia 0: 560    ,tresc wejsca 1:713
+Nr wierzch: 8   , Id wierzch: 893   ,czy lider:      false      ;tresc wejscia 0: 27    ,tresc wejsca 1:264
+Nr wierzch: 9   , Id wierzch: 511   ,czy lider:      false      ;tresc wejscia 0: 157    ,tresc wejsca 1:156
+Nr wierzch: 10   , Id wierzch: 957   ,czy lider:      true      ;tresc wejscia 0: 551    ,tresc wejsca 1:959
+Nr wierzch: 11   , Id wierzch: 713   ,czy lider:      false      ;tresc wejscia 0: 558    ,tresc wejsca 1:238
+Nr wierzch: 12   , Id wierzch: 484   ,czy lider:      false      ;tresc wejscia 0: 257    ,tresc wejsca 1:354
+Nr wierzch: 13   , Id wierzch: 713   ,czy lider:      false      ;tresc wejscia 0: 18    ,tresc wejsca 1:221
+Nr wierzch: 14   , Id wierzch: 264   ,czy lider:      false      ;tresc wejscia 0: 893    ,tresc wejsca 1:325
+Nr wierzch: 15   , Id wierzch: 156   ,czy lider:      false      ;tresc wejscia 0: 511    ,tresc wejsca 1:560
+Nr wierzch: 16   , Id wierzch: 959   ,czy lider:      true      ;tresc wejscia 0: 957    ,tresc wejsca 1:27
+Nr wierzch: 17   , Id wierzch: 238   ,czy lider:      false      ;tresc wejscia 0: 713    ,tresc wejsca 1:157
+Nr wierzch: 18   , Id wierzch: 354   ,czy lider:      false      ;tresc wejscia 0: 484    ,tresc wejsca 1:551
+Nr wierzch: 19   , Id wierzch: 221   ,czy lider:      false      ;tresc wejscia 0: 713    ,tresc wejsca 1:558
+---
+Nr wierzch: 0   , Id wierzch: 325   ,czy lider:      false      ;tresc wejscia 0: 713    ,tresc wejsca 1:18
+Nr wierzch: 1   , Id wierzch: 560   ,czy lider:      false      ;tresc wejscia 0: 264    ,tresc wejsca 1:893
+Nr wierzch: 2   , Id wierzch: 27   ,czy lider:      false      ;tresc wejscia 0: 156    ,tresc wejsca 1:511
+Nr wierzch: 3   , Id wierzch: 157   ,czy lider:      false      ;tresc wejscia 0: 959    ,tresc wejsca 1:957
+Nr wierzch: 4   , Id wierzch: 551   ,czy lider:      false      ;tresc wejscia 0: 238    ,tresc wejsca 1:713
+Nr wierzch: 5   , Id wierzch: 558   ,czy lider:      false      ;tresc wejscia 0: 354    ,tresc wejsca 1:484
+Nr wierzch: 6   , Id wierzch: 257   ,czy lider:      false      ;tresc wejscia 0: 221    ,tresc wejsca 1:713
+Nr wierzch: 7   , Id wierzch: 18   ,czy lider:      false      ;tresc wejscia 0: 325    ,tresc wejsca 1:264
+Nr wierzch: 8   , Id wierzch: 893   ,czy lider:      false      ;tresc wejscia 0: 560    ,tresc wejsca 1:156
+Nr wierzch: 9   , Id wierzch: 511   ,czy lider:      false      ;tresc wejscia 0: 27    ,tresc wejsca 1:959
+Nr wierzch: 10   , Id wierzch: 957   ,czy lider:      false      ;tresc wejscia 0: 157    ,tresc wejsca 1:238
+Nr wierzch: 11   , Id wierzch: 713   ,czy lider:      false      ;tresc wejscia 0: 551    ,tresc wejsca 1:354
+Nr wierzch: 12   , Id wierzch: 484   ,czy lider:      false      ;tresc wejscia 0: 558    ,tresc wejsca 1:221
+Nr wierzch: 13   , Id wierzch: 713   ,czy lider:      false      ;tresc wejscia 0: 257    ,tresc wejsca 1:325
+Nr wierzch: 14   , Id wierzch: 264   ,czy lider:      false      ;tresc wejscia 0: 18    ,tresc wejsca 1:560
+Nr wierzch: 15   , Id wierzch: 156   ,czy lider:      false      ;tresc wejscia 0: 893    ,tresc wejsca 1:27
+Nr wierzch: 16   , Id wierzch: 959   ,czy lider:      true      ;tresc wejscia 0: 511    ,tresc wejsca 1:157
+Nr wierzch: 17   , Id wierzch: 238   ,czy lider:      false      ;tresc wejscia 0: 957    ,tresc wejsca 1:551
+Nr wierzch: 18   , Id wierzch: 354   ,czy lider:      false      ;tresc wejscia 0: 713    ,tresc wejsca 1:558
+Nr wierzch: 19   , Id wierzch: 221   ,czy lider:      false      ;tresc wejscia 0: 484    ,tresc wejsca 1:257

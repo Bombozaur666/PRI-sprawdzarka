@@ -1,0 +1,588 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sprawozdanie PUBLIC "sprawozdanie" "http://faculty.wmi.amu.edu.pl:20002/zajecia/file-storage/view/sprawozdanie.dtd">
+<sprawozdanie przedmiot="ALR" temat="A">
+<imie_nazwisko>Wojciech Galant</imie_nazwisko>
+<nr_indeksu>426124</nr_indeksu>
+<liczba_pkt>4</liczba_pkt>
+<zadanie nr="-1" pkt="1"></zadanie>
+<zadanie nr="0" pkt="1"></zadanie>
+<zadanie nr="1" pkt="1"></zadanie>
+<zadanie nr="1a" pkt="1"></zadanie>
+<zadanie nr="3" pkt="4"></zadanie>
+<zadanie nr="8" pkt="1"></zadanie>
+</sprawozdanie>
+
+Zadanie -1 -------------------------------------
+Komenda fiber obsługuje wierzchołki
+/// wydruk
+source symul_lib.tcl;
+  #% 
+
+# uruchamianie komendy - Ctrl+Enter
+# (uruchamia sie zaznaczona komenda lub ta na ktorej jest kursor)
+# procedura "_puts" uzywa okienka output
+
+wm geom .konsola 667x765+637+65; wm geom .output 309x348+265+64; wm withdraw .; kons_font 15
+kons_font 16
+
+load ./q3.so
+
+fiber create 3 start
+  #% 
+  # + tworzy 3 fibery: fiber0 fiber1 fiber2,
+  #  ktore rownoczesnie sa interp-ami (logicznymi)
+  # + fibery wykonuja podany w 3 arg. kod tcl-owy,
+  #  w tym wypadku jest to wywolanie proc start
+
+proc Inicjalizacja nr {
+  fiber$nr alias _puts _puts
+  fiber$nr alias maineval eval
+  fiber$nr eval "set nr $nr; set run 1"
+  fiber$nr eval {
+    proc start {} {
+      global nr
+      _puts "$nr: aaaaaaaaa"
+      fiber yield
+      _puts "$nr: bbbbbbbbb"
+    }
+  }
+}
+  #% 
+  #% 
+Inicjalizacja 0
+  #% 
+Inicjalizacja 1
+Inicjalizacja 2
+  #% 
+  #% 
+
+fiber yield
+  #% 
+  #% 
+  #% 
+  #% 
+  # + przalaczenie procesora na fiber0 ...
+
+fiber error
+  #% ended ended ended
+  #% {} {} {}
+  # + wyswietla stan fiberow
+fiber restart
+  #% 
+  # + restartuje te wstanie "ended"
+fiber delete
+  # + usuwa fibery (wszystkie musza byc "ended")
+
+
+
+exit
+
+Zadanie 0 -------------------------------------
+source symul_lib.tcl; # ladowanie symulatora
+  #% 
+ 
+# tworzymy graf komunikacyjny (w tym wypadku cykl)
+set liczbaWierz 5
+set sasiedzi(0) {4 1}
+set sasiedzi(1) {0 2}
+set sasiedzi(2) {1 3}
+set sasiedzi(3) {2 4}
+set sasiedzi(4) {3 0}
+  #% 3 0
+ 
+# główny program na każdym wierzchołku/fiberze...
+fiber create $liczbaWierz {
+ 
+  if {$id==0} {wyslij 1 0}
+  fiber yield; # oznacza koniec rundy
+ 
+  while {$run} { # zmienna run pozwala zakonczyć działanie symulacji
+    if {$kom(0)!=""} {
+      set x $kom(0)
+      incr x
+      wyslij 1 $x
+    }
+    fiber yield; # oznacza koniec rundy
+  }
+}
+  #% 
+ 
+Inicjalizacja; # koniecznie trzeba to wywołać !!!
+  #% 
+ 
+proc wizualizacja {} {
+  fiber_iterate {_puts "$id: $kom0, $kom1"}
+    # petla fiber_iterate iteruje po wszystkich fiberach
+    # proc wizualizacja wywolujemy z konsoli po kazdej rundzie
+}
+  #% 
+  #% 
+  
+Zadanie 1 -------------------------------------
+
+--Rozwiązanie--
+
+source symul_lib.tcl; 
+
+set liczbaWierz 5
+set sasiedzi(0) {4 1}
+set sasiedzi(1) {0 2}
+set sasiedzi(2) {1 3}
+set sasiedzi(3) {2 4}
+set sasiedzi(4) {3 0}
+
+fiber create $liczbaWierz {
+    set leader {}
+    wyslij 1 "$id_los"
+    fiber yield;
+
+    while {$run} {
+      set id0 $kom(0)
+
+      if {$id0>$id_los} {
+        wyslij 1 "$id0"
+      } elseif {$id0==$id_los} {
+        set leader "TRUE"; wyslij 1 "-1"
+      } elseif {$id0==-1 && $leader=={}} {
+        set leader "FALSE"; wyslij 1 "-1"
+      }
+      fiber yield;
+    }
+}
+Inicjalizacja;
+
+proc wizualizacja {} {
+_puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+fiber_iterate {_puts "leader: $leader ID: $id, ID_los: $id_los; koms: $kom0, $kom1"}
+}
+
+fiber yield; runda; wizualizacja
+
+--Output--
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+leader:  ID: 0, ID_los: 409; koms: 751, 
+leader:  ID: 1, ID_los: 20; koms: 409, 
+leader:  ID: 2, ID_los: 22; koms: 20, 
+leader:  ID: 3, ID_los: 680; koms: 22, 
+leader:  ID: 4, ID_los: 751; koms: 680, 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+leader:  ID: 0, ID_los: 409; koms: , 
+leader:  ID: 1, ID_los: 20; koms: 751, 
+leader:  ID: 2, ID_los: 22; koms: 409, 
+leader:  ID: 3, ID_los: 680; koms: , 
+leader:  ID: 4, ID_los: 751; koms: , 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+leader:  ID: 0, ID_los: 409; koms: , 
+leader:  ID: 1, ID_los: 20; koms: , 
+leader:  ID: 2, ID_los: 22; koms: 751, 
+leader:  ID: 3, ID_los: 680; koms: 409, 
+leader:  ID: 4, ID_los: 751; koms: , 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+leader:  ID: 0, ID_los: 409; koms: , 
+leader:  ID: 1, ID_los: 20; koms: , 
+leader:  ID: 2, ID_los: 22; koms: , 
+leader:  ID: 3, ID_los: 680; koms: 751, 
+leader:  ID: 4, ID_los: 751; koms: , 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+leader:  ID: 0, ID_los: 409; koms: , 
+leader:  ID: 1, ID_los: 20; koms: , 
+leader:  ID: 2, ID_los: 22; koms: , 
+leader:  ID: 3, ID_los: 680; koms: , 
+leader:  ID: 4, ID_los: 751; koms: 751, 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+leader:  ID: 0, ID_los: 409; koms: -1, 
+leader:  ID: 1, ID_los: 20; koms: , 
+leader:  ID: 2, ID_los: 22; koms: , 
+leader:  ID: 3, ID_los: 680; koms: , 
+leader: TRUE ID: 4, ID_los: 751; koms: , 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+leader: FALSE ID: 0, ID_los: 409; koms: , 
+leader:  ID: 1, ID_los: 20; koms: -1, 
+leader:  ID: 2, ID_los: 22; koms: , 
+leader:  ID: 3, ID_los: 680; koms: , 
+leader: TRUE ID: 4, ID_los: 751; koms: , 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+leader: FALSE ID: 0, ID_los: 409; koms: , 
+leader: FALSE ID: 1, ID_los: 20; koms: , 
+leader:  ID: 2, ID_los: 22; koms: -1, 
+leader:  ID: 3, ID_los: 680; koms: , 
+leader: TRUE ID: 4, ID_los: 751; koms: , 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+leader: FALSE ID: 0, ID_los: 409; koms: , 
+leader: FALSE ID: 1, ID_los: 20; koms: , 
+leader: FALSE ID: 2, ID_los: 22; koms: , 
+leader:  ID: 3, ID_los: 680; koms: -1, 
+leader: TRUE ID: 4, ID_los: 751; koms: , 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+leader: FALSE ID: 0, ID_los: 409; koms: , 
+leader: FALSE ID: 1, ID_los: 20; koms: , 
+leader: FALSE ID: 2, ID_los: 22; koms: , 
+leader: FALSE ID: 3, ID_los: 680; koms: , 
+leader: TRUE ID: 4, ID_los: 751; koms: -1, 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+leader: FALSE ID: 0, ID_los: 409; koms: , 
+leader: FALSE ID: 1, ID_los: 20; koms: , 
+leader: FALSE ID: 2, ID_los: 22; koms: , 
+leader: FALSE ID: 3, ID_los: 680; koms: , 
+leader: TRUE ID: 4, ID_los: 751; koms: , 
+
+Zadanie 1a -------------------------------------
+
+source symul_lib.tcl; 
+
+set liczbaWierz 5
+set sasiedzi(0) {1 4}
+set sasiedzi(1) {2 0}
+set sasiedzi(2) {3 1}
+set sasiedzi(3) {4 2}
+set sasiedzi(4) {0 3}
+
+fiber create $liczbaWierz {
+    set leader {}
+    wyslij 1 "$id_los"
+    fiber yield;
+
+    while {$run} {
+      set id0 $kom(0)
+
+      if {$id0>$id_los} {
+        wyslij 1 "$id0"
+      } elseif {$id0==$id_los} {
+        set leader "TRUE"; wyslij 1 "-1"
+      } elseif {$id0==-1 && $leader=={}} {
+        set leader "FALSE"; wyslij 1 "-1"
+      }
+      fiber yield;
+    }
+}
+Inicjalizacja;
+
+proc wizualizacja {} {
+_puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+fiber_iterate {_puts "leader: $leader ID: $id, ID_los: $id_los; koms: $kom0, $kom1"}
+}
+
+fiber yield; runda; wizualizacja
+
+--Output--
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+leader:  ID: 0, ID_los: 894; koms: 86, 
+leader:  ID: 1, ID_los: 86; koms: 788, 
+leader:  ID: 2, ID_los: 788; koms: 908, 
+leader:  ID: 3, ID_los: 908; koms: 341, 
+leader:  ID: 4, ID_los: 341; koms: 894, 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+leader:  ID: 0, ID_los: 894; koms: 788, 
+leader:  ID: 1, ID_los: 86; koms: 908, 
+leader:  ID: 2, ID_los: 788; koms: , 
+leader:  ID: 3, ID_los: 908; koms: 894, 
+leader:  ID: 4, ID_los: 341; koms: , 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+leader:  ID: 0, ID_los: 894; koms: 908, 
+leader:  ID: 1, ID_los: 86; koms: , 
+leader:  ID: 2, ID_los: 788; koms: , 
+leader:  ID: 3, ID_los: 908; koms: , 
+leader:  ID: 4, ID_los: 341; koms: , 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+leader:  ID: 0, ID_los: 894; koms: , 
+leader:  ID: 1, ID_los: 86; koms: , 
+leader:  ID: 2, ID_los: 788; koms: , 
+leader:  ID: 3, ID_los: 908; koms: , 
+leader:  ID: 4, ID_los: 341; koms: 908, 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+leader:  ID: 0, ID_los: 894; koms: , 
+leader:  ID: 1, ID_los: 86; koms: , 
+leader:  ID: 2, ID_los: 788; koms: , 
+leader:  ID: 3, ID_los: 908; koms: 908, 
+leader:  ID: 4, ID_los: 341; koms: , 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+leader:  ID: 0, ID_los: 894; koms: , 
+leader:  ID: 1, ID_los: 86; koms: , 
+leader:  ID: 2, ID_los: 788; koms: -1, 
+leader: TRUE ID: 3, ID_los: 908; koms: , 
+leader:  ID: 4, ID_los: 341; koms: , 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+leader:  ID: 0, ID_los: 894; koms: , 
+leader:  ID: 1, ID_los: 86; koms: -1, 
+leader: FALSE ID: 2, ID_los: 788; koms: , 
+leader: TRUE ID: 3, ID_los: 908; koms: , 
+leader:  ID: 4, ID_los: 341; koms: , 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+leader:  ID: 0, ID_los: 894; koms: -1, 
+leader: FALSE ID: 1, ID_los: 86; koms: , 
+leader: FALSE ID: 2, ID_los: 788; koms: , 
+leader: TRUE ID: 3, ID_los: 908; koms: , 
+leader:  ID: 4, ID_los: 341; koms: , 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+leader: FALSE ID: 0, ID_los: 894; koms: , 
+leader: FALSE ID: 1, ID_los: 86; koms: , 
+leader: FALSE ID: 2, ID_los: 788; koms: , 
+leader: TRUE ID: 3, ID_los: 908; koms: , 
+leader:  ID: 4, ID_los: 341; koms: -1, 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+leader: FALSE ID: 0, ID_los: 894; koms: , 
+leader: FALSE ID: 1, ID_los: 86; koms: , 
+leader: FALSE ID: 2, ID_los: 788; koms: , 
+leader: TRUE ID: 3, ID_los: 908; koms: -1, 
+leader: FALSE ID: 4, ID_los: 341; koms: , 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+leader: FALSE ID: 0, ID_los: 894; koms: , 
+leader: FALSE ID: 1, ID_los: 86; koms: , 
+leader: FALSE ID: 2, ID_los: 788; koms: , 
+leader: TRUE ID: 3, ID_los: 908; koms: , 
+leader: FALSE ID: 4, ID_los: 341; koms: , 
+
+Zadanie 3 -------------------------------------
+
+--Rozwiązanie--
+
+source symul_lib.tcl
+#source symul_graf_lib.tcl
+
+set liczbaWierz 10
+iterate i $liczbaWierz {
+  let i1 $i-1; if {$i1==-1} {let i1 $liczbaWierz-1}
+  let i2 $i+1; if {$i2==$liczbaWierz} {let i2 0}
+  set sasiedzi($i) "$i1 $i2"
+}
+
+#G::rysujGraf
+
+proc reverse li {
+  set len [llength $li]
+  iterate i $len {lappend wynik [lindex $li [expr {$len-$i-1}]]}
+  set wynik
+}
+
+fiber create $liczbaWierz {
+  set lider {}
+  
+  wyslij 0 "$id_los 0 0"
+  wyslij 1 "$id_los 0 0"
+  fiber yield
+  while {$run} {
+    algorytm [czytaj 0] [czytaj 1]
+    fiber yield
+  }
+}
+
+Inicjalizacja
+
+proc wizualizacja {} {
+  _puts ---
+  fiber_iterate {_puts "$id, $id_los, $lider; $kom0, $kom1"}
+}
+
+fiber_iterate {
+  # + ta procedura jedynie przekazuje komunikaty...
+  proc algorytm {m0 m1} {
+    global id id_los stopien lider
+    if {$m0!=""} {
+      foreach {id0 i0 l0} $m0 break
+      incr i0
+      wyslij 1 "$id0 $i0 0"
+	  if {$id_los<$id0} {
+		set lider "false"
+	   } 
+	   if {$id_los>$id0 && $lider!="false"} {
+		set lider "true"
+	   }
+    }
+    if {$m1!=""} {
+      foreach {id1 i1 l1} $m1 break
+      incr i1
+      wyslij 0 "$id1 $i1 0"
+	  if {$id_los<$id1} {
+		set lider "false"
+	  } 
+	   if {$id_los>$id1 && $lider!="false"} {
+		set lider "true"
+	   }
+    }
+  }
+}
+
+fiber yield; runda; wizualizacja; set licznikKom
+
+--Output--
+
+---
+0, 21, ; {474 0 0}, {564 0 0}
+1, 564, ; {21 0 0}, {298 0 0}
+2, 298, ; {564 0 0}, {58 0 0}
+3, 58, ; {298 0 0}, {995 0 0}
+4, 995, ; {58 0 0}, {900 0 0}
+5, 900, ; {995 0 0}, {144 0 0}
+6, 144, ; {900 0 0}, {31 0 0}
+7, 31, ; {144 0 0}, {524 0 0}
+8, 524, ; {31 0 0}, {474 0 0}
+9, 474, ; {524 0 0}, {21 0 0}
+---
+0, 21, false; {524 1 0}, {298 1 0}
+1, 564, true; {474 1 0}, {58 1 0}
+2, 298, false; {21 1 0}, {995 1 0}
+3, 58, false; {564 1 0}, {900 1 0}
+4, 995, true; {298 1 0}, {144 1 0}
+5, 900, false; {58 1 0}, {31 1 0}
+6, 144, false; {995 1 0}, {524 1 0}
+7, 31, false; {900 1 0}, {474 1 0}
+8, 524, true; {144 1 0}, {21 1 0}
+9, 474, false; {31 1 0}, {564 1 0}
+---
+0, 21, false; {31 2 0}, {58 2 0}
+1, 564, true; {524 2 0}, {995 2 0}
+2, 298, false; {474 2 0}, {900 2 0}
+3, 58, false; {21 2 0}, {144 2 0}
+4, 995, true; {564 2 0}, {31 2 0}
+5, 900, false; {298 2 0}, {524 2 0}
+6, 144, false; {58 2 0}, {474 2 0}
+7, 31, false; {995 2 0}, {21 2 0}
+8, 524, true; {900 2 0}, {564 2 0}
+9, 474, false; {144 2 0}, {298 2 0}
+---
+0, 21, false; {144 3 0}, {995 3 0}
+1, 564, false; {31 3 0}, {900 3 0}
+2, 298, false; {524 3 0}, {144 3 0}
+3, 58, false; {474 3 0}, {31 3 0}
+4, 995, true; {21 3 0}, {524 3 0}
+5, 900, false; {564 3 0}, {474 3 0}
+6, 144, false; {298 3 0}, {21 3 0}
+7, 31, false; {58 3 0}, {564 3 0}
+8, 524, false; {995 3 0}, {298 3 0}
+9, 474, false; {900 3 0}, {58 3 0}
+
+Zadanie 8 --------------------------------
+--Rozwiązanie--
+#algorytm 1 wysyłający O(n) komunikatów
+
+source symul_lib.tcl
+#source symul_graf_lib.tcl
+
+set liczbaWierz 5 
+set sasiedzi(0) {4 1} 
+set sasiedzi(1) {0 2} 
+set sasiedzi(2) {1 3} 
+set sasiedzi(3) {2 4} 
+set sasiedzi(4) {3 0} 
+
+#G::rysujGraf
+
+fiber create $liczbaWierz { 
+	set sum $id 
+	wyslij 0 $id 
+	wyslij 1 $id 
+	set i 0 
+	fiber yield; # oznacza koniec rundy 
+	while {$i < $liczbaWierz/2} { 
+		set a $kom(0) 
+		set b $kom(1) 
+		let sum $sum+$a+$b 
+		wyslij 0 $b 
+		wyslij 1 $a 
+		incr i 
+		fiber yield; 
+	} 
+} 
+
+Inicjalizacja; 
+
+proc wizualizacja {} {
+	_puts ">>>>>>>>>>>>>>>>>>>>>>>"
+	fiber_iterate {
+		_puts "id: $id, sum: $sum, koms: $kom(0), $kom(1)"
+	}
+} 
+
+fiber yield; runda; wizualizacja
+
+#algorytm 2 działający w O(n) rundach 
+
+source symul_lib.tcl
+#source symul_graf_lib.tcl
+
+set liczbaWierz 5 
+set sasiedzi(0) {4 1} 
+set sasiedzi(1) {0 2} 
+set sasiedzi(2) {1 3} 
+set sasiedzi(3) {2 4} 
+set sasiedzi(4) {3 0} 
+
+#G::rysujGraf
+
+fiber create $liczbaWierz { 
+	set sum $id 
+	wyslij 1 $id 
+	set i 0 
+	fiber yield; 
+	while {$i < $liczbaWierz-1} { 
+		set a $kom(0) 
+		let sum $sum+$a 
+		wyslij 1 $a 
+		incr i 
+		fiber yield; 
+	} 
+} 
+	
+Inicjalizacja; 
+	
+proc wizualizacja {} { 
+	_puts ">>>>>>>>>>>>>>>>>>>>>>>" 
+	fiber_iterate {_puts "id: $id, sum: $sum, koms: $kom(0)"} 
+} 
+
+fiber yield; runda; wizualizacja
+
+--Output--
+#Algorytm 1
+>>>>>>>>>>>>>>>>>>>>>>>
+id: 0, sum: 0, koms: 4, 1
+id: 1, sum: 1, koms: 0, 2
+id: 2, sum: 2, koms: 1, 3
+id: 3, sum: 3, koms: 2, 4
+id: 4, sum: 4, koms: 3, 0
+>>>>>>>>>>>>>>>>>>>>>>>
+id: 0, sum: 5, koms: 3, 2
+id: 1, sum: 3, koms: 4, 3
+id: 2, sum: 6, koms: 0, 4
+id: 3, sum: 9, koms: 1, 0
+id: 4, sum: 7, koms: 2, 1
+>>>>>>>>>>>>>>>>>>>>>>>
+id: 0, sum: 10, koms: 2, 3
+id: 1, sum: 10, koms: 3, 4
+id: 2, sum: 10, koms: 4, 0
+id: 3, sum: 10, koms: 0, 1
+id: 4, sum: 10, koms: 1, 2
+
+#Algorytm 2
+>>>>>>>>>>>>>>>>>>>>>>>
+id: 0, sum: 0, koms: 4
+id: 1, sum: 1, koms: 0
+id: 2, sum: 2, koms: 1
+id: 3, sum: 3, koms: 2
+id: 4, sum: 4, koms: 3
+>>>>>>>>>>>>>>>>>>>>>>>
+id: 0, sum: 4, koms: 3
+id: 1, sum: 1, koms: 4
+id: 2, sum: 3, koms: 0
+id: 3, sum: 5, koms: 1
+id: 4, sum: 7, koms: 2
+>>>>>>>>>>>>>>>>>>>>>>>
+id: 0, sum: 7, koms: 2
+id: 1, sum: 5, koms: 3
+id: 2, sum: 3, koms: 4
+id: 3, sum: 6, koms: 0
+id: 4, sum: 9, koms: 1
+>>>>>>>>>>>>>>>>>>>>>>>
+id: 0, sum: 9, koms: 1
+id: 1, sum: 8, koms: 2
+id: 2, sum: 7, koms: 3
+id: 3, sum: 6, koms: 4
+id: 4, sum: 10, koms: 0
+>>>>>>>>>>>>>>>>>>>>>>>
+id: 0, sum: 10, koms: 0
+id: 1, sum: 10, koms: 1
+id: 2, sum: 10, koms: 2
+id: 3, sum: 10, koms: 3
+id: 4, sum: 10, koms: 4
