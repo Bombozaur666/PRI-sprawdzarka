@@ -1,4 +1,3 @@
-
 import os, re, subprocess
 
 #STEP 1 - get all the files (later from a database i guess)
@@ -47,22 +46,27 @@ for file in os.listdir(location):
 		file_new = str(file)
 		file_new = file_new.replace("_merge.pml", "_result.txt")
 		open(file_new, 'w').close() #czysci plik zeby mozna cat uzyc nizej i nie dodawac w nieskonczonosc tekstu
+
+		subprocess.run(f'spin -a {file}', shell=True)
 		
-		commands = [f'spin -a {file}', 'gcc -o pan pan.c'] #TODO make it go through all LTL statements instead of one
-#TODO 2 sprawic zeby drukowal bledy i skipowal do nastepnego
-		for com in commands:
-			subprocess.run(com, shell=True)
-			#subprocess.check_output(com, shell=True)
-		temp = 0
-		if not ltl_lista:
-			command_no_ltl = "./pan -m400000"
-			subprocess.run(command_no_ltl, shell=True)
-		else:
-			for ltl in ltl_lista:
-				temp += 1
-				command_ltl = f'./pan -a -N L{temp} >> {file_new}'
-				print(command_ltl)
-				subprocess.run(command_ltl, shell=True)
+		out = subprocess.Popen('gcc -o pan pan.c', 
+			stdout=subprocess.PIPE, 
+			stderr=subprocess.STDOUT,
+			shell=True)
+		stdout,stderr = out.communicate()
+		print(stdout)
+		
+		if stdout == b'':
+			temp = 0
+			if not ltl_lista:
+				command_no_ltl = "./pan -m400000"
+				subprocess.run(command_no_ltl, shell=True)
+			else:
+				for ltl in ltl_lista:
+					temp += 1
+					command_ltl = f'./pan -a -N L{temp} >> {file_new}'
+					print(command_ltl)
+					subprocess.run(command_ltl, shell=True)
 		
 	
 
