@@ -25,5 +25,5 @@ class GroupForm(Form):
     year = fields.CharField(label='Rok akademicki', max_length=10)
     term = fields.ChoiceField(choices=term_choices)
 
-class ChangePasswordForm(Form):
+
     

@@ -2,17 +2,20 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from django.shortcuts import render, redirect
 from upload import models
+from .forms import return_points
 from .forms import SendedTasksForm
 from .forms import TasksListForm
 from .models import SendedTasks
 from .models import TaskList
 from api import serializers
-from django.http import HttpResponse
+#from django.http import HttpResponsse
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from .antyplagiat import *
+from .models import SendedTasks
 from .xml_metric import xmlmetricf
 from users.models import Account
+
 
 class StudentViewSet(viewsets.ModelViewSet):
 
@@ -21,8 +24,13 @@ class StudentViewSet(viewsets.ModelViewSet):
 
 @staff_member_required(login_url='login')
 def task_sended_list(request):
-    sended=SendedTasks.objects.all()
-    return render(request,'upload/task_sended_list.html',{'sended': sended})
+    sended=SendedTasks.objects.filter(max_point="0")
+    for x in sended:
+        listapkt, punkty  = return_points(x.task.name)
+        sended.update(max_point=punkty)
+        sended.update(point=listapkt)
+    sended2 = SendedTasks.objects.all()
+    return render(request,'upload/task_sended_list.html',{'sended': sended2})
 
 @login_required
 def task_sended_upload(request):
