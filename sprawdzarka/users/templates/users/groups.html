@@ -1,0 +1,14 @@
+{% extends "api/base.html" %}
+{% load crispy_forms_tags  %}
+{% block content %}
+    {% for group in all %}
+        {% if group.name == 'Nauczyciel'%}
+            <!-- continue -->
+        {% else %}
+            {{ group.name }}
+            <br>
+        {% endif %}
+    {% endfor %}
+
+    <a class="nav-item nav-link" href="{% url 'new_group'%}">Dodaj nową grupę</a>
+{% endblock content %}

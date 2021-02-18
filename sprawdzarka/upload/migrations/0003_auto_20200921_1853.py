@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('upload', '0002_tasklist'),
+        ('upload', '0001_initial'),
     ]
 
     operations = [

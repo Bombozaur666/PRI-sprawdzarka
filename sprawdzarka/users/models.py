@@ -1,5 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.db.models.deletion import CASCADE, SET_NULL
+
+class Group(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255)
+    year = models.CharField(max_length=10)
+    term = models.CharField(max_length=4)
+
+    def __str__(self) -> str:
+        return self.name
 
 class MyAccountManager(BaseUserManager):
     def create_user(self, username, password, snumber):
@@ -35,6 +45,7 @@ class Account(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    group = models.CharField(max_length=100, default=0)
 
 
     USERNAME_FIELD = 'username'
