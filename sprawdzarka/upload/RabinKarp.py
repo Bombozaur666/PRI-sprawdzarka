@@ -291,7 +291,3 @@ def Rabin_Karp_algorithm(pat, txt, q):
         else:
             raise Exception("Co najmniej jeden parametr jest niepoprawny")
 
-
-
-
-

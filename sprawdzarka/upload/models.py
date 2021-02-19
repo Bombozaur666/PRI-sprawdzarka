@@ -10,6 +10,7 @@ class SendedTasks(models.Model):
     max_point=models.CharField(max_length=3,default="0")
     point=models.CharField(max_length=100,default="0")
     has_been_tested = models.BooleanField(default=False)
+    group = models.CharField(max_length=10, default="0")
 
 
 class TaskList(models.Model):

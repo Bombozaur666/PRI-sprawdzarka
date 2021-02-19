@@ -140,6 +140,6 @@ def plagiat(request):
                     print("NIE MA PLAGIATU!!")
             else:
                 print("Nie można sprawdzić plagiatu dla plików pustych lub bez rozwiązania")
-        task = SendedTasks.objects.get(task = first_file).update(has_been_tested = True)
+        task = SendedTasks.objects.filter(task = first_file)
         task.update(has_been_tested = True)
     return(render(request, 'upload/plagiat.html'))
