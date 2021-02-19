@@ -3,3 +3,4 @@ from upload import models
 
 admin.site.register(models.SendedTasks)
 admin.site.register(models.TaskList)
+admin.site.register(models.Plagiat)

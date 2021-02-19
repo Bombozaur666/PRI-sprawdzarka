@@ -19,7 +19,7 @@ class TaskList(models.Model):
 	task = models.FileField(upload_to='task/tasklist/')
 
 class Plagiat(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     snumber1 = models.CharField(max_length=6)
     snumber2 = models.CharField(max_length=6)
     name1 = models.CharField(max_length=100)
