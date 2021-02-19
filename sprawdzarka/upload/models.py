@@ -24,5 +24,5 @@ class Plagiat(models.Model):
     snumber2 = models.CharField(max_length=6)
     name1 = models.CharField(max_length=100)
     name2 = models.CharField(max_length=100)
-    plagiat = models.CharField(max_length=4)
+    plagiat = models.FloatField()
 

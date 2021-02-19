@@ -1,19 +1,13 @@
 from rest_framework import viewsets
-from rest_framework import permissions
 from django.shortcuts import render, redirect
 from .forms import return_points
 from .forms import SendedTasksForm
 from .forms import TasksListForm
-from .models import SendedTasks
-from .models import TaskList
 from api import serializers
-#from django.http import HttpResponsse
 from .RabinKarp import *
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
-from .antyplagiat import *
-from .models import SendedTasks
-from .xml_metric import xmlmetricf
+from .models import SendedTasks,Plagiat
 from users.models import Account
 
 
@@ -21,6 +15,17 @@ class StudentViewSet(viewsets.ModelViewSet):
 
     queryset = Account.objects.all()
     serializer_class = serializers.StudentSerializer
+
+@staff_member_required(login_url='login')
+def open_file(request, file):
+    file = file.lstrip('task/')
+    f = open(file, 'r', encoding="utf-8")
+    result = []
+    for line in f:
+        result.append(line)
+    f.close()
+    return render(request,'upload/wyswietlanie.html',{'result': result},)
+
 
 @staff_member_required(login_url='login')
 def task_sended_list(request):
@@ -77,10 +82,10 @@ def read_file2(request, file_to_open):
 def plagiat(request):
     files_to_check = [str(elem) for elem in list(SendedTasks.objects.filter(has_been_tested = False).values_list('task', flat=True))]
     all_files = [str(elem) for elem in list(SendedTasks.objects.all().values_list('task', flat=True))]
-    print(files_to_check)
-    print(all_files)
     for first_file in files_to_check:
         for second_file in all_files:
+            if second_file == first_file:
+                continue
             file1 = open(first_file, 'r', encoding="utf-8", errors="ignore")
             file2 = open(second_file, 'r', encoding="utf-8", errors="ignore")                
             name_surname1, nr_index1, count_pkt1 = ReadMetric(file1)
@@ -118,28 +123,18 @@ def plagiat(request):
                     total = len(not_repeat2)
                     count_of_the_same_or_similar = len(similars)
                     plagiarism_coefficient = round(count_of_the_same_or_similar * 100 / total, 2)
-                if plagiarism_coefficient >= 30 and plagiarism_coefficient <= 100:
-                    print(plagiarism_coefficient, "% podobieństwa")
-                    print("PLAGIAT!!!")
-                    if (name_surname1 == '-' or nr_index1 == '-' or count_pkt1 == '-') and (name_surname2 == '-' or nr_index2 == '-' or count_pkt2 == '-'):
-                        print("Nie można zweryfikować wszystkich danych obu studentów w plikach ", first_file, " i ", second_file)
-                    elif name_surname1 == '-' or nr_index1 == '-' or count_pkt1 == '-':
-                        print("Nie można zweryfikować wszystkich danych studenta w pliku ", first_file)
-                        print("Osoba, która dopuściła się plagiatu to:")
-                        print(name_surname2, " o numerze indeksu ", nr_index2)
-                    elif name_surname2 == '-' or nr_index2 == '-' or count_pkt2 == '-':
-                        print("Osoba, która dopuściła się plagiatu to:")
-                        print(name_surname1, " o numerze indeksu ", nr_index1)
-                        print("Nie można zweryfikować wszystkich danych studenta dla pliku ", second_file)
-                    else:
-                        print("Osoby które dopuściły się plagiatu to:")
-                        print(name_surname1, " o numerze indeksu ", nr_index1)
-                        print(name_surname2, " o numerze indeksu ", nr_index2)
-                else:
-                    print(plagiarism_coefficient, "% podobieństwa")
-                    print("NIE MA PLAGIATU!!")
-            else:
-                print("Nie można sprawdzić plagiatu dla plików pustych lub bez rozwiązania")
+            snum1=[str(elem) for elem in list(SendedTasks.objects.filter(task = first_file).values_list('snumber', flat=True))]
+            snum2 = [str(elem) for elem in list(SendedTasks.objects.filter(task = second_file).values_list('snumber', flat=True))]
+            plagiat = Plagiat()
+            plagiat.snumber1= snum1[0]
+            plagiat.snumber2=snum2[0]
+            plagiat.name1= first_file
+            plagiat.name2= second_file
+            plagiat.plagiat=plagiarism_coefficient
+            plagiat.save()
         task = SendedTasks.objects.filter(task = first_file)
         task.update(has_been_tested = True)
-    return(render(request, 'upload/plagiat.html'))
+    
+    plagiaty = Plagiat.objects.all()
+    
+    return render(request, 'upload/plagiat.html', {'plagiaty':plagiaty})
