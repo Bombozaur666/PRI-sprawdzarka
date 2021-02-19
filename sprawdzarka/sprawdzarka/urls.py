@@ -1,7 +1,7 @@
-"""sprawd<str:file_to_open>zarka URL Configuration
+"""sprawdzarka URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.0/topics/http/urls/
+    https://docs.djangoproject.com/en/3.1/topics/http/urls/
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -14,20 +14,21 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from api import views
-from upload import views
-from django.urls import include, path
-from rest_framework import routers
+from django.urls import path, include
+from users import views as user_views
+from django.contrib.auth import views as auth_views
 
-router = routers.DefaultRouter()
-router.register(r'students', views.StudentViewSet)
 
-# Wire up our API using automatic URL routing.
-# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.index),
-    path('', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('task/',include('upload.urls')),
+    path('register/', user_views.register, name='register'),
+    path('profile/', user_views.profile, name='profile'),
+    path('grupy/',user_views.groups, name = 'all_groups'),
+    path('grupy/<int:group_id>',user_views.all_students, name = 'group'),
+    path('grupy/nowa',user_views.new_group, name = 'new_group'),
+    path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
+    path('', include('api.urls')),
+    path('task/', include('upload.urls')),
+    path('forum/', include('forum.urls')),
 ]

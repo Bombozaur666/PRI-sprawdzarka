@@ -1,0 +1,30 @@
+{% extends "api/base.html" %}
+{% block content %}
+	<table class="table">
+			<thead>
+			<tr>
+				<th>task id </th>
+				<th>snumber </th>
+				<th>Lista zadan</th>
+				<th>suma pkt</th>
+				<th>task</th>
+			</tr>
+			<tbody>
+				{% for data in sended %}
+
+					<tr>
+						<td>{{data.taskid}}</td>
+						<td>{{data.snumber}}</td>
+						<td>{{data.point}}</td>
+						<td>{{data.max_point}}</td>
+						<td>
+							<a href="/{{data.task.name}}" class="btn btn-primary btn-sm"> 
+                                open file
+                            </a>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+			</thead>
+		</table>
+{% endblock %}

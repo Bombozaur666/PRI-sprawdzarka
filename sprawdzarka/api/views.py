@@ -1,14 +1,7 @@
-from django.contrib.auth.models import User, Group
-from rest_framework import viewsets
-from rest_framework import permissions
-from api import serializers
-from django.shortcuts import render, redirect
-from api import models
-class StudentViewSet(viewsets.ModelViewSet):
+from django.shortcuts import render
+from django.contrib.admin.views.decorators import staff_member_required
 
-    queryset = User.objects.all()
-    serializer_class = serializers.StudentSerializer
-
-
-def index(request):
-    return render(request,"index.html")
+def home(request):
+    return render(request, 'api/home.html')
+def about(request):
+    return render(request, 'api/about.html')
