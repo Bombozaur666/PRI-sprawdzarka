@@ -36,6 +36,13 @@ def task_sended_list(request):
     sended2 = SendedTasks.objects.all()
     return render(request,'upload/task_sended_list.html',{'sended': sended2})
 
+@staff_member_required(login_url='login')
+def task_Promela_student_sended_list(request):
+    sended=Promela.objects.all()
+    return render(request,'upload/task_Promela_sended_list.html',{'sended': sended})
+
+
+
 @login_required
 def task_sended_upload(request):
     if request.method=='POST':
@@ -77,7 +84,21 @@ def read_file2(request, file_to_open):
         result.append(line)
     f.close()
     return render(request,'upload/wyswietlanie.html',{'result': result},)
-
+@login_required
+def read_file_Promela_task_student(request, file_to_open):
+    f = open(r'task/Promela/Studentstask/'+file_to_open, encoding="utf-8")
+    result = []
+    for line in f:
+        result.append(line)
+    f.close()
+    return render(request,'upload/wyswietlanie.html',{'result': result},)@login_required
+def read_file_Promela_output(request, file_to_open):
+    f = open(r'task/Promela/Studentoutput/'+file_to_open, encoding="utf-8")
+    result = []
+    for line in f:
+        result.append(line)
+    f.close()
+    return render(request,'upload/wyswietlanie.html',{'result': result},)
 @staff_member_required(login_url='login')
 def plagiat(request):
     files_to_check = [str(elem) for elem in list(SendedTasks.objects.filter(has_been_tested = False).values_list('task', flat=True))]
