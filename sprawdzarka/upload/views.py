@@ -1,7 +1,6 @@
 from rest_framework import viewsets
 from rest_framework import permissions
 from django.shortcuts import render, redirect
-from upload import models
 from .forms import return_points
 from .forms import SendedTasksForm
 from .forms import TasksListForm
@@ -9,6 +8,7 @@ from .models import SendedTasks
 from .models import TaskList
 from api import serializers
 #from django.http import HttpResponsse
+from .RabinKarp import *
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from .antyplagiat import *
@@ -27,8 +27,7 @@ def task_sended_list(request):
     sended=SendedTasks.objects.filter(max_point="0")
     for x in sended:
         listapkt, punkty  = return_points(x.task.name)
-        sended.update(max_point=punkty)
-        sended.update(point=listapkt)
+        sended.update(max_point=punkty, point=listapkt)
     sended2 = SendedTasks.objects.all()
     return render(request,'upload/task_sended_list.html',{'sended': sended2})
 
@@ -76,45 +75,71 @@ def read_file2(request, file_to_open):
 
 @staff_member_required(login_url='login')
 def plagiat(request):
-    result_list = []
-    file_content=""
-    Lista=[]
-    for file in SendedTasks.objects.all():
-        Lista.append(file)
-    dlug=len(Lista)
-    for i in range(dlug):
-        for j in range (i+1,dlug,1):
-            file_content = ""
-            plagiarism = ProgramFile("Bartłomiej Nowak", "434162", "15")
-            file1, file2 = plagiarism.get_file(Lista[i].task.name, Lista[j].task.name)
-            name_surname1, nr_index1, count_pkt1 = plagiarism.ReadReport(file1)
-            name_surname2, nr_index2, count_pkt2 = plagiarism.ReadReport(file2)
-            first_list, second_list = plagiarism.get_words(file1, file2)
-            text_list1, text_list2 = plagiarism.get_textlist(first_list, second_list)
-            if len(text_list1) != 0 and len(text_list2) != 0:
-                to_check, count_of_the_same_or_similar = plagiarism.check_words(text_list1, text_list2)
-                if len(text_list1) >= len(text_list2):
-                    for checked in to_check:
-                        result = plagiarism.check_the_similar_words(checked, text_list1)
-                        count_of_the_same_or_similar += result
-                    total = len(text_list1)
+    files_to_check = [str(elem) for elem in list(SendedTasks.objects.filter(has_been_tested = False).values_list('task', flat=True))]
+    all_files = [str(elem) for elem in list(SendedTasks.objects.all().values_list('task', flat=True))]
+    print(files_to_check)
+    print(all_files)
+    for first_file in files_to_check:
+        for second_file in all_files:
+            file1 = open(first_file, 'r', encoding="utf-8", errors="ignore")
+            file2 = open(second_file, 'r', encoding="utf-8", errors="ignore")                
+            name_surname1, nr_index1, count_pkt1 = ReadMetric(file1)
+            name_surname2, nr_index2, count_pkt2 = ReadMetric(file2)
+            words1, words2 = get_words(file1, file2)
+            text1, text2 = get_textlist(words1, words2)                    
+            not_repeat1, not_repeat2 = remove_repeat(text1, text2)
+            similars = []
+            txt = ""
+            q = 101  # Liczba pierwsza
+            if len(not_repeat1) > 0 and len(not_repeat2) > 0:
+                if len(not_repeat1) >= len(not_repeat2):
+                    txt = " ".join([str(i) for i in not_repeat1])
+                    for word in not_repeat2:
+                        indexes = []                                
+                        indexes = Rabin_Karp_algorithm(word, txt, q)
+                        if len(indexes) > 0:
+                            if word not in similars:
+                                similars.append(word)
+                            else:
+                                continue
+                    total = len(not_repeat1)
+                    count_of_the_same_or_similar = len(similars)                            
                     plagiarism_coefficient = round(count_of_the_same_or_similar * 100 / total, 2)
                 else:
-                    for checked in to_check:
-                        result = plagiarism.check_the_similar_words(checked, text_list2)
-                        count_of_the_same_or_similar += result
-                    total = len(text_list2)
+                    txt = " ".join([str(i) for i in not_repeat2])
+                    for word in not_repeat1:
+                        indexes = []
+                        indexes = Rabin_Karp_algorithm(word, txt, q)
+                        if len(indexes) > 0:
+                            if word not in similars:
+                                similars.append(word)
+                            else:
+                                continue
+                    total = len(not_repeat2)
+                    count_of_the_same_or_similar = len(similars)
                     plagiarism_coefficient = round(count_of_the_same_or_similar * 100 / total, 2)
-                if plagiarism_coefficient >= 30:
-                    file_content += str(name_surname1)+ " " +str(nr_index1) + " całkowita ilość punktów "+ str(count_pkt1) +" "+str(xmlmetricf(Lista[i].task.name))+  " | "  +str(name_surname2) + " całkowita ilość punktów "+ str(count_pkt2) +" "+ str(nr_index2) + " "+str(xmlmetricf(Lista[j].task.name)) +" | " +"Procent podobieństwa " + str(plagiarism_coefficient)
+                if plagiarism_coefficient >= 30 and plagiarism_coefficient <= 100:
+                    print(plagiarism_coefficient, "% podobieństwa")
+                    print("PLAGIAT!!!")
+                    if (name_surname1 == '-' or nr_index1 == '-' or count_pkt1 == '-') and (name_surname2 == '-' or nr_index2 == '-' or count_pkt2 == '-'):
+                        print("Nie można zweryfikować wszystkich danych obu studentów w plikach ", first_file, " i ", second_file)
+                    elif name_surname1 == '-' or nr_index1 == '-' or count_pkt1 == '-':
+                        print("Nie można zweryfikować wszystkich danych studenta w pliku ", first_file)
+                        print("Osoba, która dopuściła się plagiatu to:")
+                        print(name_surname2, " o numerze indeksu ", nr_index2)
+                    elif name_surname2 == '-' or nr_index2 == '-' or count_pkt2 == '-':
+                        print("Osoba, która dopuściła się plagiatu to:")
+                        print(name_surname1, " o numerze indeksu ", nr_index1)
+                        print("Nie można zweryfikować wszystkich danych studenta dla pliku ", second_file)
+                    else:
+                        print("Osoby które dopuściły się plagiatu to:")
+                        print(name_surname1, " o numerze indeksu ", nr_index1)
+                        print(name_surname2, " o numerze indeksu ", nr_index2)
                 else:
-                    file_content += str(name_surname1)+ " " +str(nr_index1) + " całkowita ilość punktów "+ str(count_pkt1) +" "+str(xmlmetricf(Lista[i].task.name))+  " | "  +str(name_surname2) + " całkowita ilość punktów "+ str(count_pkt2) +" "+ str(nr_index2) + " "+str(xmlmetricf(Lista[j].task.name)) +" | "
-                    file_content +="Oba teksty mają "+ str(plagiarism_coefficient) + " procent podobnych słów. "
-                    file_content +="Prace są różne! Nie stwierdzam plagiatu!!"
+                    print(plagiarism_coefficient, "% podobieństwa")
+                    print("NIE MA PLAGIATU!!")
             else:
-                file_content +="Nie można sprawdzić plagiatu dla pustych plików"
-            result_list.append(file_content)
-    return render(request,'upload/plagiat.html', {'result_list': result_list})
-
-
-
+                print("Nie można sprawdzić plagiatu dla plików pustych lub bez rozwiązania")
+        task = SendedTasks.objects.get(task = first_file).update(has_been_tested = True)
+        task.update(has_been_tested = True)
+    return(render(request, 'upload/plagiat.html'))
