@@ -1,6 +1,5 @@
 {% extends "api/base.html" %}
 {% block content %}
-    <a class="btn btn-outline-info" href="{% url 'all'%}">Zobacz wszystkie pytania</a><br><br>
+    <a class="btn btn-outline-info" href="{% url 'all_normal'%}">Zobacz wszystkie pytania</a><br><br>
     <a class="btn btn-outline-info" href="{% url 'add_question_choose'%}">Dodaj pytanie</a><br><br>
-    <a class="btn btn-outline-info" href="{% url 'add_answer_choose'%}">Dodaj odpowiedź</a><br><br>
 {% endblock %}

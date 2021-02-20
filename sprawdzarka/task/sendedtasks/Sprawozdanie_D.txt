@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sprawozdanie PUBLIC "sprawozdanie" "http://mhanckow.vm.wmi.amu.edu.pl:20002/zajecia/file-storage/view/sprawozdanie.dtd">
+<sprawozdanie przedmiot="ALR" temat="D">
+<imie_nazwisko>Patryk Łukasiewicz</imie_nazwisko>
+<nr_indeksu>434743</nr_indeksu>
+<liczba_pkt>7</liczba_pkt>
+<zadanie nr="3" pkt="1"></zadanie>
+<zadanie nr="5" pkt="1"></zadanie>
+<zadanie nr="6" pkt="1"></zadanie>
+<zadanie nr="8" pkt="1"></zadanie>
+<zadanie nr="9" pkt="1"></zadanie>
+<zadanie nr="10" pkt="1"></zadanie>
+<zadanie nr="11" pkt="1"></zadanie>
+</sprawozdanie>
+
+Zadanie 3 ------------------------------
+
+int licznik=0;
+int i1 = 0;
+int i2 = 0;
+
+semaphore sem;
+
+
+void proc1()
+{
+
+	while(1)
+	{
+        wait(sem);
+		licznik++;
+		i1++;
+        signal(sem);
+	}
+}
+
+void proc2()
+{
+	while(1)
+	{
+        wait(sem);
+		licznik++;
+		i2++;
+        signal(sem);
+	}
+}
+
+void procKontr()
+{
+    while(1){
+	cout << "i1 + i2: " << i1+i2 << " licznik: " << licznik << endl;
+    }
+}
+
+main()
+{
+	initialsem(sem,1); 
+
+	cobegin
+	{
+		proc1();
+		proc2();
+		procKontr();
+	}
+}
+
+/// wydruk
+
+
+i1 + i2: 68685  licznik: 68685
+i1 + i2: 68685  licznik: 68686
+i1 + i2: 68687  licznik: 68687
+i1 + i2: 68690  licznik: 68690
+i1 + i2: 68692  licznik: 68693
+i1 + i2: 68693  licznik: 68693
+
+
+Zadanie 5 ------------------------------
+
+void Producent()
+{
+	int atrapa;
+
+	while(1) 
+	{
+		wait(S); // poczatek sekcji krytycznej
+		Produkuj();
+		N++;
+		if( N==1 ) signal(Zwloka);
+		signal(S); // koniec sekcji krytycznej
+
+		// atrapy
+	}
+}
+
+
+void Konsument()
+{
+	int atrapa; string[20] str;
+
+	wait(Zwloka);
+	while(1) 
+	{
+		wait(S); // poczatek sekcji krytycznej
+		Konsumuj();
+		N--;
+		signal(S); // koniec sekcji krytycznej
+		if( N==0 ) wait(Zwloka);
+
+		sprintf(str,"atrapa-poczatek; N=%d",N); Pokaz(str);
+	
+		// atrapy
+	
+		sprintf(str,"atrapa-koniec; N=%d",N); Pokaz(str);
+	}
+}
+
+
+/// wydruk
+
+(...)
+1: atrapa-poczatek; N=1
+1: atrapa-koniec; N=1
+1: konsumuje 165; buf_pisz=997, buf_czyt=996
+2: produkuje 435; buf_pisz=997, buf_czyt=997
+1: atrapa-poczatek; N=1
+1: atrapa-koniec; N=1
+1: konsumuje 435; buf_pisz=998, buf_czyt=997
+2: produkuje 209; buf_pisz=998, buf_czyt=998
+1: atrapa-poczatek; N=1
+1: atrapa-koniec; N=1
+1: konsumuje 209; buf_pisz=999, buf_czyt=998
+2: produkuje 713; buf_pisz=999, buf_czyt=999
+
+
+Zadanie 6 ------------------------------
+
+int MAX=10
+
+void producer()
+{
+	int i, item = 1, counter = 0;
+	for(i = 0; i < 2*MAX; i++)
+	{
+		wait(produce_permit);
+		wait(empty_count);
+		queue_add(item);
+		signal(full_count);
+		signal(produce_permit);
+		++item;
+	}
+}
+
+void consumer1()
+{
+	int i, counter = 0;
+	for(i = 0; i < MAX; i++)
+	{
+		wait(full_count);
+		cout << queue_get() << endl;
+		signal(empty_count);
+	}
+}
+
+void consumer2()
+{
+	int i, counter = 0;
+	for(i = 0; i < MAX; i++)
+	{
+		wait(full_count);
+		cout << queue_get() << endl;
+		signal(empty_count);
+	}
+}
+
+/// wydruk
+
+Executing PCODE ...
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+20
+
+
+Zadanie 8 ------------------------------
+
+binarysem bin_sem1, bin_sem2;
+int x;
+
+void prod()
+{
+	int i;
+	for(i = 0; i < 100; i++)
+	{
+		wait(bin_sem1);
+		x = random(100);
+		signal(bin_sem2);
+	}
+}
+
+void cons()
+{
+	int i;
+	for(i = 0; i < 100; i++)
+	{
+		wait(bin_sem2);
+		cout << "Liczba #" << i+1 << ": " << x << endl;
+		signal(bin_sem1);
+	}
+}
+
+main()
+{
+	initialsem(bin_sem1, 1);
+	initialsem(bin_sem2, 0);
+	cobegin
+	{
+		prod();
+		cons();
+	}
+}
+
+/// wydruk
+
+// (koncowka wydruku)
+
+Liczba #90: 90
+Liczba #91: 38
+Liczba #92: 31
+Liczba #93: 65
+Liczba #94: 21
+Liczba #95: 8
+Liczba #96: 82
+Liczba #97: 69
+Liczba #98: 74
+Liczba #99: 42
+Liczba #100: 4
+
+Zadanie 9 ------------------------------
+
+const int RozmiarCzytelni = 5;
+int IloscCzytelnikow = 0;
+int IloscPisarzy = 0;
+int wCzytelni[8];
+int wCzytelniPisarze[3];
+int ile[8];
+int ilePisarzy[3];
+binarysem I = 1;
+semaphore R = RozmiarCzytelni;
+binarysem W = 1;
+
+void Czytelnik(int nr) 
+{
+    int atrapa;
+    while(1) 
+	{
+        wait(R);
+	    wait(I);
+        IloscCzytelnikow++;
+        ile[nr] = ile[nr] + 1;
+        wCzytelni[nr] = 1;
+        signal(I);
+
+        atrapa = 123;
+        atrapa = 123;
+        atrapa = 123;
+
+        wait(I);
+        IloscCzytelnikow--;
+        wCzytelni[nr] = 0;
+        signal(I);
+        signal(R);
+
+        atrapa = 123;
+        atrapa = 123;
+        atrapa = 123;
+    }
+}
+
+void Pisarz(int nr) 
+{
+    int i, j, atrapa;
+
+    while(1) 
+	{
+        wait(W);
+        for(i = 1; i <= RozmiarCzytelni; i++)
+            wait(R);
+
+        wait(I);
+        IloscPisarzy++;
+        ilePisarzy[nr] = ilePisarzy[nr] + 1;
+	    wCzytelniPisarze[nr] = 1;
+        signal(I);
+
+        atrapa = 123;
+        atrapa = 123;
+        atrapa = 123;
+
+        wait(I);
+        IloscPisarzy--;
+    	wCzytelniPisarze[nr] = 0;
+        signal(I);
+
+        for(i = 1; i <= RozmiarCzytelni; i++)
+            signal(R);
+
+        signal(W);
+
+        atrapa = 123;
+        atrapa = 123;
+        atrapa = 123;
+    }
+}
+
+void _Kontrola() 
+{
+    int atrapa;
+    while(1) 
+	{
+        if (ilePisarzy[1] > 100) 
+		{
+            cout << ilePisarzy[1] << " " << ilePisarzy[2] << " | ";
+            cout << ile[1] << " " << ile[2] << " " << ile[3] << " " << ile[4] << " " << ile[5] << " " << ile[6] << " " << ile[7] << endl;
+	        exit(1);
+        }
+
+    	cout << wCzytelniPisarze[1] << " " << wCzytelniPisarze[2] << " | ";
+        cout << wCzytelni[1] << " " << wCzytelni[2] << " " << wCzytelni[3] << " " << wCzytelni[4] << " " << wCzytelni[5] << " " << wCzytelni[6] << " " << wCzytelni[7] << endl;
+
+        atrapa = 123;
+        atrapa = 123;
+        atrapa = 123;
+        atrapa = 123;
+        atrapa = 123;
+        atrapa = 123;
+    }
+}
+
+main() 
+{
+    cobegin 
+	{
+        Czytelnik(1);
+        Czytelnik(2);
+        Czytelnik(3);
+        Czytelnik(4);
+        Czytelnik(5);
+        Czytelnik(6);
+        Czytelnik(7);
+
+        Pisarz(1);
+        Pisarz(2);
+
+        _Kontrola();
+    }
+}
+
+Zadanie 10 ------------------------------
+
+int Jem[5];
+int Widelec[5];
+binarysem S = 1;
+binarysem Waiter = 1;
+
+void Filozof(int nr) 
+{
+    while(1) 
+	{
+        wait(S);
+        wait(Waiter);
+
+        Widelec[nr] = Widelec[nr] - 1;
+	    Widelec[(nr + 1) % 5] = Widelec[(nr + 1) % 5] - 1;
+
+	    Jem[nr] = 1;
+	    signal(Waiter);
+
+        Widelec[nr] = Widelec[nr] + 1;
+	    Widelec[(nr + 1) % 5] = Widelec[(nr + 1) % 5] + 1;
+
+	    Jem[nr] = 0;
+	    signal(S);
+   }
+}
+
+void procesKontrolny() 
+{
+    while(1) 
+	{
+        cout << Jem[0] << Jem[1] << Jem[2] << Jem[3] << Jem[4] << endl;
+    }
+}
+
+main() 
+{
+    cobegin 
+	{
+        Filozof(0);
+        Filozof(1);
+        Filozof(2);
+        Filozof(3);
+        Filozof(4);
+
+        procesKontrolny();
+    }
+}
+
+Zadanie 11 ------------------------------
+
+int Jem[5];
+int Widelec[5];
+binarysem S = 1;
+binarysem Waiter = 1;
+
+void Filozof(int nr) 
+{
+    while(1) 
+	{
+        wait(S);
+        wait(Waiter);
+
+        Widelec[nr] = Widelec[nr] - 1;
+	    Widelec[(nr + 1) % 5] = Widelec[(nr + 1) % 5] - 1;
+
+	    Jem[nr] = 1;
+	    signal(Waiter);
+
+        Widelec[nr] = Widelec[nr] + 1;
+	    Widelec[(nr + 1) % 5] = Widelec[(nr + 1) % 5] + 1;
+
+	    Jem[nr] = 0;
+	    signal(S);
+   }
+}
+
+void procesKontrolny() 
+{
+    while(1) 
+	{
+        cout << Jem[0] << Jem[1] << Jem[2] << Jem[3] << Jem[4] << endl;
+    }
+}
+
+int state = ["THINKING", "HUNGRY", "EATING"]
+int semafor = [0, 0, 0]
+void test(i)
+{
+	if( (state[i]==HUNGRY)  &&  (state[LEFT]!=EATING)  &&  (state[RIGHT]!=EATING) )
+	{
+    state[i]=EATING; signal(s[i]);
+	}
+}
+
+main() 
+{
+    cobegin 
+	{
+        Filozof(0);
+        Filozof(1);
+        Filozof(2);
+        Filozof(3);
+        Filozof(4);
+
+        procesKontrolny();
+    }
+}

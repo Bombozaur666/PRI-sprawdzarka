@@ -1,6 +1,8 @@
 from django.contrib import admin
-from upload import models 
+from .models import *
 
-admin.site.register(models.SendedTasks)
-admin.site.register(models.TaskList)
-admin.site.register(models.Plagiat)
+admin.site.register(SendedTasks)
+admin.site.register(TaskList)
+admin.site.register(Plagiat)
+admin.site.register(Promela)
+admin.site.register(TaskListPromela)

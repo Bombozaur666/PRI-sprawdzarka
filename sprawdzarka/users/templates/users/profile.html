@@ -1,4 +1,6 @@
 {% extends "api/base.html" %}
+{% load crispy_forms_tags  %}
 {% block content %}
     <h1>{{ user.username }}</h1>
+    <h1>Liczba punktów:{{ user.points }}</h1>
 {% endblock content %}

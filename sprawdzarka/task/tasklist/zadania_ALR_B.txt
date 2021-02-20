@@ -1,0 +1,32 @@
+Zadanie 11 (impl.)(2pkt) "gossiping w kracie"
+Kazdy wierzchołek chce poznać ID wszystkich innych wierzchołków w sieci;
+zaimplementuj algorytm synchroniczny, który to zapewnia ...
+Jest oczywiste, że w tym algorytmie będą wysyłane długie komuniakty
+zawierające wiele ID! Postaraj się aby nie przesyłać 2x tej samej informacji!!!
+Zbadaj maksymalną długość komunikatu (liczbę ID które on przenosi),
+gdy uruchamiamy go w kracie k x k wierzchołków
+(algorytm ma być testowany i napisany tylko dla takiej kraty).
+
+Zadanie 12 (impl.)(2pkt) "ciężkie gwiazdy w drzewie ukorzenionym"
+Dane jest drzewo ukorzenione T, z wagami na krawędziach.
+Zaimplementuj algorytm znajdujący rozłączne gwiazdy o ŁĄCZNEJ wadze >=1/2*w(T).
+Czas działania algorytmu powinien być rzędu O(wysokość(T)).
+Uwaga: nie należy używać długich komunikatów, tj nie zbierać obrazu całego drzewa w korzeniu!
+Zakładamy, że wierz znają wysokość(T).
+
+Zadanie 13 (impl.) "wybór lidera w grafie dowolnym"
+Zaimplementuj synchroniczny algorytm wyboru lidera w dowolnym grafie;
+użyj "flooding"-u do obliczenia max ID;
+zbadaj liczbę komunikatów i czas działania tego algorytmu;
+zastanów się czy można tu coś zoptymalizować...
+zastanów się co jest potrzebne (jakie parametry sieci),
+aby algorytm mógł się zakończyć na wszystkich wierzchołkach
+
+Zadanie 14 (impl.)(2pkt) "orientacja kraw. z outdeg<=2 w drzewie"
+Zaimplementuj algorytm znajdujący orientację krawędzi z outdeg<=2 w drzewie (nieukorzenionym!)
+
+Zadanie 14a (impl.)(3.5pkt) "szybka orientacja kraw. z outdeg <=2 w drzewie"
+Jak 14 ale czas działania ograniczony przez O(logn log^*n) lub lepszy.
+
+Zadanie 14b (impl.)(*)(4pkt) "szybkie ciężkie gwiazdy w drzewie"
+Czas działania ograniczony przez O(logn log^*n).

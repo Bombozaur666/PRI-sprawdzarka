@@ -24,6 +24,7 @@ urlpatterns = [
     path('register/', user_views.register, name='register'),
     path('profile/', user_views.profile, name='profile'),
     path('grupy/',user_views.groups, name = 'all_groups'),
+    path('grupy/<int:group_id>',user_views.all_students, name = 'group'),
     path('grupy/nowa',user_views.new_group, name = 'new_group'),
     path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),

@@ -13,11 +13,11 @@
             </tr>
             {% for line in plagiaty %}
                 <tr>
-                    <td>{{ line.snumber1 }}</td>
-                    <td>{{ line.snumber2 }}</td>
-                    <td>{{ line.plagiat }}</td>
-                    <td><a class="btn btn-primary btn-sm" href="{% url 'open' file=line.name1 %}">Open file</a></td>
-                    
+                    <td><center>{{ line.snumber1 }}</center></td>
+                    <td><center>{{ line.snumber2 }}</center></td>
+                    <td><center>{{ line.plagiat }}</center></td>
+                    <td><center><a class="btn btn-primary btn-sm" href="{% url 'open' file_to_open=line.name1 %}">Open file</a></center></td>
+                    <td><center><a class="btn btn-primary btn-sm" href="{% url 'open' file_to_open=line.name2 %}">Open file</a></center></td>
                 </tr>   
             {% endfor %}
         </table>

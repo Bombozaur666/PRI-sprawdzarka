@@ -45,7 +45,8 @@ class Account(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-    group = models.CharField(max_length=100, default=0)
+    group = models.CharField(verbose_name='Grupa',max_length=100, default=0)
+    points = models.IntegerField(default=0)
 
 
     USERNAME_FIELD = 'username'

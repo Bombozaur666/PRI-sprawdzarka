@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.db.models import fields
 from .models import *
-from django.forms import Form , fields
+from django.forms import Form , fields, ModelForm
 
 class RegistrationForm(UserCreationForm):
     group_ids = [str(elem) for elem in list(Group.objects.all().values_list('id', flat=True))]
@@ -25,5 +25,9 @@ class GroupForm(Form):
     year = fields.CharField(label='Rok akademicki', max_length=10)
     term = fields.ChoiceField(choices=term_choices)
 
+class PassForm(UserCreationForm):
+    class Meta:
+        model = Account
+        fields = ('username','password1', 'password2')
 
     

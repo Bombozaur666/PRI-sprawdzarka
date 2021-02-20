@@ -1,30 +1,20 @@
 from rest_framework import viewsets
-from django.shortcuts import render, redirect
-from .forms import return_points
-from .forms import SendedTasksForm
-from .forms import TasksListForm
+from django.shortcuts import render
+from .forms import *
 from api import serializers
 from .RabinKarp import *
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from .models import SendedTasks,Plagiat
 from users.models import Account
-
+from django.contrib import messages
+from .promeli_filechcker import *
+from django.core.files.base import ContentFile
 
 class StudentViewSet(viewsets.ModelViewSet):
 
     queryset = Account.objects.all()
     serializer_class = serializers.StudentSerializer
-
-@staff_member_required(login_url='login')
-def open_file(request, file):
-    file = file.lstrip('task/')
-    f = open(file, 'r', encoding="utf-8")
-    result = []
-    for line in f:
-        result.append(line)
-    f.close()
-    return render(request,'upload/wyswietlanie.html',{'result': result},)
 
 
 @staff_member_required(login_url='login')
@@ -38,20 +28,43 @@ def task_sended_list(request):
 
 @staff_member_required(login_url='login')
 def task_Promela_student_sended_list(request):
-    sended=Promela.objects.all()
+    promela_funck()
+    sended=Promela2.objects.all()
     return render(request,'upload/task_Promela_sended_list.html',{'sended': sended})
-
-
 
 @login_required
 def task_sended_upload(request):
     if request.method=='POST':
         form = SendedTasksForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            object = form.save(commit=False)
+            if SendedTasks.objects.filter(snumber = request.user.snumber, taskid = object.taskid).exists():
+                messages.warning(request,"Nie można dodać 2 razy tego samego zadania.")
+            else:
+                object.snumber = request.user.snumber
+                object.save()
     else:
         form=SendedTasksForm()
     return render(request,'upload/task_sended_upload.html', {'form': form})
+
+def task_sended_promela_upload(request):
+    if request.method=='POST':
+        form = SendedPromelaTasksForm(request.POST, request.FILES)
+        if form.is_valid():
+            object = form.save(commit=False)
+            if Promela.objects.filter(snumber = request.user.snumber, taskid = object.taskid).exists():
+                messages.warning(request,"Nie można dodać 2 razy tego samego zadania.")
+            else:
+                object.snumber = request.user.snumber
+                object.taskcopy = object.task
+                object.save()
+
+
+
+
+    else:
+        form= SendedPromelaTasksForm()
+    return render(request, 'upload/task_sended_upload.html', {'form': form})
 
 @login_required
 def read_file1(request, file_to_open):
@@ -66,15 +79,42 @@ def task_list(request):
     sended=TaskList.objects.all
     return render(request,'upload/task_List.html',{'sended': sended})
 
+def task_list_choose(request):
+    return render(request,'upload/task_list_choose.html')
+
+def task_upload_choose(request):
+    return render(request,'upload/task_upload_choose.html')
+
+def task_sended_choose(request):
+    return render(request,'upload/task_sended_choose.html')
+
+def task_list_promela(request):
+    sended=TaskListPromela.objects.all
+    return render(request,'upload/task_List_promela.html',{'sended': sended})
+
 @staff_member_required(login_url='login')
 def task_List_upload(request):
     if request.method=='POST':
         form = TasksListForm(request.POST, request.FILES)
         if form.is_valid():
+            form.save(commit=False)
+            form.tname = request.user.username
             form.save()
     else:
         form=TasksListForm()
     return render(request,'upload/task_sended_upload.html', {'form': form})
+
+@staff_member_required(login_url='login')
+def task_promela_upload(request):
+    if request.method=='POST':
+        form = TaskListPromelaForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save(commit=False)
+            form.tname = request.user.username
+            form.save()
+    else:
+        form=TaskListPromelaForm()
+    return render(request,'upload/task_promela_upload.html', {'form': form})
 
 @login_required
 def read_file2(request, file_to_open):
@@ -84,6 +124,7 @@ def read_file2(request, file_to_open):
         result.append(line)
     f.close()
     return render(request,'upload/wyswietlanie.html',{'result': result},)
+
 @login_required
 def read_file_Promela_task_student(request, file_to_open):
     f = open(r'task/Promela/Studentstask/'+file_to_open, encoding="utf-8")
@@ -92,6 +133,7 @@ def read_file_Promela_task_student(request, file_to_open):
         result.append(line)
     f.close()
     return render(request,'upload/wyswietlanie.html',{'result': result},)@login_required
+
 def read_file_Promela_output(request, file_to_open):
     f = open(r'task/Promela/Studentoutput/'+file_to_open, encoding="utf-8")
     result = []
@@ -99,9 +141,11 @@ def read_file_Promela_output(request, file_to_open):
         result.append(line)
     f.close()
     return render(request,'upload/wyswietlanie.html',{'result': result},)
+
+
 @staff_member_required(login_url='login')
 def plagiat(request):
-    files_to_check = [str(elem) for elem in list(SendedTasks.objects.filter(has_been_tested = False).values_list('task', flat=True))]
+    files_to_check = [str(elem) for elem in list(SendedTasks.objects.filter(has_been_tested=False).values_list('task', flat=True))]
     all_files = [str(elem) for elem in list(SendedTasks.objects.all().values_list('task', flat=True))]
     for first_file in files_to_check:
         for second_file in all_files:
@@ -149,8 +193,8 @@ def plagiat(request):
             plagiat = Plagiat()
             plagiat.snumber1= snum1[0]
             plagiat.snumber2=snum2[0]
-            plagiat.name1= first_file
-            plagiat.name2= second_file
+            plagiat.name1= first_file.lstrip('task/sendedtasks/')
+            plagiat.name2= second_file.lstrip('task/sendedtasks/')
             plagiat.plagiat=plagiarism_coefficient
             plagiat.save()
         task = SendedTasks.objects.filter(task = first_file)

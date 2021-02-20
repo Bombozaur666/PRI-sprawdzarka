@@ -1,5 +1,5 @@
+from upload.models import SendedTasks
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
@@ -22,7 +22,7 @@ def register(request):
 def profile(request):
     return render(request, 'users/profile.html')
 
-@staff_member_required(login_url='login')
+
 def groups(request):
     all = Group.objects.all()
     return render(request, 'users/groups.html', {'all': all})
@@ -41,3 +41,20 @@ def new_group(request):
     else:
         form = GroupForm()
     return render(request, 'users/new_group.html', {'form': form})
+
+
+def all_students(request, group_id):
+    all = [str(elem) for elem in list(Account.objects.filter(group = group_id).values_list('snumber', flat=True))]
+    result = []
+    
+    for student in all:
+        points = 0
+        all_points = [int(elem) for elem in list(SendedTasks.objects.filter(snumber = student).values_list('max_point', flat=True))]
+        for point in all_points:
+            points += point
+        result.append({'student':student,'points':points})
+        Account.objects.filter(snumber = student).update(points = points)
+
+    return render(request, 'users/group.html', {'result':result})
+
+    
