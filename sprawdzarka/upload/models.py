@@ -1,4 +1,3 @@
-from os import name
 from django.db import models
 
 # Create your models here.
@@ -31,10 +30,19 @@ class Promela(models.Model):
     taskid = models.CharField(max_length=5)
     snumber = models.CharField(max_length=6)
     task = models.FileField(upload_to='task/Promela/Studentstask/')
-    output = models.FileField(upload_to='task/Promela/Studentoutput/')
+    taskcopy = models.FileField(upload_to='task/Promela/Studentstaskcopies/')
+    group = models.CharField(max_length=10, default="0")
     has_been_tested = models.BooleanField(default=False)
+
+class Promela2(models.Model):
+    id = models.IntegerField(primary_key=True)
+    taskid = models.CharField(max_length=5)
+    snumber = models.CharField(max_length=6)
+    task = models.FileField(upload_to='task/Promela/Studentstask/')
+    output = models.FileField(upload_to='task/Promela/Studentoutput/')
     group = models.CharField(max_length=10, default="0")
     point=models.CharField(max_length=100,default="0")
+
 
 class TaskListPromela(models.Model):
     id = models.IntegerField(primary_key=True)

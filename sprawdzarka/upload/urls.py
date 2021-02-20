@@ -13,11 +13,9 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from os import name
-from django.contrib import admin
-from api import views
+
 from upload import views
-from django.urls import include, path
+from django.urls import path
 from rest_framework import routers
 
 router = routers.DefaultRouter()
@@ -27,6 +25,7 @@ router.register(r'students', views.StudentViewSet)
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('upload/',views.task_sended_upload, name='upload'),
+    path('uploadpromela/',views.task_sended_upload, name='uploadPromela'),
     path('sendedtasks/<str:file_to_open>',views.read_file1, name='sended-task'),
     path('sendedlist/',views.task_sended_list, name='sended-list'),
     

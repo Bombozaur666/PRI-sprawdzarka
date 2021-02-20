@@ -1,4 +1,3 @@
-from .models import *
 def get_file(l):
     files_and_enlargement = {}
     for file in l:
@@ -15,7 +14,6 @@ def get_file(l):
         enlargement = "".join([str(i) for i in enlargement])
         if enlargement == '.txt' or enlargement == '.xml':
             files_and_enlargement[file] = enlargement
-
     return files_and_enlargement
 
 def ReadMetric(report):
@@ -71,7 +69,6 @@ def get_words(file1, file2):
         clear_words1 = []
         chars = ['?', '!', ':', ';', '.', '(', ')', '\n', ',', '\t', '?\n', '!\n', '.\n', ',\n', ':\n', ';\n', '(\n', ')\n']
         for word in words1:
-            #words1.remove(word)
             word = list(word)
             for i in range(len(word)):
                 if word[i] in chars:
@@ -88,7 +85,6 @@ def get_words(file1, file2):
         clear_words2 = []
         chars = ['?', '!', ':', ';', '.', '(', ')', '\n', ',', '\t', '?\n', '!\n', '.\n', ',\n', ':\n', ';\n', '(\n', ')\n']
         for word in words2:
-            #words2.remove(word)
             word = list(word)
             for i in range(len(word)):
                 if word[i] in chars:
@@ -165,8 +161,6 @@ def check_words( words_list1, words_list2):
                         else:
                             j = j + 1
         count_of_the_same = len(the_same)
-        #print(words_list1)
-        #print(words_list2)
         return words_to_check, count_of_the_same
 
 def check_words( words_list1, words_list2):
@@ -201,8 +195,6 @@ def check_words( words_list1, words_list2):
                         else:
                             j = j + 1
         count_of_the_same = len(the_same)
-        #print(words_list1)
-        #print(words_list2)
         return words_to_check, count_of_the_same
 
 def check_the_similar_words( checked, list_of_words):
@@ -279,15 +271,11 @@ def Rabin_Karp_algorithm(pat, txt, q):
                     j += 1
                     if j == M:
                         similars.append(i)
-                        #print(pat)
-                        #print("Pattern found at index " + str(i))
-
                 if i < N - M:  # Przelicz wartość hasha dla kolejnego tekstu
                     t = (d * (t - ord(txt[i]) * h) + ord(txt[i + M])) % q
                     if t < 0:  # Możemy mieć wartość ujemną t. Konwertujemy na dodatnią
                         t = t + q
             return similars
-
         else:
             raise Exception("Co najmniej jeden parametr jest niepoprawny")
 

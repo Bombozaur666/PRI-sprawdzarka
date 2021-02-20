@@ -1,6 +1,5 @@
 from rest_framework import viewsets
-from django.shortcuts import render, redirect
-from .forms import return_points
+from django.shortcuts import render
 from .forms import *
 from api import serializers
 from .RabinKarp import *
@@ -9,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from .models import SendedTasks,Plagiat
 from users.models import Account
 from django.contrib import messages
-
+from .promeli_filechcker import *
 
 class StudentViewSet(viewsets.ModelViewSet):
 
@@ -28,7 +27,8 @@ def task_sended_list(request):
 
 @staff_member_required(login_url='login')
 def task_Promela_student_sended_list(request):
-    sended=Promela.objects.all()
+    promela_funck()
+    sended=Promela2.objects.all()
     return render(request,'upload/task_Promela_sended_list.html',{'sended': sended})
 
 @login_required
@@ -45,6 +45,22 @@ def task_sended_upload(request):
     else:
         form=SendedTasksForm()
     return render(request,'upload/task_sended_upload.html', {'form': form})
+
+@login_required
+def task_promela_upload(request):
+    if request.method=='POST':
+        form = SendedPromelaTasksForm(request.POST, request.FILES)
+        if form.is_valid():
+            object = form.save(commit=False)
+            if Promela.objects.filter(snumber = request.user.snumber, taskid = object.taskid).exists():
+                messages.warning(request,"Nie można dodać 2 razy tego samego zadania.")
+            else:
+                object.snumber = request.user.snumber
+                object.taskcopy = form.task
+                object.save()
+    else:
+        form= SendedPromelaTasksForm()
+    return render(request, 'upload/task_sended_upload.html', {'form': form})
 
 @login_required
 def read_file1(request, file_to_open):
@@ -125,7 +141,7 @@ def read_file_Promela_output(request, file_to_open):
 
 @staff_member_required(login_url='login')
 def plagiat(request):
-    files_to_check = [str(elem) for elem in list(SendedTasks.objects.filter(has_been_tested = False).values_list('task', flat=True))]
+    files_to_check = [str(elem) for elem in list(SendedTasks.objects.filter(has_been_tested=False).values_list('task', flat=True))]
     all_files = [str(elem) for elem in list(SendedTasks.objects.all().values_list('task', flat=True))]
     for first_file in files_to_check:
         for second_file in all_files:
