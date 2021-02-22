@@ -1,0 +1,26 @@
+{% extends "api/base.html" %}
+{% block content %}
+    <h1>Treść pytania:</h1> <br>
+        {{ this_question.question_content }}
+    <br>
+    <h1>Odpowiedzi:</h1>
+    {% if check %}
+        <h2>Odpowiedzi prowadzącego:</h2>
+            {% for answer in teacher_answers %}
+                {{ answer.content }}
+                <br>
+                <br>
+            {% endfor %}
+        <h2>Pozostałe odpowiedzi:</h2>
+    {% endif %}
+    
+    {% for answer in answers %}
+        {{ answer.content }}
+        <br>
+        <br>
+    {% endfor %}
+        {{ no_answer }}
+        <br>
+        <br>
+    <a class="btn btn-outline-info" href= "{% url 'add_answer_promela' id=this_question.id %}">Dodaj odpowiedź</a>
+{% endblock %}

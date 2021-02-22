@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sprawozdanie PUBLIC "sprawozdanie" "http://mhanckow.vm.wmi.amu.edu.pl:20002/zajecia/file-storage/view/sprawozdanie.dtd">
+<sprawozdanie przedmiot="SIK" temat="F">
+<imie_nazwisko>Patryk Łukasiewicz</imie_nazwisko>
+<nr_indeksu>434743</nr_indeksu>
+<liczba_pkt>5</liczba_pkt>
+<zadanie nr="1" pkt="2.5"></zadanie>
+<zadanie nr="2" pkt="2.5"></zadanie>
+</sprawozdanie>
+
+
+Zadanie F.0a -------------------------------------
+
+SNMP devices: 
+b1-30-lap.sci.wmi.amu.edu.pl     [150.254.77.8] noResponse 
+pn0216124.sci.wmi.amu.edu.pl     [150.254.77.56] noResponse 
+pn0216127.sci.wmi.amu.edu.pl     [150.254.77.11] noResponse 
+pn0070616.sci.wmi.amu.edu.pl     [150.254.77.58] noResponse 
+pn0070606.sci.wmi.amu.edu.pl     [150.254.77.13] noResponse 
+b2-46-3.sci.wmi.amu.edu.pl       [150.254.77.63] noResponse 
+pn0218283.sci.wmi.amu.edu.pl     [150.254.77.62] noResponse 
+pn0070636.sci.wmi.amu.edu.pl     [150.254.77.66] noResponse 
+pn0070605.sci.wmi.amu.edu.pl     [150.254.77.71] noResponse 
+a1-27-test-b.sci.wmi.amu.edu.pl  [150.254.77.75] noResponse 
+pn0216187.sci.wmi.amu.edu.pl     [150.254.77.76] noResponse 
+pn0070625.sci.wmi.amu.edu.pl     [150.254.77.89] noResponse 
+pn0070631.sci.wmi.amu.edu.pl     [150.254.77.96] noResponse 
+pn0278425.sci.wmi.amu.edu.pl     [150.254.77.127] noResponse 
+b0-15-3.sci.wmi.amu.edu.pl       [150.254.77.129] noResponse 
+pn0070804.sci.wmi.amu.edu.pl     [150.254.77.136] noResponse 
+pn0216121.sci.wmi.amu.edu.pl     [150.254.77.138] noResponse 
+pn0070809.sci.wmi.amu.edu.pl     [150.254.77.144] noResponse 
+b0-11.sci.wmi.amu.edu.pl         [150.254.77.141] noResponse 
+pn0257866.sci.wmi.amu.edu.pl     [150.254.77.163] noResponse 
+pn0070630.sci.wmi.amu.edu.pl     [150.254.77.166] noResponse 
+pn0070619.sci.wmi.amu.edu.pl     [150.254.77.168] noResponse 
+pn0286368.sci.wmi.amu.edu.pl     [150.254.77.173] noResponse 
+b1-15-3.sci.wmi.amu.edu.pl       [150.254.77.181] noResponse 
+pn0216182.sci.wmi.amu.edu.pl     [150.254.77.182] noResponse 
+pn0070816.sci.wmi.amu.edu.pl     [150.254.77.183] noResponse 
+pn0070628.sci.wmi.amu.edu.pl     [150.254.77.184] noResponse 
+pn0070624.sci.wmi.amu.edu.pl     [150.254.77.190] noResponse 
+pn0070806.sci.wmi.amu.edu.pl     [150.254.77.189] noResponse 
+pn0070599.sci.wmi.amu.edu.pl     [150.254.77.191] noResponse 
+pn0278429.sci.wmi.amu.edu.pl     [150.254.77.195] noResponse 
+pn0070818.sci.wmi.amu.edu.pl     [150.254.77.202] noResponse 
+b2-34-5.sci.wmi.amu.edu.pl       [150.254.77.206] noResponse 
+b2-12-3.sci.wmi.amu.edu.pl       [150.254.77.208] noResponse 
+pn0302049.sci.wmi.amu.edu.pl     [150.254.77.213] noResponse 
+pn0070627.sci.wmi.amu.edu.pl     [150.254.77.214] noResponse 
+blackmagic.wmi.amu.edu.pl        [150.254.77.219] noResponse 
+40-006013.sci.wmi.amu.edu.pl     [150.254.77.223] noResponse 
+pn0070613.sci.wmi.amu.edu.pl     [150.254.77.102] noResponse 
+pn0070814.sci.wmi.amu.edu.pl     [150.254.77.222] noResponse 
+pn0070638.sci.wmi.amu.edu.pl     [150.254.77.106] noResponse 
+c2-3.sci.wmi.amu.edu.pl          [150.254.77.225] noResponse 
+pn0070801.sci.wmi.amu.edu.pl     [150.254.77.108] noResponse 
+pn0070797.sci.wmi.amu.edu.pl     [150.254.77.226] noResponse 
+pn0070618.sci.wmi.amu.edu.pl     [150.254.77.230] noResponse 
+b1-31.sci.wmi.amu.edu.pl         [150.254.77.110] noResponse 
+b2-10-2.sci.wmi.amu.edu.pl       [150.254.77.235] noResponse 
+pn0070629.sci.wmi.amu.edu.pl     [150.254.77.233] noResponse 
+pn0070810.sci.wmi.amu.edu.pl     [150.254.77.113] noResponse 
+10.0.2.2                         [10.0.2.2] noResponse 
+pn0070620.sci.wmi.amu.edu.pl     [150.254.77.115] noResponse 
+gw-v100.core.wmi.amu.edu.pl      [150.254.79.1] noResponse 
+pn0070821.sci.wmi.amu.edu.pl     [150.254.77.118] noResponse 
+pn0070807.sci.wmi.amu.edu.pl     [150.254.77.16] noResponse 
+pn0216126.sci.wmi.amu.edu.pl     [150.254.77.119] noResponse 
+pn0070822.sci.wmi.amu.edu.pl     [150.254.77.17] noResponse 
+pn0298698.sci.wmi.amu.edu.pl     [150.254.77.120] noResponse 
+pn0278424.sci.wmi.amu.edu.pl     [150.254.77.20] noResponse 
+b3-47-2.sci.wmi.amu.edu.pl       [150.254.77.123] noResponse 
+b2-34-4.sci.wmi.amu.edu.pl       [150.254.77.22] noResponse 
+b3-6.sci.wmi.amu.edu.pl          [150.254.77.25] noResponse 
+pn0309640.sci.wmi.amu.edu.pl     [150.254.77.28] noResponse 
+pn0070798.sci.wmi.amu.edu.pl     [150.254.77.35] noResponse 
+pn0070622.sci.wmi.amu.edu.pl     [150.254.77.29] noResponse 
+gw-v200.core.wmi.amu.edu.pl      [150.254.77.1] noResponse 
+b3-29.sci.wmi.amu.edu.pl         [150.254.77.39] noResponse 
+pn0271326.sci.wmi.amu.edu.pl     [150.254.77.3] noResponse 
+b3-24.sci.wmi.amu.edu.pl         [150.254.77.42] noResponse 
+pn0216137.sci.wmi.amu.edu.pl     [150.254.77.43] noResponse 
+pn0070597.sci.wmi.amu.edu.pl     [150.254.77.4] noResponse 
+b3-34.sci.wmi.amu.edu.pl         [150.254.77.44] noResponse 
+pn0271328.sci.wmi.amu.edu.pl     [150.254.77.5] noResponse 
+pn0070617.sci.wmi.amu.edu.pl     [150.254.77.6] noResponse 
+pn0216117.sci.wmi.amu.edu.pl     [150.254.77.45] noResponse 
+pn0070626.sci.wmi.amu.edu.pl     [150.254.77.51] noResponse 
+pn0070604.sci.wmi.amu.edu.pl     [150.254.77.7] noResponse 
+pn0070817.sci.wmi.amu.edu.pl     [150.254.77.54] noResponse 
+
+
+Zadanie F.0b -------------------------------------
+
+ifconfig -a (w puppy)
+
+(...)
+tap0      Link encap:Ethernet  HWaddr FA:98:20:E1:04:C3  
+          inet addr:192.168.2.1  Bcast:192.168.2.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:7 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:5 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:500 
+          RX bytes:476 (476.0 B)  TX bytes:338 (338.0 B)
+
+tap1      Link encap:Ethernet  HWaddr E6:AB:A1:C0:55:D0  
+          inet addr:192.168.1.1  Bcast:192.168.1.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:43 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:17 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:500 
+          RX bytes:2794 (2.7 KiB)  TX bytes:1220 (1.1 KiB)
+
+pingowanie z jednego dosemu do drugiego:
+
+///wydruk
+
+C:\>ping 192.168.2.53
+ 
+mTCP Ping by M Brutman (mbbrutman@gmail.com) (C)opyright 2009-2015
+Version: Jul  5 2015
+ 
+ICMP Packet payload is 32 bytes.
+ 
+Packet sequence number 0 received in 0.00 ms, ttl=254
+Packet sequence number 1 received in 0.00 ms, ttl=254
+Packet sequence number 2 received in 0.00 ms, ttl=254
+Packet sequence number 3 received in 0.00 ms, ttl=254
+ 
+Packets sent: 4, Replies received: 4, Replies lost: 0
+Average time for a reply: 0.00 ms (not counting lost packets)                
