@@ -25,7 +25,7 @@ class SendedTasksForm(forms.ModelForm):
 	taskid = fields.ChoiceField(choices=this_choices)
 	class Meta:
 		model = SendedTasks
-		fields = ('taskid','task')
+		fields = ('task','task')
 
 
 class SendedPromelaTasksForm(forms.ModelForm):
@@ -43,10 +43,10 @@ class SendedPromelaTasksForm(forms.ModelForm):
 class TasksListForm(forms.ModelForm):
 	class Meta:
 		model = TaskList
-		fields = ('task',)
+		fields = ('taskname','task',)
 
 class TaskListPromelaForm(forms.ModelForm):
 	class Meta:
 		model = TaskListPromela
-		fields = ('task',)
+		fields = ('taskname','task',)
 

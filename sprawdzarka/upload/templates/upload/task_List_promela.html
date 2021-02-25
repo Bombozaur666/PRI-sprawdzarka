@@ -3,14 +3,14 @@
 	<table class="table">
 			<thead>
 			<tr>
-				<th>id | </th>
+				<th>task name | </th>
 				<th>task | </th>
 				<th>Zadaj pytanie</th>
 			</tr>
 			<tbody>
 				{% for data in sended %}
 					<tr>
-						<td>{{data.id}}</td>
+						<td>{{data.taskname}}</td>
 						<td>
 							<a href="/{{data.task.name}}" class="btn btn-primary btn-sm"> 
                                 open file
