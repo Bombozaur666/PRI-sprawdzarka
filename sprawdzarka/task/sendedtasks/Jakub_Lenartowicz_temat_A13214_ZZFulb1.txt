@@ -1,0 +1,743 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sprawozdanie PUBLIC "sprawozdanie" "http://mhanckow.vm.wmi.amu.edu.pl:20002/zajecia/file-storage/view/sprawozdanie.dtd">
+<sprawozdanie przedmiot="ALR" temat="A">
+<imie_nazwisko>Jakub Lenartowicz</imie_nazwisko>
+<nr_indeksu>416115</nr_indeksu>
+<liczba_pkt>10</liczba_pkt>
+<zadanie nr="-1" pkt="1"></zadanie>
+<zadanie nr="0" pkt="1"></zadanie>
+<zadanie nr="1" pkt="1"></zadanie>
+<zadanie nr="1a" pkt="1"></zadanie>
+<zadanie nr="2" pkt="1"></zadanie>
+<zadanie nr="3" pkt="4"></zadanie>
+<zadanie nr="8" pkt="1"></zadanie>
+
+</sprawozdanie>
+
+Zadanie -1 -------------------------------------
+/// wydruk
+0: aaaaaaaaa
+1: aaaaaaaaa
+2: aaaaaaaaa
+0: bbbbbbbbb
+1: bbbbbbbbb
+2: bbbbbbbbb
+
+  #% 3 2 1 0
+  #% 3 2 1 0
+  #% 2 3 1 0
+  #% 3 1 2 0
+  #% 2 1 3 0
+  #% 1 3 2 0
+  #% 1 2 3 0
+  #% 3 2 0 1
+  #% 2 3 0 1
+  #% 3 1 0 2
+  #% 2 1 0 3
+  #% 1 3 0 2
+  #% 1 2 0 3
+  #% 3 0 2 1
+  #% 2 0 3 1
+  #% 3 0 1 2
+  #% 2 0 1 3
+  #% 1 0 3 2
+  #% 1 0 2 3
+  #% 0 3 2 1
+  #% 0 2 3 1
+  #% 0 3 1 2
+  #% 0 2 1 3
+  #% 0 1 3 2
+  #% 0 1 2 3
+
+Zadanie 0 -------------------------------------
+/// wydruk
+0: , 
+1: 0, 
+2: , 
+3: , 
+4: , 
+0: , 
+1: , 
+2: 1, 
+3: , 
+4: , 
+0: , 
+1: , 
+2: , 
+3: 2, 
+4: , 
+0: , 
+1: , 
+2: , 
+3: , 
+4: 3, 
+
+Zadanie 1 -------------------------------------
+load ./q3.dll
+
+source symul_lib.tcl;
+source symul_graf_lib.tcl
+
+G::kraw 0 1
+G::kraw 1 2
+G::kraw 2 3
+G::kraw 3 4
+G::kraw 4 0
+G::pokazGraf
+G::rysujGraf
+
+fiber create $liczbaWierz {
+	set lider ?;
+	wyslij 0 $id_los;
+	fiber yield;
+	while {$run} {
+		if {$kom1!=""} {
+			set x $kom1;
+			if {$lider==1} {
+
+			} elseif {$x==0} {
+				wyslij 0 $x;
+				set lider 0;
+			} elseif {$x>$id_los} {
+				wyslij 0 $x;
+			} elseif {$x==$id_los} {
+				set lider 1;
+				wyslij 0 0;
+			} elseif {$x < $id_los} {
+
+			}
+		}
+		fiber yield;
+	}
+}
+
+Inicjalizacja;
+
+proc wizualizacja {} {
+  fiber_iterate {_puts "$id_los: $lider, $kom1"}
+}
+
+if 0 {
+set_run 0; fiber yield; runda; set_run 1; fiber delete
+  # usuwanie fiberow
+set_run 0; fiber yield; runda; set_run 1; fiber restart
+  # restart kodu fiberow
+fiber error
+  # wyswietla stan fiberow ({}, ended, error)
+}
+_puts "---"
+fiber yield; runda; wizualizacja
+ 
+/// wydruk
+---
+23: ?, 630
+337: ?, 23
+835: ?, 337
+696: ?, 835
+630: ?, 696
+---
+23: ?, 696
+337: ?, 630
+835: ?, 
+696: ?, 
+630: ?, 835
+---
+23: ?, 835
+337: ?, 696
+835: ?, 630
+696: ?, 
+630: ?, 
+---
+23: ?, 
+337: ?, 835
+835: ?, 696
+696: ?, 
+630: ?, 
+---
+23: ?, 
+337: ?, 
+835: ?, 835
+696: ?, 
+630: ?, 
+---
+23: ?, 
+337: ?, 
+835: 1, 
+696: ?, 0
+630: ?, 
+---
+23: ?, 
+337: ?, 
+835: 1, 
+696: 0, 
+630: ?, 0
+---
+23: ?, 0
+337: ?, 
+835: 1, 
+696: 0, 
+630: 0, 
+---
+23: 0, 
+337: ?, 0
+835: 1, 
+696: 0, 
+630: 0, 
+---
+23: 0, 
+337: 0, 
+835: 1, 0
+696: 0, 
+630: 0, 
+---
+23: 0, 
+337: 0, 
+835: 1, 
+696: 0, 
+630: 0, 
+
+
+Zadanie 1a -------------------------------------
+load ./q3.dll
+
+source symul_lib.tcl;
+
+set liczbaWierz 5
+set sasiedzi(0) {4 1}
+set sasiedzi(1) {0 2}
+set sasiedzi(2) {1 3}
+set sasiedzi(3) {2 4}
+set sasiedzi(4) {3 0}
+
+fiber create $liczbaWierz {
+	set lider ?;
+	wyslij 0 $id_los;
+	wyslij 1 $id_los;
+	fiber yield;
+	while {$run} {
+		set x0 $kom0;
+		set x1 $kom1;
+		
+		if {$kom1!="" && $kom0!=""} {
+			set x ?;
+			if {$kom0 > $kom1} {
+				set x $kom0;
+				if {$lider==1} {
+					
+				} elseif {$x==0} {
+					wyslij 1 0;
+					set lider 0;
+				} elseif {$x>$id_los} {
+					wyslij 1 $x;
+				} elseif {$x==$id_los} {
+					set lider 1;
+					wyslij 0 0;
+					wyslij 1 0;
+				} elseif {$x < $id_los} {
+
+				}
+				fiber yield;
+			} else {
+				set x $kom1;
+				if {$lider==1} {
+					
+				} elseif {$x==0} {
+					wyslij 0 $x;
+					set lider 0;
+				} elseif {$x>$id_los} {
+					wyslij 0 $x;
+				} elseif {$x==$id_los} {
+					set lider 1;
+					wyslij 0 0;
+					wyslij 1 0;
+				} elseif {$x < $id_los} {
+
+				}
+				fiber yield;
+			}
+		} elseif {$kom0!=""} {
+			set x $kom0;
+			if {$lider==1} {
+				
+			} elseif {$x==0} {
+				wyslij 1 0;
+				set lider 0;
+			} elseif {$x>$id_los} {
+				wyslij 1 $x;
+			} elseif {$x==$id_los} {
+				set lider 1;
+				wyslij 0 0;
+				wyslij 1 0;
+			} elseif {$x < $id_los} {
+			
+			}
+			fiber yield;
+		} else {
+			set x $kom1;
+			if {$lider==1} {
+				
+			} elseif {$x==0} {
+				wyslij 0 $x;
+				set lider 0;
+			} elseif {$x>$id_los} {
+				wyslij 0 $x;
+			} elseif {$x==$id_los} {
+				set lider 1;
+				wyslij 0 0;
+				wyslij 1 0;
+			} elseif {$x < $id_los} {
+
+			}
+			fiber yield;
+		}
+	}
+}
+
+Inicjalizacja;
+
+proc wizualizacja {} {
+  fiber_iterate {_puts "$id_los: $lider, $kom0, $kom1"}
+}
+
+if 0 {
+set_run 0; fiber yield; runda; set_run 1; fiber delete
+  # usuwanie fiberow
+set_run 0; fiber yield; runda; set_run 1; fiber restart
+  # restart kodu fiberow
+fiber error
+  # wyswietla stan fiberow ({}, ended, error)
+}
+_puts "---"
+fiber yield; runda; wizualizacja
+/// wydruk
+---
+307: ?, 720, 194
+194: ?, 307, 407
+407: ?, 194, 451
+451: ?, 407, 720
+720: ?, 451, 307
+---
+307: ?, , 407
+194: ?, 720, 451
+407: ?, , 720
+451: ?, , 
+720: ?, , 
+---
+307: ?, , 
+194: ?, , 720
+407: ?, 720, 
+451: ?, , 
+720: ?, , 407
+---
+307: ?, , 720
+194: ?, , 
+407: ?, , 
+451: ?, 720, 
+720: ?, , 
+---
+307: ?, , 
+194: ?, , 
+407: ?, , 
+451: ?, , 
+720: ?, 720, 720
+---
+307: ?, 0, 
+194: ?, , 
+407: ?, , 
+451: ?, , 0
+720: 1, , 
+---
+307: 0, , 
+194: ?, 0, 
+407: ?, , 0
+451: 0, , 
+720: 1, , 
+---
+307: 0, , 
+194: 0, , 0
+407: 0, 0, 
+451: 0, , 
+720: 1, , 
+---
+307: 0, , 0
+194: 0, , 
+407: 0, , 
+451: 0, 0, 
+720: 1, , 
+---
+307: 0, , 
+194: 0, , 
+407: 0, , 
+451: 0, , 
+720: 1, 0, 0
+---
+307: 0, , 
+194: 0, , 
+407: 0, , 
+451: 0, , 
+720: 1, , 
+
+Zadanie 2 -------------------------------------
+load ./q3.dll
+
+source symul_lib.tcl;
+
+
+set liczbaWierz 6
+set sasiedzi(0) {1 2}
+set sasiedzi(1) {0 4}
+set sasiedzi(2) {0 4 5}
+set sasiedzi(3) {1}
+set sasiedzi(4) {2}
+set sasiedzi(5) {2}
+
+fiber create $liczbaWierz {
+	set L [expr {int(ceil(log(6)/log(2)))}]
+	foreach sasiedzi $liczbaWierz {
+		set cv [bity $id]
+		wyslij 1 $cv
+		fiber yield;
+	}
+	while {L > 3} {
+	foreach sasiedzi $liczbaWierz {
+		if {$id = 0} {
+			set i 0
+			set bv [lindex $cv 0]
+		} else {
+			set cp $kom(0)
+			set i [porownanieC $cv $cp]
+			set bv [lindex $cv $i]
+			}
+		let cv $i$bv
+	}
+	let L [expr {int(ceil(log($L)/log(2)) + 1)}]
+	fiber yield;
+	}
+}
+
+set obslugaBitow {
+  proc bity x { # postac binarna liczby
+    usun0 [binary scan [binary format I $x] B* x; set x]
+  }
+  proc usun0 x { # usuwa zera poczatkowe z repr bin liczby
+    set x [string trimleft $x 0]
+    if {$x==""} {set x 0}
+    set x
+  }
+  proc porownanieC {cv cu} { # porownuje 2 kolory, zwraca indeks oraz 2 bity...
+    set dlcu [string len $cu]
+    set dlcv [string len $cv]
+    if {$dlcu<$dlcv} {
+      set cu "[string repeat 0 [expr {$dlcv-$dlcu}]]$cu"
+    }
+    if {$dlcu>$dlcv} {
+      set cv "[string repeat 0 [expr {$dlcu-$dlcv}]]$cv"
+    }
+    set dl [string len $cu]
+    iterate i $dl {
+      set i1 [expr {$dl-$i-1}]
+        # KONIECZNIE trzeba numerowac bity od prawej gdyz
+        # dopisuje sie 0 z lewej i wtedy indeksy by sie zmienialy!
+      set bu [string index $cu $i1]
+      set bv [string index $cv $i1]
+      if {$bu != $bv} {return "$i $bv $bu"}
+    }
+    return {-1 ? ?}
+  }
+  proc wyrownaj {L x} { # dodaje 0 z lewej do L-bitow
+    set dl [string len $x]
+    if {$dl>$L} {error "wyrownaj"}
+    return "[string repeat "0" [expr {$L-$dl}]]$x"
+  }
+  proc bin2dec x { # do 32-bitow
+    binary scan [binary form B* [wyrownaj 32 $x]] I y
+    set y
+  }
+  proc iterate {zm liIter kod} { # wygodna petla
+    upvar $zm i
+    for {set i 0} {$i<$liIter} {incr i} {
+      set e [catch {uplevel $kod} x]
+      if {$e!=0} {return -code $e $x}
+    }
+  }
+}
+
+fiber_iterate $obslugaBitow
+
+
+Inicjalizacja;
+
+proc wizualizacja {} {
+  fiber_iterate {_puts "$id: $cv"}
+}
+
+_puts "---"
+fiber yield; runda; wizualizacja
+
+if 0 {
+set_run 0; fiber yield; runda; set_run 1; fiber delete
+  # usuwanie fiberow
+set_run 0; fiber yield; runda; set_run 1; fiber restart
+  # restart kodu fiberow
+fiber error
+  # wyswietla stan fiberow ({}, ended, error)
+}
+# kod sprawdzający ile jest różnych kolorów w zm. Cv (glob. w fiberach):
+set _ {}; iterate i $liczbaWierz {lappend _ [fiber_eval $i {set cv}]}
+llength [lsort -unique $_]
+
+Zadanie 3 -------------------------------------
+source symul_lib.tcl
+
+set liczbaWierz 10
+iterate i $liczbaWierz {
+  let i1 $i-1; if {$i1==-1} {let i1 $liczbaWierz-1}
+  let i2 $i+1; if {$i2==$liczbaWierz} {let i2 0}
+  set sasiedzi($i) "$i1 $i2"
+}
+
+proc reverse li {
+  set len [llength $li]
+  iterate i $len {lappend wynik [lindex $li [expr {$len-$i-1}]]}
+  set wynik
+}
+
+fiber create $liczbaWierz {
+  set lider {}
+  
+  wyslij 0 "$id_los 0 0"
+  wyslij 1 "$id_los 0 0"
+  fiber yield
+  while {$run} {
+    algorytm [czytaj 0] [czytaj 1]
+    fiber yield
+  }
+}
+
+Inicjalizacja
+
+proc wizualizacja {} {
+  fiber_iterate {_puts "$id, $id_los, $lider; $kom0, $kom1"}
+}
+
+fiber_iterate {
+  proc algorytm {m0 m1} {
+    global id id_los stopien lider
+    if {$m0!=""} {
+      foreach {id0 i0 l0} $m0 break
+      incr i0
+      wyslij 1 "$id0 $i0 0"
+	  if {$id_los<$id0} {
+		set lider "false"
+	   } 
+	   if {$id_los>$id0 && $lider!="false"} {
+		set lider "true"
+	   }
+    }
+    if {$m1!=""} {
+      foreach {id1 i1 l1} $m1 break
+      incr i1
+      wyslij 0 "$id1 $i1 0"
+	  if {$id_los<$id1} {
+		set lider "false"
+	  } 
+	   if {$id_los>$id1 && $lider!="false"} {
+		set lider "true"
+	   }
+    }
+  }
+}
+
+_puts "---"
+fiber yield; runda; wizualizacja; set licznikKom
+
+///wydruk
+---
+0, 215, ; {902 0 0}, {106 0 0}
+1, 106, ; {215 0 0}, {645 0 0}
+2, 645, ; {106 0 0}, {941 0 0}
+3, 941, ; {645 0 0}, {298 0 0}
+4, 298, ; {941 0 0}, {47 0 0}
+5, 47, ; {298 0 0}, {782 0 0}
+6, 782, ; {47 0 0}, {400 0 0}
+7, 400, ; {782 0 0}, {298 0 0}
+8, 298, ; {400 0 0}, {902 0 0}
+9, 902, ; {298 0 0}, {215 0 0}
+---
+0, 215, false; {298 1 0}, {645 1 0}
+1, 106, false; {902 1 0}, {941 1 0}
+2, 645, false; {215 1 0}, {298 1 0}
+3, 941, true; {106 1 0}, {47 1 0}
+4, 298, false; {645 1 0}, {782 1 0}
+5, 47, false; {941 1 0}, {400 1 0}
+6, 782, true; {298 1 0}, {298 1 0}
+7, 400, false; {47 1 0}, {902 1 0}
+8, 298, false; {782 1 0}, {215 1 0}
+9, 902, true; {400 1 0}, {106 1 0}
+---
+0, 215, false; {400 2 0}, {941 2 0}
+1, 106, false; {298 2 0}, {298 2 0}
+2, 645, false; {902 2 0}, {47 2 0}
+3, 941, true; {215 2 0}, {782 2 0}
+4, 298, false; {106 2 0}, {400 2 0}
+5, 47, false; {645 2 0}, {298 2 0}
+6, 782, true; {941 2 0}, {902 2 0}
+7, 400, false; {298 2 0}, {215 2 0}
+8, 298, false; {47 2 0}, {106 2 0}
+9, 902, true; {782 2 0}, {645 2 0}
+---
+0, 215, false; {782 3 0}, {298 3 0}
+1, 106, false; {400 3 0}, {47 3 0}
+2, 645, false; {298 3 0}, {782 3 0}
+3, 941, true; {902 3 0}, {400 3 0}
+4, 298, false; {215 3 0}, {298 3 0}
+5, 47, false; {106 3 0}, {902 3 0}
+6, 782, false; {645 3 0}, {215 3 0}
+7, 400, false; {941 3 0}, {106 3 0}
+8, 298, false; {298 3 0}, {645 3 0}
+9, 902, true; {47 3 0}, {941 3 0}
+---
+0, 215, false; {47 4 0}, {47 4 0}
+1, 106, false; {782 4 0}, {782 4 0}
+2, 645, false; {400 4 0}, {400 4 0}
+3, 941, true; {298 4 0}, {298 4 0}
+4, 298, false; {902 4 0}, {902 4 0}
+5, 47, false; {215 4 0}, {215 4 0}
+6, 782, false; {106 4 0}, {106 4 0}
+7, 400, false; {645 4 0}, {645 4 0}
+8, 298, false; {941 4 0}, {941 4 0}
+9, 902, false; {298 4 0}, {298 4 0}
+
+Zadanie 8 -------------------------------------
+///alg1 O(n) komunikatow
+source symul_lib.tcl
+
+set liczbaWierz 5
+set sasiedzi(0) {4 1}
+set sasiedzi(1) {0 2}
+set sasiedzi(2) {1 3}
+set sasiedzi(3) {2 4}
+set sasiedzi(4) {3 0}
+ 
+fiber create $liczbaWierz {
+	set sum $id_los
+	wyslij 0 $id_los
+	wyslij 1 $id_los
+	set i 0
+	fiber yield;
+	while {$i < $liczbaWierz/2} { 
+		set x $kom(0)
+		set y $kom(1)
+		let sum $sum+$x+$y
+		wyslij 0 $y
+		wyslij 1 $x
+		incr i
+		fiber yield;
+  }
+}
+ 
+Inicjalizacja; 
+ 
+proc wizualizacja {} {
+	_puts ---
+    fiber_iterate {_puts "ID: $id_los, sum: $sum | $kom(0),$kom(1)"}
+}
+
+fiber yield; runda; wizualizacja
+
+///wydruk alg1 O(n) komunikatow
+---
+ID: 879, sum: 879 | 931,730
+ID: 730, sum: 730 | 879,911
+ID: 911, sum: 911 | 730,833
+ID: 833, sum: 833 | 911,931
+ID: 931, sum: 931 | 833,879
+---
+ID: 879, sum: 2540 | 833,911
+ID: 730, sum: 2520 | 931,833
+ID: 911, sum: 2474 | 879,931
+ID: 833, sum: 2675 | 730,879
+ID: 931, sum: 2643 | 911,730
+---
+ID: 879, sum: 4284 | 911,833
+ID: 730, sum: 4284 | 833,931
+ID: 911, sum: 4284 | 931,879
+ID: 833, sum: 4284 | 879,730
+ID: 931, sum: 4284 | 730,911
+---
+ID: 879, sum: 4284 | ,
+ID: 730, sum: 4284 | ,
+ID: 911, sum: 4284 | ,
+ID: 833, sum: 4284 | ,
+ID: 931, sum: 4284 | ,
+
+///alg1 O(n) rund
+source symul_lib.tcl
+
+set liczbaWierz 5
+set sasiedzi(0) {4 1}
+set sasiedzi(1) {0 2}
+set sasiedzi(2) {1 3}
+set sasiedzi(3) {2 4}
+set sasiedzi(4) {3 0}
+ 
+fiber create $liczbaWierz {
+	set sum $id_los
+	wyslij 1 $id_los
+	set i 0
+	fiber yield;
+	while {$i < $liczbaWierz-1} { 
+		set x $kom(0)
+		let sum $sum+$x
+		wyslij 1 $x
+		incr i
+		fiber yield;
+  }
+}
+ 
+Inicjalizacja; 
+ 
+proc wizualizacja {} {
+	_puts ---
+    fiber_iterate {_puts "ID: $id_los, sum: $sum, $kom(0)"}
+}
+
+fiber yield; runda; wizualizacja
+
+///wydruk alg1 O(n) rund
+---
+ID: 189, sum: 189, 27
+ID: 203, sum: 203, 189
+ID: 482, sum: 482, 203
+ID: 52, sum: 52, 482
+ID: 27, sum: 27, 52
+---
+ID: 189, sum: 216, 52
+ID: 203, sum: 392, 27
+ID: 482, sum: 685, 189
+ID: 52, sum: 534, 203
+ID: 27, sum: 79, 482
+---
+ID: 189, sum: 268, 482
+ID: 203, sum: 419, 52
+ID: 482, sum: 874, 27
+ID: 52, sum: 737, 189
+ID: 27, sum: 561, 203
+---
+ID: 189, sum: 750, 203
+ID: 203, sum: 471, 482
+ID: 482, sum: 901, 52
+ID: 52, sum: 926, 27
+ID: 27, sum: 764, 189
+---
+ID: 189, sum: 953, 189
+ID: 203, sum: 953, 203
+ID: 482, sum: 953, 482
+ID: 52, sum: 953, 52
+ID: 27, sum: 953, 27
+---
+ID: 189, sum: 953, 
+ID: 203, sum: 953, 
+ID: 482, sum: 953, 
+ID: 52, sum: 953, 
+ID: 27, sum: 953, 

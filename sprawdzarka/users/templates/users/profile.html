@@ -1,0 +1,11 @@
+{% extends "api/base.html" %}
+{% load crispy_forms_tags  %}
+{% block content %}
+    {% if user.is_staff %}
+        <h1>{{ user.username }}</h1>
+    {% elif user.is_authenticated  %}
+        <h1>{{ user.username }}</h1>
+        <h1>Liczba punktów:{{ user.points }}</h1>
+
+    {% endif %}
+{% endblock content %}
