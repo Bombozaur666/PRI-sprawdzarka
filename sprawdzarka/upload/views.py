@@ -1,12 +1,11 @@
-from rest_framework import viewsets
 from django.shortcuts import render
 from .forms import *
-from api import serializers
 from .RabinKarp import *
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from .models import SendedTasks,Plagiat
-
+from .xml_metric import *
 
 
 @staff_member_required(login_url='login')
@@ -27,10 +26,7 @@ def task_sended_upload(request):
             if SendedTasks.objects.filter(snumber = request.user.snumber, taskid = object.taskid).exists():
                 messages.warning(request,"Nie można dodać 2 razy tego samego zadania.")
             else:
-                """ plik_do_obrobki=request.FILES['task']
-                print(plik_do_obrobki.content)"""
-                handle_uploaded_file(request.FILES['task'])
-                if xmlmetricf():
+                if xmlmetricf(request.FILES['task']):
                     object.snumber = request.user.snumber
                     object.save()
                 else:

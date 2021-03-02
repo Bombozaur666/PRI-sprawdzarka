@@ -23,11 +23,10 @@ class SendedTasksForm(forms.ModelForm):
 		for i in task_id_data :
 			this_choices.append(tuple([i,i]))
 	taskid = fields.ChoiceField(choices=this_choices)
+
 	class Meta:
 		model = SendedTasks
 		fields = ('task',)
-
-
 
 class TasksListForm(forms.ModelForm):
 	class Meta:
