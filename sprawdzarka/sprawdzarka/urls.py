@@ -30,5 +30,6 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
     path('', include('api.urls')),
     path('task/', include('upload.urls')),
+    path('promela/', include('Promela.urls')),
     path('forum/', include('forum.urls')),
 ]

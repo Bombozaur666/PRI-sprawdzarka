@@ -16,7 +16,7 @@ class SendedTasks(models.Model):
 
 class TaskList(models.Model):
     id = models.IntegerField(primary_key=True)
-    taskname = models.CharField(max_length=200, default='Brak tytułu')
+    taskname = models.CharField(max_length=200,blank=False)
     tname = models.CharField(max_length=100)
     task = models.FileField(upload_to='task/tasklist/')
 
@@ -27,4 +27,3 @@ class Plagiat(models.Model):
     name1 = models.CharField(max_length=100)
     name2 = models.CharField(max_length=100)
     plagiat = models.FloatField()
-

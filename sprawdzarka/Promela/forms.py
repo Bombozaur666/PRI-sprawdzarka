@@ -15,9 +15,16 @@ class TeacherTaskForm(forms.ModelForm):
 
     class Meta:
         model = TeacherTask
-        fields = ('task_name','max_points','file','group')
+        fields = ('task_name','max_points','file','group',)
 
 class StudentTaskForm(forms.ModelForm):
-    class Meta:
-        model = StudentTask
-        fields = ('task_file',)
+	task_id_data = [str(elem) for elem in list(StudentTask.objects.all().values_list('id', flat=True))]
+	
+	this_choices = []
+	if len(task_id_data) > 0:
+		for i in task_id_data :
+			this_choices.append(tuple([i,i]))
+	taskid = fields.ChoiceField(choices=this_choices)
+	class Meta:
+		model = StudentTask
+		fields = ('task_file',)

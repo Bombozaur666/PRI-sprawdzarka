@@ -3,15 +3,15 @@ from django.db.models.deletion import SET_NULL
 
 class TeacherTask(models.Model):
     id = models.IntegerField(primary_key=True)
-    task_name = models.TextField(max_length=100)
+    task_name = models.CharField(max_length=100,blank=False)
     max_points = models.FloatField(default=0)
-    file = models.FileField(upload_to="/task/promela/teacher_ltl")
+    file = models.FileField(upload_to="task/promela/teacher_ltl")
     group_id = models.IntegerField(default=0)
     
 class StudentTask(models.Model):
     id = models.IntegerField(primary_key=True)
     task_id = models.IntegerField()
-    task_file = models.FieldFile(upload_to = "/task/promela/student_files")
+    task_file = models.FileField(upload_to = "task/promela/student_files")
     snumber = models.CharField(max_length=6)
     group_id = models.IntegerField(default=0)
     class Meta:
@@ -21,6 +21,6 @@ class StudentOutput(models.Model):
     id = models.IntegerField(primary_key=True)
     student_task_id = models.IntegerField()
     snumber = models.CharField(max_length=6)
-    output_file = models.FileField(upload_to='/task/promela/output')
+    output_file = models.FileField(upload_to='task/promela/output')
     points = models.IntegerField(default=0)
     has_been_graded = models.BooleanField(default=False)

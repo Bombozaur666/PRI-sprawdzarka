@@ -6,17 +6,8 @@ from .RabinKarp import *
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from .models import SendedTasks,Plagiat
-from users.models import Account
-from django.contrib import messages
-from .xml_metric import *
-import codecs
 
-'''
-class StudentViewSet(viewsets.ModelViewSet):
 
-    queryset = Account.objects.all()
-    serializer_class = serializers.StudentSerializer
-    '''
 
 @staff_member_required(login_url='login')
 def task_sended_list(request):
@@ -65,7 +56,7 @@ def task_list_choose(request):
     return render(request,'upload/task_list_choose.html')
 
 def task_upload_choose(request):
-    return render(request,'upload/task_student_upload_choose.html')
+    return render(request,'upload/task_upload_choose.html')
 
 def task_sended_choose(request):
     return render(request,'upload/task_sended_choose.html')

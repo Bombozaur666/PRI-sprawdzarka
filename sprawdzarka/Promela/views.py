@@ -5,8 +5,9 @@ from .forms import *
 from .promeli_filechcker import *
 from django.contrib import messages
 
+
 @staff_member_required(login_url='login')
-def task_promela_upload_list(request):
+def task_promela_upload_teacher(request):
     if request.method=='POST':
         form = TeacherTaskForm(request.POST, request.FILES)
         if form.is_valid():
@@ -15,14 +16,7 @@ def task_promela_upload_list(request):
             form.save()
     else:
         form=TeacherTaskForm()
-    return render(request,'upload/task_promela_upload.html', {'form': form})
-
-@staff_member_required(login_url='login')
-def task_Promela_student_sended_list(request):
-    promela_funck()
-    sended=Promela2.objects.all()
-    return render(request,'upload/task_Promela_sended_list.html',{'sended': sended})
-
+    return render(request,'Promela/task_promela_upload.html', {'form': form})
 @login_required
 def task_promela_upload(request):
     if request.method=='POST':
@@ -37,7 +31,14 @@ def task_promela_upload(request):
                 object.save()
     else:
         form= StudentTaskForm()
-    return render(request, 'upload/task_sended_upload.html', {'form': form})
+    return render(request, 'Promela/task_sended_upload.html', {'form': form})
+
+@staff_member_required(login_url='login')
+def task_Promela_student_sended_list(request):
+    promela_funck()
+    sended=StudentTask.objects.all()
+    return render(request,'Promela/task_Promela_sended_list.html',{'sended': sended})
+
 
 @login_required
 def read_file_promela__task_list(request, file_to_open):
@@ -49,8 +50,8 @@ def read_file_promela__task_list(request, file_to_open):
     return render(request,'upload/wyswietlanie.html',{'result': result},)
 
 def task_list_promela(request):
-    sended=TaskListPromela.objects.all
-    return render(request,'upload/task_List_promela.html',{'sended': sended})
+    sended=TeacherTask.objects.all
+    return render(request,'Promela/task_List_promela.html',{'sended': sended})
 
 @login_required
 def read_file_Promela_task_student(request, file_to_open):

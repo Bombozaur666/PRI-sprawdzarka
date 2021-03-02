@@ -1,10 +1,12 @@
-import re, subprocess
-from .models import Promela, TaskListPromela, Promela2
-import os
+import re, subprocess, os
+from .models import TeacherTask, StudentTask, StudentOutput
+
 # STEP 1 - get all the files (later from a database i guess)
 
 
 def promela_funck():
+    pass
+"""
     List_of_files=Promela.objects.filter(has_been_tested=False).all()
     List_of_ltls=TaskListPromela.objects.all()
     plik_pml = plik_ltl = ""
@@ -63,3 +65,4 @@ def promela_funck():
             else:
                 Prom2 = Promela2(taskid=file.taskid.value, snumber=file.snumber.value, task=file.task,output=file.taskcopy, group=file.group.value)
                 Prom2.save()
+                """
