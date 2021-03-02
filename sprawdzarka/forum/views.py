@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .models import *
 from upload import models as upload_models
 from django.contrib.auth.decorators import login_required
-from .form import AddQuestionForm
+from .form import AddQuestionForm,AddAnswerForm
 
 @login_required
 def all(request):
@@ -45,37 +45,37 @@ def question_fake(request):
 @login_required
 def add_question(request, id):
     if request.method == "POST":
-        form = AddQuestionForm(request.POST, request.FILES)
+        form = AddQuestionForm(request.POST)
         if form.is_valid():
             object = form.save(commit=False)
             object.task_id=id
             object.asking_student=request.user.username
             object.save()
-            return all(request)
+            return redirect('/forum/all/')
     else:
         form=AddQuestionForm()
     return render(request, 'forum/questionForm.html', {'form': form})
 
-
 @login_required
 def add_answer(request, id):
-    question_id = id
-    task = Question.objects.get(id = question_id)
-    task_id = task.task_id
-    if request.method == 'POST':
-        answer = Answer()
-        if request.user.is_staff:
-            answer.has_teacher_answered = True
-            task.has_teacher_answer = True
-        answer.task_id = task_id
-        answer.question_id = question_id
-        answer.content = request.POST['fcontent']
-        answer.who_answered = request.user.username
-        answer.save()
-        task.save()
-        return question(request, id)
-
-    return render(request, 'forum/add_answer.html') 
+    if request.method == "POST":
+        form = AddAnswerForm(request.POST)
+        if form.is_valid():
+            object = form.save(commit=False)
+            task = Question.objects.get(id = id)
+            if request.user.is_staff:
+                task.has_teacher_answer = True
+                object.has_teacher_answered = True
+            object.task_id = task.task_id
+            object.question_id = id
+            object.who_answered = request.user.username
+            object.save()
+            task.save()
+            path = f'/forum/{id}'
+            return redirect(path)
+    else:
+        form=AddAnswerForm()         
+    return render(request, 'forum/add_answer_form.html',{'form': form}) 
 
 @login_required
 def answer_fake(request):
