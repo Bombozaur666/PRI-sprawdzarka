@@ -17,6 +17,8 @@ def task_promela_upload_teacher(request):
     else:
         form=TeacherTaskForm()
     return render(request,'Promela/task_promela_upload.html', {'form': form})
+
+
 @login_required
 def task_promela_upload(request):
     if request.method=='POST':
@@ -31,7 +33,7 @@ def task_promela_upload(request):
                 object.save()
     else:
         form= StudentTaskForm()
-    return render(request, 'Promela/task_sended_upload.html', {'form': form})
+    return render(request, 'upload/task_sended_upload.html', {'form': form})
 
 @staff_member_required(login_url='login')
 def task_Promela_student_sended_list(request):

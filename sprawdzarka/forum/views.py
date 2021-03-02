@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .models import *
 from upload import models as upload_models
 from django.contrib.auth.decorators import login_required
+from .form import AddQuestionForm
 
 @login_required
 def all(request):
@@ -43,15 +44,17 @@ def question_fake(request):
 
 @login_required
 def add_question(request, id):
-    this_id = id
     if request.method == "POST":
-        question = Question()
-        question.task_id = this_id
-        question.question_content = request.POST['fcontent']
-        question.asking_student = request.user.snumber
-        question.save()
-        return all(request)
-    return render(request, 'forum/add_question.html')
+        form = AddQuestionForm(request.POST, request.FILES)
+        if form.is_valid():
+            object = form.save(commit=False)
+            object.task_id=id
+            object.asking_student=request.user.username
+            object.save()
+            return all(request)
+    else:
+        form=AddQuestionForm()
+    return render(request, 'forum/questionForm.html', {'form': form})
 
 
 @login_required

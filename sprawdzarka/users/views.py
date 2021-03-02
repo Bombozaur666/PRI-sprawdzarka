@@ -44,7 +44,7 @@ def new_group(request):
 
 
 def all_students(request, group_id):
-    all = [str(elem) for elem in list(Account.objects.filter(group = group_id).values_list('snumber', flat=True))]
+    all = [str(elem) for elem in list(Account.objects.filter(group_id = group_id).values_list('snumber', flat=True))]
     result = []
     
     for student in all:

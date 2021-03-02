@@ -4,7 +4,7 @@ from django.db import models
 class Question(models.Model):
     id = models.IntegerField(primary_key=True)
     task_id = models.IntegerField()
-    question_content = models.CharField(max_length=256)
+    question_content = models.TextField(max_length=256, blank=False, null=False, default=None)
     date = models.DateTimeField(auto_now_add= True)
     has_teacher_answer = models.BooleanField(default= False)
     asking_student = models.CharField(max_length= 6)
