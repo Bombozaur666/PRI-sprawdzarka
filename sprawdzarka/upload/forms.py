@@ -22,11 +22,12 @@ class SendedTasksForm(forms.ModelForm):
 	if len(task_id_data) > 0:
 		for i in task_id_data :
 			this_choices.append(tuple([i,i]))
-	taskid = fields.ChoiceField(choices=this_choices)
+	Plik = fields.ChoiceField(label='Numer zadania', choices=this_choices)
 
 	class Meta:
 		model = SendedTasks
 		fields = ('task',)
+		
 
 class TasksListForm(forms.ModelForm):
 	class Meta:

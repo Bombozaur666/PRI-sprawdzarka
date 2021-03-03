@@ -5,7 +5,6 @@
         <h1>{{ user.username }}</h1>
     {% elif user.is_authenticated  %}
         <h1>{{ user.username }}</h1>
-        <h1>Liczba punktów:{{ user.points }}</h1>
-
+        <h1>Liczba punktów: {{ user.points }}</h1>
     {% endif %}
 {% endblock content %}

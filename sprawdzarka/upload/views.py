@@ -23,7 +23,7 @@ def task_sended_upload(request):
         form = SendedTasksForm(request.POST, request.FILES)
         if form.is_valid():
             object = form.save(commit=False)
-            if SendedTasks.objects.filter(snumber = request.user.snumber, taskid = object.taskid).exists():
+            if SendedTasks.objects.filter(snumber = request.user.snumber, taskid = object.Plik).exists():
                 messages.warning(request,"Nie można dodać 2 razy tego samego zadania.")
             else:
                 if xmlmetricf(request.FILES['task']):
@@ -34,15 +34,6 @@ def task_sended_upload(request):
     else:
         form=SendedTasksForm()
     return render(request,'upload/task_sended_upload.html', {'form': form})
-
-@login_required
-def read_file1(request, file_to_open):
-    f = open(r'task/sendedtasks/'+file_to_open, encoding="utf-8")
-    result = []
-    for line in f:
-        result.append(line)
-    f.close()
-    return render(request,'upload/wyswietlanie.html',{'result': result},)
 
 def task_list(request):
     sended=TaskList.objects.all
@@ -71,6 +62,14 @@ def task_List_upload(request):
     else:
         form=TasksListForm()
     return render(request,'upload/task_sended_upload.html', {'form': form})
+@login_required
+def read_file1(request, file_to_open):
+    f = open(r'task/sendedtasks/'+file_to_open, encoding="utf-8")
+    result = []
+    for line in f:
+        result.append(line)
+    f.close()
+    return render(request,'upload/wyswietlanie.html',{'result': result},)
 
 @login_required
 def read_file2(request, file_to_open):

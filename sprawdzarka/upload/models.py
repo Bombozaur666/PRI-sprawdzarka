@@ -1,11 +1,11 @@
 from django.db import models
 
-# Create your models here.
+
 class SendedTasks(models.Model):
     id = models.IntegerField(primary_key=True)
-    taskid = models.CharField(max_length=5)
+    taskid = models.CharField("Zadanie nr", max_length=5)
     snumber = models.CharField(max_length=6)
-    task = models.FileField(upload_to='task/sendedtasks/')
+    task = models.FileField("Plik",upload_to='task/sendedtasks/')
     max_point=models.CharField(max_length=3,default="0")
     point=models.CharField(max_length=100,default="0")
     has_been_tested = models.BooleanField(default=False)
@@ -16,9 +16,9 @@ class SendedTasks(models.Model):
 
 class TaskList(models.Model):
     id = models.IntegerField(primary_key=True)
-    taskname = models.CharField(max_length=200,blank=False)
+    taskname = models.CharField("Nazwa zadania", max_length=200, blank=False, default=None)
     tname = models.CharField(max_length=100)
-    task = models.FileField(upload_to='task/tasklist/')
+    task = models.FileField("Plik", upload_to='task/tasklist/')
 
 class Plagiat(models.Model):
     id = models.IntegerField(primary_key=True)
