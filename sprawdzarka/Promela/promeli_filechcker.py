@@ -1,11 +1,71 @@
 import re, subprocess, os
 from .models import TeacherTask, StudentTask, StudentOutput
 
-# STEP 1 - get all the files (later from a database i guess)
 
 
-def promela_funck():
-    pass
+def promela_funck(snumber):
+    List_of_files = StudentTask.objects.filter(has_been_tested=False).all()
+    for file in List_of_files:
+        ltl = TeacherTask.objects.get(id = file.task_id)
+        ss = []
+        i = 0
+        with open(ltl.file.name) as f:
+            ss = f.read().splitlines()
+            f.close()
+        for x in ss:
+            y = re.search(r'^ltl L[0-9]', x)
+            if y is not None:
+                i += 1
+        ltl_amount = i
+
+        file_new = str(file)
+        file_new = file_new.replace(".pml", "_result.txt")
+        open(file_new, 'w').close()  # czysci plik zeby mozna cat uzyc nizej i nie dodawac w nieskonczonosc tekstu
+
+        file.has_been_tested = True
+
+        subprocess.run(f'spin -a {ltl.file.name} {file.task_file.name}', shell=True)
+
+        out = subprocess.Popen('gcc -o pan pan.c',
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT,
+                               shell=True)
+        stdout, stderr = out.communicate()
+        print(stdout)
+
+        if stdout == b'':
+            temp = 0
+            if ltl_amount == 0:
+                command_no_ltl = "./pan -m400000"
+                subprocess.run(command_no_ltl, shell=True)
+            else:
+                for ltl_number in range(ltl_amount):
+                    temp += 1
+                    command_ltl = f'./pan -a -N L{temp} >> {file_new}'
+                    subprocess.run(command_ltl, shell=True)
+
+
+        object = StudentOutput()
+        object.student_task_id = file.id
+        object.snumber = snumber
+        object.output_file = file_new
+
+        ww = []
+        with open(file_new) as f:
+            ww = f.read().splitlines()
+            f.close()
+        for x in ww:
+            y = re.search("errors: 0", x)
+            if y is not None:
+                object.points = ltl.max_points
+                break
+            else:
+                object.points = 0
+        object.has_been_graded = True
+
+
+
+
 """
     List_of_files=Promela.objects.filter(has_been_tested=False).all()
     List_of_ltls=TaskListPromela.objects.all()
