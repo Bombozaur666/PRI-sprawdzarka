@@ -5,18 +5,23 @@
 			<tr>
 				<th>Nazwa zadania | </th>
 				<th>Zadanie | </th>
+				{% if user.is_staff %}
+				{%else%}
 				<th>Zadaj pytanie</th>
+				{% endif %}
 			</tr>
 			<tbody>
 				{% for data in sended %}
 					<tr>
-						<td>{{data.taskname}}</td>
+						<td>{{data.task_name}}</td>
 						<td><a href="/{{data.task.name}}" class="btn btn-primary btn-sm">Otwórz plik</a></td>
+						{% if user.is_staff %}
+						{%else%}
 						<td><a class="btn btn-outline-info" href="{% url 'ask_question' id=data.id %}">Zadaj pytanie prowadzącemu</a></td>
+						{% endif %}
 					</tr>
 				{% endfor %}
 			</tbody>
 			</thead>
 		</table>
 {% endblock %}
-

@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.fields import IntegerField
 
 
 class SendedTasks(models.Model):
@@ -6,11 +7,9 @@ class SendedTasks(models.Model):
     taskid = models.CharField("Zadanie nr", max_length=5)
     snumber = models.CharField(max_length=6)
     task = models.FileField("Plik",upload_to='task/sendedtasks/')
-    max_point=models.CharField(max_length=3,default="0")
-    point=models.CharField(max_length=100,default="0")
     has_been_tested = models.BooleanField(default=False)
     group = models.CharField(max_length=10, default="0")
-
+    max_point=IntegerField(max_length=3)
     class Meta:
         ordering = ('group','taskid',)
 
@@ -20,6 +19,7 @@ class TaskList(models.Model):
     tname = models.CharField(max_length=100)
     task = models.FileField("Plik", upload_to='task/tasklist/')
 
+
 class Plagiat(models.Model):
     id = models.IntegerField(primary_key=True)
     snumber1 = models.CharField(max_length=6)
@@ -27,3 +27,12 @@ class Plagiat(models.Model):
     name1 = models.CharField(max_length=100)
     name2 = models.CharField(max_length=100)
     plagiat = models.FloatField()
+    
+class StudentsPoints(models.Model):
+    id = models.IntegerField(primary_key=True)
+    snumber=models.CharField(max_length=6)
+    task_id=models.IntegerField(max_length=2)
+    number_task=models.CharField(max_length=3)
+    answer=models.IntegerField(max_length=2)
+    class Meta:
+        ordering=('taskid','snumber')

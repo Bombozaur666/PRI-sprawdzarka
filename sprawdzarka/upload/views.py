@@ -1,3 +1,4 @@
+import codecs, re
 from django.shortcuts import render
 from .forms import *
 from .RabinKarp import *
@@ -7,15 +8,27 @@ from django.contrib import messages
 from .models import SendedTasks,Plagiat
 from .xml_metric import *
 
-
 @staff_member_required(login_url='login')
 def task_sended_list(request):
-    sended=SendedTasks.objects.filter(max_point="0")
+    sended=SendedTasks.objects.filter(max_point="0", has_been_tested=False)
     for x in sended:
-        listapkt, punkty = return_points(x.task.name)
-        sended.update(max_point=punkty, point=listapkt)
+        suma=0
+        lista = ""
+        f = open(x.task.name, encoding="utf-8")
+        for line in f:
+            y = re.search(r'^<zadanie nr="(.+)" pkt="([0-9]+)">', line)
+            if y is not None:
+                temp=StudentsPoints()
+                temp.snumber=request.user.snumber
+                temp.number_task=str(y.group(1))
+                temp.answer=y.group(2)
+                temp.save()
+                suma+=int(y.group(2))
+        f.close()
+        sended.update(max_point=suma)
     sended2 = SendedTasks.objects.all()
     return render(request,'upload/task_sended_list.html',{'sended': sended2})
+    
 
 @login_required
 def task_sended_upload(request):
@@ -23,10 +36,10 @@ def task_sended_upload(request):
         form = SendedTasksForm(request.POST, request.FILES)
         if form.is_valid():
             object = form.save(commit=False)
-            if SendedTasks.objects.filter(snumber = request.user.snumber, taskid = object.Plik).exists():
+            if SendedTasks.objects.filter(snumber = request.user.snumber, taskid = object.taskid).exists():
                 messages.warning(request,"Nie można dodać 2 razy tego samego zadania.")
             else:
-                if xmlmetricf(request.FILES['task']):
+                if xmlmetricf(codecs.EncodedFile(request.FILES['task'],"utf-8")):
                     object.snumber = request.user.snumber
                     object.save()
                 else:
@@ -34,6 +47,7 @@ def task_sended_upload(request):
     else:
         form=SendedTasksForm()
     return render(request,'upload/task_sended_upload.html', {'form': form})
+
 
 def task_list(request):
     sended=TaskList.objects.all
