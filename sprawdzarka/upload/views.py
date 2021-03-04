@@ -26,7 +26,7 @@ def task_sended_upload(request):
             if SendedTasks.objects.filter(snumber = request.user.snumber, taskid = object.taskid).exists():
                 messages.warning(request,"Nie można dodać 2 razy tego samego zadania.")
             else:
-                if xmlmetricf(str(request.FILES['task'])):
+                if xmlmetricf(codecs.EncodedFile(request.FILES['task'],"utf-8")):
                     object.snumber = request.user.snumber
                     object.save()
                 else:
