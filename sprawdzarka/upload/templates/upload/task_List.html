@@ -13,7 +13,7 @@
 			<tbody>
 				{% for data in sended %}
 					<tr>
-						<td>{{data.task_name}}</td>
+						<td>{{data.taskname}}</td>
 						<td><a href="/{{data.task.name}}" class="btn btn-primary btn-sm">Otwórz plik</a></td>
 						{% if user.is_staff %}
 						{%else%}
