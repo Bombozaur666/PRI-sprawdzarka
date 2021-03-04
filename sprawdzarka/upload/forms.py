@@ -19,7 +19,7 @@ class SendedTasksForm(forms.ModelForm):
 class TasksListForm(forms.ModelForm):
 	class Meta:
 		model = TaskList
-		fields = ('taskname','task','max_points')
+		fields = ('taskname','task',)
 
 
 

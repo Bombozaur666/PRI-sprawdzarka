@@ -21,7 +21,7 @@ def task_sended_list(request):
                 temp=StudentsPoints()
                 temp.snumber=request.user.snumber
                 temp.number_task=str(y.group(1))
-                temp.answer=y.group(2)
+                temp.points=y.group(2)
                 temp.save()
                 suma+=int(y.group(2))
         f.close()
