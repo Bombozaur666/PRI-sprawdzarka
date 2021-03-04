@@ -1,0 +1,26 @@
+{% extends "api/base.html" %}
+{% block content %}
+	<table class="table">
+			<thead>
+			<tr>
+				<th>Temat zadania | </th>
+				<th>Zadanie | </th>
+				<th>Zadaj pytanie</th>
+			</tr>
+			<tbody>
+				{% for data in sended %}
+					<tr>
+						<td>{{data.task_name}}</td>
+						<td>
+							<a href="/{{data.task.name}}" class="btn btn-primary btn-sm"> 
+                                open file
+                            </a>
+						</td>
+						<td><a class="btn btn-outline-info" href="{% url 'ask_question' id=data.id %}">Zadaj pytanie prowadzącemu</a></td>
+					</tr>
+				{% endfor %}
+			</tbody>
+			</thead>
+		</table>
+{% endblock %}
+
