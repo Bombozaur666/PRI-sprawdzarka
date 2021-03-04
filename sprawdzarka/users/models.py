@@ -11,6 +11,9 @@ class Group(models.Model):
     def __str__(self) -> str:
         return self.name
 
+    def id(self):
+        return self.id
+
 class MyAccountManager(BaseUserManager):
     def create_user(self, username, password, snumber):
         if not snumber:
@@ -45,7 +48,7 @@ class Account(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-    group = models.CharField(verbose_name='Grupa',max_length=100, default=0)
+    group_id = models.IntegerField(verbose_name='Grupa', default=0)
     points = models.IntegerField(default=0)
 
 
