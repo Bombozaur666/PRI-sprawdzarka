@@ -5,7 +5,7 @@ from .RabinKarp import *
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import SendedTasks,Plagiat
+from .models import *
 from .xml_metric import *
 
 @staff_member_required(login_url='login')
@@ -19,9 +19,12 @@ def task_sended_list(request):
             y = re.search(r'^<zadanie nr="(.+)" pkt="([0-9]+)">', line)
             if y is not None:
                 temp=StudentsPoints()
+                print("-----------------------------")
+                print(request.user.snumber)
                 temp.snumber=request.user.snumber
+                temp.taskid=x.taskid
                 temp.number_task=str(y.group(1))
-                temp.points=y.group(2)
+                temp.points=int(y.group(2))
                 temp.save()
                 suma+=int(y.group(2))
         f.close()

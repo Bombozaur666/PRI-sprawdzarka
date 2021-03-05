@@ -1,4 +1,4 @@
-from upload.models import SendedTasks
+from upload.models import SendedTasks, StudentsPoints
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -20,6 +20,14 @@ def register(request):
 
 @login_required
 def profile(request):
+    punkty=0
+    print("elo")
+    points=[str(elem) for elem in list(StudentsPoints.objects.filter(snumber = request.user.snumber).values_list('points', flat=True))]
+    print(points)
+    for x in points:
+        punkty+=int(x)
+        print(x)
+    Account.objects.filter(snumber = request.user.snumber).update(points = punkty)
     return render(request, 'users/profile.html')
 
 

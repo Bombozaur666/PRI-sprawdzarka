@@ -1,0 +1,9 @@
+{% extends "api/base.html" %}
+{% block content %}
+
+    {% for test in all %}
+        {{ test.name }} <a class="btn btn-outline-info" href="{% url 'test' test_id=test.id question_id=1%}">Rozwiąż test</a><br><br>
+        <br>
+    {% endfor %}
+
+{% endblock %}

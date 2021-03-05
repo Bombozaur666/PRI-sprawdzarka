@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'upload.apps.UploadConfig',
     'forum.apps.ForumConfig',
     'Promela.apps.PromelaConfig',
+    'tests.apps.TestsConfig',
 ]
 
 MIDDLEWARE = [

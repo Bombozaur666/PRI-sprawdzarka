@@ -9,7 +9,7 @@ class SendedTasks(models.Model):
     task = models.FileField("Plik",upload_to='task/sendedtasks/')
     has_been_tested = models.BooleanField(default=False)
     group = models.CharField(max_length=10, default="0")
-    max_point=IntegerField()
+    max_point=models.IntegerField(default=0)
     class Meta:
         ordering = ('group','taskid',)
 
@@ -31,8 +31,8 @@ class Plagiat(models.Model):
 class StudentsPoints(models.Model):
     id = models.IntegerField(primary_key=True)
     snumber=models.CharField(max_length=6)
-    taskid=models.IntegerField()
+    taskid=models.CharField(max_length=3)
     number_task=models.CharField(max_length=3)
-    points=models.IntegerField()
+    points=models.IntegerField(default=0)
     class Meta:
         ordering=('taskid','snumber')
