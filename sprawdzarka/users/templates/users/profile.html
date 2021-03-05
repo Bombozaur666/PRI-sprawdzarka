@@ -4,6 +4,7 @@
     <h1>{{ user.username }}</h1>
     {% if user.is_staff %}
     {% elif user.is_authenticated  %}
+        <h1>Numer Studenta: {{ user.snumber }}</h1>
         <h1>Grupa: {{ user.group_id }}</h1>
         <h1>Liczba punktów: {{ user.points }}</h1>
         

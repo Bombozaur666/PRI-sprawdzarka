@@ -14,6 +14,7 @@ class StudentTask(models.Model):
     task_file = models.FileField("Plik", upload_to = "task/promela/student_files")
     snumber = models.CharField(max_length=6)
     group_id = models.IntegerField(default=0)
+    has_been_tested= models.BooleanField(default=False)
     class Meta:
         ordering = ('group_id','task_id',)
 

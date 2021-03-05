@@ -7,25 +7,14 @@
 				<th>snumber </th>
 				<th>suma pkt</th>
 				<th>task</th>
-				<th>output </th>
 			</tr>
 			<tbody>
 				{% for data in sended %}
-
 					<tr>
 						<td>{{data.taskid}}</td>
 						<td>{{data.snumber}}</td>
 						<td>{{data.point}}</td>
-						<td>
-							<a href="/{{data.task.name}}" class="btn btn-primary btn-sm"> 
-                                open file
-                            </a>
-						</td>
-						<td>
-							<a href="/{{data.output.name}}" class="btn btn-primary btn-sm">
-                                open file
-                            </a>
-						</td>
+						<td><a href="{% url 'promela-sended-task' file_to_open=data.task_file.name %}" class="btn btn-primary btn-sm">Otwórz plik</a></td>
 					</tr>
 				{% endfor %}
 			</tbody>

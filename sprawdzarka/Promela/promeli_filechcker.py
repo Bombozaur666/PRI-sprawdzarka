@@ -1,7 +1,5 @@
-import re, subprocess, os
+import re, subprocess
 from .models import TeacherTask, StudentTask, StudentOutput
-
-
 
 def promela_funck(snumber):
     List_of_files = StudentTask.objects.filter(has_been_tested=False).all()
@@ -43,8 +41,6 @@ def promela_funck(snumber):
                     temp += 1
                     command_ltl = f'./pan -a -N L{temp} >> {file_new}'
                     subprocess.run(command_ltl, shell=True)
-
-
         object = StudentOutput()
         object.student_task_id = file.id
         object.snumber = snumber
@@ -62,6 +58,9 @@ def promela_funck(snumber):
             else:
                 object.points = 0
         object.has_been_graded = True
+        object.save()
+        file.has_been_tested=True
+        file.save
 
 
 

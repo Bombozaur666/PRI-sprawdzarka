@@ -11,13 +11,12 @@
 			</tr>
 			<tbody>
 				{% for data in sended %}
-
 					<tr>
 						<td>{{data.taskid}}</td>
 						<td>{{data.snumber}}</td>
 						<td>{{data.point}}</td>
 						<td>{{data.max_point}}</td>
-						<td><a href="/{{data.task.name}}" class="btn btn-primary btn-sm">Otwórz plik</a></td>
+						<td><a href="/{{data.task}}" class="btn btn-primary btn-sm">Otwórz plik</a></td>
 					</tr>
 				{% endfor %}
 			</tbody>

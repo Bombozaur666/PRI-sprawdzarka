@@ -15,7 +15,7 @@
 	<tr>
 		<td>{{data.task_name}}</td>
 			{% if user.is_staff %}
-			<td><a href="/{{data.task.name}}" class="btn btn-primary btn-sm">Otwórz plik</a></td>
+			<td><a href="{% url 'ltl-open' file_to_open=data.file.name %}" class="btn btn-primary btn-sm">Otwórz plik</a></td>
 			{% else %}
 			<td><a class="btn btn-outline-info" href="{% url 'ask_question' id=data.id %}">Zadaj pytanie prowadzącemu</a></td>
 			{% endif %}
