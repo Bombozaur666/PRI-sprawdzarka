@@ -310,7 +310,7 @@
 		_m = 3; goto P999; /* 0 */
 
 		 /* PROC P */
-	case 14: // STATE 1 - C:\\Users\\Micha許\Desktop\\PRI-sprawdzarka\\sprawdzarka\\task\\promela\\student_files\\np02b.pml:8 - [i = 0] (0:0:1 - 1)
+	case 14: // STATE 1 - C:\\PRI-sprawdzarka\\sprawdzarka\\task\\promela\\student_files\\np02b.pml:8 - [i = 0] (0:0:1 - 1)
 		IfNotBlocked
 		reached[0][1] = 1;
 		(trpt+1)->bup.oval = ((int)((P0 *)_this)->i);
@@ -320,7 +320,7 @@
 #endif
 		;
 		_m = 3; goto P999; /* 0 */
-	case 15: // STATE 2 - C:\\Users\\Micha許\Desktop\\PRI-sprawdzarka\\sprawdzarka\\task\\promela\\student_files\\np02b.pml:10 - [((i>=3))] (0:0:1 - 1)
+	case 15: // STATE 2 - C:\\PRI-sprawdzarka\\sprawdzarka\\task\\promela\\student_files\\np02b.pml:10 - [((i>=3))] (0:0:1 - 1)
 		IfNotBlocked
 		reached[0][2] = 1;
 		if (!((((int)((P0 *)_this)->i)>=3)))
@@ -332,7 +332,7 @@
 #endif
 			((P0 *)_this)->i = 0;
 		_m = 3; goto P999; /* 0 */
-	case 16: // STATE 5 - C:\\Users\\Micha許\Desktop\\PRI-sprawdzarka\\sprawdzarka\\task\\promela\\student_files\\np02b.pml:13 - [tmp = a] (0:0:1 - 1)
+	case 16: // STATE 5 - C:\\PRI-sprawdzarka\\sprawdzarka\\task\\promela\\student_files\\np02b.pml:13 - [tmp = a] (0:0:1 - 1)
 		IfNotBlocked
 		reached[0][5] = 1;
 		(trpt+1)->bup.oval = ((int)((P0 *)_this)->tmp);
@@ -342,7 +342,7 @@
 #endif
 		;
 		_m = 3; goto P999; /* 0 */
-	case 17: // STATE 6 - C:\\Users\\Micha許\Desktop\\PRI-sprawdzarka\\sprawdzarka\\task\\promela\\student_files\\np02b.pml:13 - [tmp = (tmp+1)] (0:0:1 - 1)
+	case 17: // STATE 6 - C:\\PRI-sprawdzarka\\sprawdzarka\\task\\promela\\student_files\\np02b.pml:13 - [tmp = (tmp+1)] (0:0:1 - 1)
 		IfNotBlocked
 		reached[0][6] = 1;
 		(trpt+1)->bup.oval = ((int)((P0 *)_this)->tmp);
@@ -352,7 +352,7 @@
 #endif
 		;
 		_m = 3; goto P999; /* 0 */
-	case 18: // STATE 7 - C:\\Users\\Micha許\Desktop\\PRI-sprawdzarka\\sprawdzarka\\task\\promela\\student_files\\np02b.pml:13 - [a = tmp] (0:0:1 - 1)
+	case 18: // STATE 7 - C:\\PRI-sprawdzarka\\sprawdzarka\\task\\promela\\student_files\\np02b.pml:13 - [a = tmp] (0:0:1 - 1)
 		IfNotBlocked
 		reached[0][7] = 1;
 		(trpt+1)->bup.oval = ((int)now.a);
@@ -362,7 +362,7 @@
 #endif
 		;
 		_m = 3; goto P999; /* 0 */
-	case 19: // STATE 8 - C:\\Users\\Micha許\Desktop\\PRI-sprawdzarka\\sprawdzarka\\task\\promela\\student_files\\np02b.pml:16 - [i = (i+1)] (0:0:1 - 1)
+	case 19: // STATE 8 - C:\\PRI-sprawdzarka\\sprawdzarka\\task\\promela\\student_files\\np02b.pml:16 - [i = (i+1)] (0:0:1 - 1)
 		IfNotBlocked
 		reached[0][8] = 1;
 		(trpt+1)->bup.oval = ((int)((P0 *)_this)->i);
@@ -372,7 +372,7 @@
 #endif
 		;
 		_m = 3; goto P999; /* 0 */
-	case 20: // STATE 12 - C:\\Users\\Micha許\Desktop\\PRI-sprawdzarka\\sprawdzarka\\task\\promela\\student_files\\np02b.pml:18 - [-end-] (0:0:0 - 3)
+	case 20: // STATE 12 - C:\\PRI-sprawdzarka\\sprawdzarka\\task\\promela\\student_files\\np02b.pml:18 - [-end-] (0:0:0 - 3)
 		IfNotBlocked
 		reached[0][12] = 1;
 		if (!delproc(1, II)) continue;

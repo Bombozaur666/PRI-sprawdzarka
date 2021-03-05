@@ -2,7 +2,7 @@
 #define PAN_H
 
 #define SpinVersion	"Spin Version 6.5.1 -- 20 December 2019"
-#define PanSource	"C:\\Users\\Micha³\\Desktop\\PRI-sprawdzarka\\sprawdzarka\\task\\promela\\student_files\\np02b.pml"
+#define PanSource	"C:\\PRI-sprawdzarka\\sprawdzarka\\task\\promela\\student_files\\np02b.pml"
 
 #define G_long	4
 #define G_int	4

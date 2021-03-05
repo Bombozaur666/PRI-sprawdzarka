@@ -41,10 +41,11 @@ def task_promela_upload(request):
 
 @staff_member_required(login_url='login')
 def task_Promela_student_sended_list(request):
-    promela_funck(request.user.snumber)
+    promela_funck()
     sended=StudentTask.objects.all()
     for task in sended:
         task.task_file.name = (os.path.basename(task.task_file.name))
+        task.output_file.name = (os.path.basename(task.output_file.name))
     return render(request,'Promela/task_Promela_sended_list.html',{'sended': sended})
 
 @login_required
@@ -67,15 +68,6 @@ def read_file_promela__task_list(request, file_to_open):
 @login_required
 def read_file_Promela_task_student(request, file_to_open):
     f = open(r'task/promela/student_files/'+file_to_open, encoding="utf-8")
-    result = []
-    for line in f:
-        result.append(line)
-    f.close()
-    return render(request,'upload/wyswietlanie.html',{'result': result},)
-
-@login_required
-def read_file_Promela_output(request, file_to_open):
-    f = open(r'task/Promela/Studentoutput/'+file_to_open, encoding="utf-8")
     result = []
     for line in f:
         result.append(line)

@@ -1,0 +1,130 @@
+pan: ltl formula L1
+pan:1: acceptance cycle (at depth 108)
+pan: wrote C:\PRI-sprawdzarka\sprawdzarka\task\promela\student_files\np02b.pml.trail
+
+(Spin Version 6.5.1 -- 20 December 2019)
+Warning: Search not completed
+	+ Partial Order Reduction
+
+Full statespace search for:
+	never claim         	+ (L1)
+	assertion violations	+ (if within scope of claim)
+	acceptance   cycles 	+ (fairness disabled)
+	invalid end states	- (disabled by never claim)
+
+State-vector 44 byte, depth reached 109, errors: 1
+       90 states, stored (125 visited)
+       47 states, matched
+      172 transitions (= visited+matched)
+        0 atomic steps
+hash conflicts:         0 (resolved)
+
+Stats on memory usage (in Megabytes):
+    0.005	equivalent memory usage for states (stored*(State-vector + overhead))
+    0.288	actual memory usage for states
+   64.000	memory used for hash table (-w24)
+    0.343	memory used for DFS stack (-m10000)
+   64.539	total actual memory usage
+
+
+
+pan: elapsed time 0.005 seconds
+pan: ltl formula L2
+pan:1: acceptance cycle (at depth 108)
+pan: wrote C:\PRI-sprawdzarka\sprawdzarka\task\promela\student_files\np02b.pml.trail
+
+(Spin Version 6.5.1 -- 20 December 2019)
+Warning: Search not completed
+	+ Partial Order Reduction
+
+Full statespace search for:
+	never claim         	+ (L2)
+	assertion violations	+ (if within scope of claim)
+	acceptance   cycles 	+ (fairness disabled)
+	invalid end states	- (disabled by never claim)
+
+State-vector 44 byte, depth reached 109, errors: 1
+     1503 states, stored (1667 visited)
+      514 states, matched
+     2181 transitions (= visited+matched)
+        0 atomic steps
+hash conflicts:         0 (resolved)
+
+Stats on memory usage (in Megabytes):
+    0.086	equivalent memory usage for states (stored*(State-vector + overhead))
+    0.288	actual memory usage for states
+   64.000	memory used for hash table (-w24)
+    0.343	memory used for DFS stack (-m10000)
+   64.539	total actual memory usage
+
+
+
+pan: elapsed time 0.004 seconds
+pan: ltl formula L3
+pan:1: acceptance cycle (at depth 108)
+pan: wrote C:\PRI-sprawdzarka\sprawdzarka\task\promela\student_files\np02b.pml.trail
+
+(Spin Version 6.5.1 -- 20 December 2019)
+Warning: Search not completed
+	+ Partial Order Reduction
+
+Full statespace search for:
+	never claim         	+ (L3)
+	assertion violations	+ (if within scope of claim)
+	acceptance   cycles 	+ (fairness disabled)
+	invalid end states	- (disabled by never claim)
+
+State-vector 44 byte, depth reached 109, errors: 1
+    36389 states, stored (39993 visited)
+    18009 states, matched
+    58002 transitions (= visited+matched)
+        0 atomic steps
+hash conflicts:        43 (resolved)
+
+Stats on memory usage (in Megabytes):
+    2.082	equivalent memory usage for states (stored*(State-vector + overhead))
+    1.753	actual memory usage for states (compression: 84.17%)
+         	state-vector as stored = 35 byte + 16 byte overhead
+   64.000	memory used for hash table (-w24)
+    0.343	memory used for DFS stack (-m10000)
+   66.004	total actual memory usage
+
+
+
+pan: elapsed time 0.046 seconds
+pan: rate 869413.04 states/second
+pan: ltl formula L4
+
+(Spin Version 6.5.1 -- 20 December 2019)
+	+ Partial Order Reduction
+
+Full statespace search for:
+	never claim         	+ (L4)
+	assertion violations	+ (if within scope of claim)
+	acceptance   cycles 	+ (fairness disabled)
+	invalid end states	- (disabled by never claim)
+
+State-vector 44 byte, depth reached 109, errors: 0
+    75758 states, stored (80983 visited)
+    36309 states, matched
+   117292 transitions (= visited+matched)
+        0 atomic steps
+hash conflicts:        85 (resolved)
+
+Stats on memory usage (in Megabytes):
+    4.335	equivalent memory usage for states (stored*(State-vector + overhead))
+    3.413	actual memory usage for states (compression: 78.74%)
+         	state-vector as stored = 31 byte + 16 byte overhead
+   64.000	memory used for hash table (-w24)
+    0.343	memory used for DFS stack (-m10000)
+   67.664	total actual memory usage
+
+
+unreached in proctype P
+	(0 of 12 states)
+unreached in claim L4
+	_spin_nvr.tmp:43, state 13, "-end-"
+	(1 of 13 states)
+
+pan: elapsed time 0.099 seconds
+pan: rate  818010.1 states/second
