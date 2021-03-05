@@ -1,0 +1,16 @@
+{% extends "api/base.html" %}
+{% load crispy_forms_tags  %}
+{% block content %}
+		<form method="post" enctype="multipart/form-data">
+			<h2>Upload tasks</h2>
+			{% if user.is_staff %}
+			<!--continue!-->
+			{% else %}
+			<h3>!!!Można wysłać zadanie tylko raz!!!</h3>
+			{% endif %}
+			{% csrf_token %}
+			{{form|crispy}}
+			<button type="submit" class="btn btn-primary">Oddaj zadanie</button>
+		</form>
+{% endblock %}
+        

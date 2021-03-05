@@ -1,0 +1,16 @@
+{% extends "api/base.html" %}
+{% load crispy_forms_tags  %}
+{% block content %}
+<table>
+    <tr>
+        <th>Student | </th>
+        <th>Liczba punktów </th>
+    </tr>
+    {% for student in result %}
+        <tr>
+            <td>{{ student.student }}</td>
+            <td>{{ student.points }}</td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock content %}

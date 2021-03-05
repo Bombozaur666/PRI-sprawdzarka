@@ -1,8 +1,10 @@
+from upload.models import SendedTasks, StudentsPoints
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from users.forms import RegistrationForm
+from django.contrib.admin.views.decorators import staff_member_required
+from .forms import *
+from .models import *
 
 def register(request):
     if request.method == "POST":
@@ -18,4 +20,51 @@ def register(request):
 
 @login_required
 def profile(request):
+    punkty=0
+    print("elo")
+    points=[str(elem) for elem in list(StudentsPoints.objects.filter(snumber = request.user.snumber).values_list('points', flat=True))]
+    print(points)
+    for x in points:
+        punkty+=int(x)
+        print(x)
+    Account.objects.filter(snumber = request.user.snumber).update(points = punkty)
     return render(request, 'users/profile.html')
+
+
+def groups(request):
+    all = Group.objects.all()
+    for group in all:
+        print(group.group)
+    return render(request, 'users/groups.html', {'all': all})
+
+@staff_member_required(login_url='login')
+def new_group(request):
+    if request.method == 'POST':
+        form = GroupForm(request.POST)
+        if form.is_valid():
+            group = Group()
+            group.name = form.data['name']
+            group.year = form.data['year']
+            group.term = form.data['term']
+            group.save()
+            return redirect('all_groups')
+    else:
+        form = GroupForm()
+    return render(request, 'users/new_group.html', {'form': form})
+
+
+def all_students(request, group_id):
+    all = [str(elem) for elem in list(Account.objects.filter(group_id = group_id).values_list('snumber', flat=True))]
+    result = []
+    
+    for student in all:
+        points = 0
+        all_points =[int(elem) for elem in list(SendedTasks.objects.filter(snumber = student).values_list('max_point', flat=True))]
+        for point in all_points:
+            points += point
+        result.append({'student':student,'points':points})
+        Account.objects.filter(snumber = student).update(points = points)
+
+    return render(request, 'users/group.html', {'result':result})
+
+    
