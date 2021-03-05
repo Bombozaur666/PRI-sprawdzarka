@@ -11,7 +11,7 @@
 			<tbody>
 				{% for data in sended %}
 					<tr>
-						<td>{{data.taskid}}</td>
+						<td>{{data.task_id}}</td>
 						<td>{{data.snumber}}</td>
 						<td>{{data.point}}</td>
 						<td><a href="{% url 'promela-sended-task' file_to_open=data.task_file.name %}" class="btn btn-primary btn-sm">Otwórz plik</a></td>

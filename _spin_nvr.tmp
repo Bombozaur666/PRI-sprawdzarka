@@ -1,0 +1,44 @@
+never L1 {    /* !(<> ([] ((a==9)))) */
+T0_init:
+	do
+	:: (! (((a==9)))) -> goto accept_S9
+	:: (1) -> goto T0_init
+	od;
+accept_S9:
+	do
+	:: (1) -> goto T0_init
+	od;
+}
+never L2 {    /* !(! (<> ([] ((a==3))))) */
+T0_init:
+	do
+	:: (((a==3))) -> goto accept_S4
+	:: (1) -> goto T0_init
+	od;
+accept_S4:
+	do
+	:: (((a==3))) -> goto accept_S4
+	od;
+}
+never L3 {    /* !(! (<> ([] ((a==2))))) */
+T0_init:
+	do
+	:: (((a==2))) -> goto accept_S4
+	:: (1) -> goto T0_init
+	od;
+accept_S4:
+	do
+	:: (((a==2))) -> goto accept_S4
+	od;
+}
+never L4 {    /* !(! (<> ([] ((a==1))))) */
+T0_init:
+	do
+	:: (((a==1))) -> goto accept_S4
+	:: (1) -> goto T0_init
+	od;
+accept_S4:
+	do
+	:: (((a==1))) -> goto accept_S4
+	od;
+}

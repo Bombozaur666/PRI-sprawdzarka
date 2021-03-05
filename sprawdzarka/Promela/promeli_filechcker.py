@@ -1,4 +1,4 @@
-import re, subprocess
+import re, subprocess, os
 from .models import TeacherTask, StudentTask, StudentOutput
 
 def promela_funck(snumber):
@@ -21,8 +21,14 @@ def promela_funck(snumber):
         open(file_new, 'w').close()  # czysci plik zeby mozna cat uzyc nizej i nie dodawac w nieskonczonosc tekstu
 
         file.has_been_tested = True
+        ltl_cos_1="C:\\Users\\Michał\\Desktop\\PRI-sprawdzarka\\"
+        ltl_cos_1+=ltl.file.name.replace('/','\\')
 
-        subprocess.run(f'spin -a {ltl.file.name} {file.task_file.name}', shell=True)
+        ltl_cos_2="C:\\Users\\Michał\\Desktop\\PRI-sprawdzarka\\"
+        ltl_cos_2+=file.task_file.name.replace('/','\\')
+
+        print("---------------------------------------\n",ltl_cos_1,"---------------------------------------\n",ltl_cos_2)
+        subprocess.run(f'spin -a -N {ltl_cos_1} {ltl_cos_2}', shell=True)
 
         out = subprocess.Popen('gcc -o pan pan.c',
                                stdout=subprocess.PIPE,
