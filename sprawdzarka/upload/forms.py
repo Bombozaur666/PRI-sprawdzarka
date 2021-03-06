@@ -1,15 +1,17 @@
 from django import forms
-from .models import SendedTasks
-from .models import TaskList
+from .models import *
+from django.forms import fields
 
 class SendedTasksForm(forms.ModelForm):
     class Meta:
         model = SendedTasks
-        fields = ('taskid','snumber','task')
+        fields = ('task', 'taskid')
+		
+
 class TasksListForm(forms.ModelForm):
 	class Meta:
-		labels = {
-		"tname": "Teacher name"
-		}
 		model = TaskList
-		fields = ('tname','task')
+		fields = ('taskname','task','group_id')
+
+
+

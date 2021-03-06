@@ -1,0 +1,35 @@
+{% extends "api/base.html" %}
+{% block content %}
+    <h1>Treść pytania:</h1> <br>
+        {{ this_question.question_content }}
+    <br>
+    <h1>Odpowiedzi:</h1>
+    {% if check %}
+        <h2>Odpowiedzi prowadzącego:</h2>
+            {% for answer in teacher_answers %}
+                {{ answer.content }}
+                <br>
+                <br>
+            {% endfor %}
+        <h2>Pozostałe odpowiedzi:</h2>
+    {% endif %}
+    <table>
+        {% for answer in answers %}
+        <tr>
+            <td>
+                {{ answer.who_answered }}
+            </td>
+            <td>
+                {{ answer.content  }}
+            </td>  
+        </tr>
+        <br>
+        <br>
+    {% endfor %}
+    </table>
+    
+        {{ no_answer }}
+        <br>
+        <br>
+    <a class="btn btn-outline-info" href= "{% url 'add_answer' id=this_question.id %}">Dodaj odpowiedź</a>
+{% endblock %}

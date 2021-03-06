@@ -1,0 +1,25 @@
+{% extends "api/base.html" %}
+{% block content %}
+    <table>
+        <tr>
+            <th>taskid | </th>
+            <th>snumber | </th>
+            <th>Data zadania pytania | </th>
+            <th>Czy jest odpowiedź prowadzącego | </th>
+            <th>Wyświetl  </th>
+        </tr>
+        {% for data in all %}
+        <tr>
+            <td>{{data.task_id }}</td>
+            <td>{{data.asking_student}}</td>
+            <td>{{data.date}}</td>
+            {% if data.has_teacher_answer == True %}
+            <td>Tak</td>
+            {% else %}
+            <td>Nie</td>
+            {% endif %}
+            <td><a class="btn btn-outline-info" href="{% url 'question' id=data.id %}">Zobacz pytanie</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
