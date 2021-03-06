@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 from django.db.models.deletion import CASCADE, SET_NULL
+import re
 
 
 class Group(models.Model):
@@ -15,6 +16,7 @@ class Group(models.Model):
     @property
     def group(self):
         return self.name + '_' + self.year.replace('/','_') + '_' + self.term
+
 
 class MyAccountManager(BaseUserManager):
     def create_user(self, username, password, snumber):

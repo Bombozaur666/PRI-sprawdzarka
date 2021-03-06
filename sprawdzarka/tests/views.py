@@ -51,14 +51,17 @@ def load_data_from_txt(path):
                 answers.append([question_id,line,chr(letter),False])
             letter += 1
     return (questions,answers)
-
+@login_required
 def tests_home(request):
     return render(request, 'tests/home.html')
-
+@login_required
 def all_tests(request):
-    all = TestFileModel.objects.all()
+    if request.user.is_staff:
+        all = TestFileModel.objects.all()
+    else:
+        all = TestFileModel.objects.filter(group_id = request.user.group_id)
     return render(request, 'tests/all.html', {'all': all})
-
+@staff_member_required
 def new_test(request):
     if request.method=='POST':
         form = TestFileForm(request.POST, request.FILES)
@@ -90,13 +93,14 @@ def new_test(request):
     else:
         form = TestFileForm()
     return render(request, 'tests/new_test.html', {'form':form})
-
+@login_required
 def test(request, test_id, question_id):
     this_test = TestFileModel.objects.get(id = test_id)
     date_start = this_test.date_start
     date_end = this_test.date_end
     all_ids = TestQuestionModel.objects.filter(test_id = test_id)
     now = timezone.now()
+    color = ''
     if now >= date_start and now <= date_end:
         if StudentPointsTest.objects.filter(test_id = test_id, snumber = request.user.snumber).exists():
             return render(request, 'tests/denied.html')
@@ -108,7 +112,9 @@ def test(request, test_id, question_id):
                     obj = form.save(commit = False)
                     if StudentAnswerModel.objects.filter(test_id = test_id,question_id = question_id, snumber = request.user.snumber).exists():
                         StudentAnswerModel.objects.filter(test_id = test_id,question_id = question_id, snumber = request.user.snumber).update(answer = obj.answer)
+                        
                     else:
+                        
                         obj.snumber = request.user.snumber
                         obj.test_id = test_id
                         obj.question_id = question_id
@@ -140,33 +146,44 @@ def test(request, test_id, question_id):
                         return redirect('/tests/end/'+str(test_id))
             else:
                 if StudentAnswerModel.objects.filter(test_id = test_id,question_id = question_id, snumber = request.user.snumber).exists():
+                    #color = 'LimeGreen'
                     a = StudentAnswerModel.objects.get(test_id = test_id,question_id = question_id, snumber = request.user.snumber)
                     form = TestViewForm(test_id = test_id, question_id = question_id, user = request.user.snumber, instance = a)
                 else:
+                    #color = 'LightSteelBlue'
                     form = TestViewForm(test_id = test_id, question_id = question_id, user = request.user.snumber)
     else:
         return render(request, 'tests/denied.html')
 
-    return render(request,'tests/test.html', {'form':form, 'question':question, 'all_ids':all_ids, 'test_id':test_id})
-
+    return render(request,'tests/test.html', {'form':form, 'question':question, 'all_ids':all_ids, 'test_id':test_id, 'color':color})
+@login_required
 def confirm_test(request, test_id):
-    all_ids = TestQuestionModel.objects.filter(test_id = test_id)
-    answers = StudentAnswerModel.objects.filter(test_id = test_id, snumber = request.user.snumber)
+    if not StudentPointsTest.objects.filter(test_id = test_id, snumber = request.user.snumber).exists():
+        all_ids = TestQuestionModel.objects.filter(test_id = test_id)
+        answers = StudentAnswerModel.objects.filter(test_id = test_id, snumber = request.user.snumber)
+    else:
+        return render(request, 'tests/denied.html')
     return render(request, 'tests/confirm.html', {'answers':answers,'test_id':test_id, 'all_ids':all_ids})
-
+@login_required
 def end_test(request, test_id):
-    points = 0
-    student_answers = StudentAnswerModel.objects.filter(test_id = test_id, snumber = request.user.snumber)
-    correct_answers = QuestionAnswerModel.objects.filter(test_id = test_id, is_right = True)
-    for student, correct in zip(student_answers,correct_answers):
-        if student.answer == correct.letter:
-            points += 1
-            StudentAnswerModel.objects.filter(id = student.id).update(is_right = True)
+    if not StudentPointsTest.objects.filter(test_id = test_id, snumber = request.user.snumber).exists():
+        points = 0
+        student_answers = StudentAnswerModel.objects.filter(test_id = test_id, snumber = request.user.snumber)
+        correct_answers = QuestionAnswerModel.objects.filter(test_id = test_id, is_right = True)
+        for student, correct in zip(student_answers,correct_answers):
+            if student.answer == correct.letter:
+                points += 1
+                StudentAnswerModel.objects.filter(id = student.id).update(is_right = True)
                 
-    end_result = StudentPointsTest()
-    end_result.snumber = request.user.snumber
-    end_result.points = points
-    end_result.test_id = test_id
-    end_result.save()
-    result = StudentPointsTest.objects.get(test_id = test_id, snumber = request.user.snumber)
+        end_result = StudentPointsTest()
+        end_result.snumber = request.user.snumber
+        end_result.points = points
+        end_result.test_id = test_id
+        end_result.save()
+        result = StudentPointsTest.objects.get(test_id = test_id, snumber = request.user.snumber)
+        print(Account.objects.get(snumber = request.user.snumber).points)
+        user_points = Account.objects.get(snumber = request.user.snumber).points + points
+        Account.objects.filter(snumber = request.user.snumber).update(points = user_points)
+    else:
+        return render(request, 'tests/denied.html')
     return render(request, 'tests/end.html', {'result':result})

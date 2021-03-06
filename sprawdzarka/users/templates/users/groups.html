@@ -12,7 +12,7 @@
         {% else %}
         <tr>
             <td>{{ group.name }}</td>
-            <td><a class="btn btn-primary btn-sm" href="{% url 'group' group_id=group.group %}">Pokaż grupę</a></td>
+            <td><a class="btn btn-primary btn-sm" href="{% url 'group' group_id=group.id %}">Pokaż grupę</a></td>
         </tr>
             
         {% endif %}

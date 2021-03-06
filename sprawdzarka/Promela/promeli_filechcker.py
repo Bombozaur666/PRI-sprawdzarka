@@ -2,22 +2,21 @@ import re, subprocess, os
 from .models import TeacherTask, StudentTask
 
 def promela_funck():
+    pattern = re.compile(r'^ltl\s(.+?)\s\{')
     List_of_files = StudentTask.objects.filter(has_been_tested=False).all()
     for file in List_of_files:
-        ltl = TeacherTask.objects.get(id = file.task_id)
-        ss = []
-        i = 0
-        with open(ltl.file.name) as f:
-            ss = f.read().splitlines()
-            f.close()
-        for x in ss:
-            y = re.search(r'^ltl L[0-9]', x)
-            if y is not None:
-                i += 1
-        ltl_amount = i
+        ltl = TeacherTask.objects.get(id = file.task_id.id)
+        ltl_list = []
+        for i, line in enumerate(open(ltl.file.name)):
+            for match in re.finditer(pattern, line):
+                all_found = match.group()
+                ltl_temp = re.findall(r'ltl\s(.+)\s\{', all_found)
+                sss = ltl_temp[0]
+                ltl_list.append(sss)
+        print(ltl_list)
 
         file_new = str(file.task_file.name)
-        file.output_file.name=file_new.replace(".pml", "_result.txt") 
+        file.output_file.name=file_new.replace(".pml", "_result.txt")
         file_new = file_new.replace(".pml", "_result.txt")
         open(file_new, 'w').close()
 
@@ -34,27 +33,29 @@ def promela_funck():
                                stderr=subprocess.STDOUT,
                                shell=True)
         stdout, stderr = out.communicate()
-
+        print(stdout)
         if stdout == b'':
             temp = 0
-            if ltl_amount == 0:
+            if len(ltl_list) == 0:
                 command_no_ltl = "C:\\PRI-sprawdzarka\\sprawdzarka\\pan -m400000"
                 subprocess.run(command_no_ltl, shell=True)
             else:
-                for ltl_number in range(ltl_amount):
-                    temp += 1
-                    command_ltl = f'C:\\PRI-sprawdzarka\\sprawdzarka\\pan -a -N L{temp} >> {file_new}'
+                for ltl_number in ltl_list:
+                    command_ltl = f'C:\\PRI-sprawdzarka\\sprawdzarka\\pan -a -N {ltl_number} >> {file_new}'
                     subprocess.run(command_ltl, shell=True)
+                    print(command_ltl)
         ww = []
         with open(file_new) as f:
             ww = f.read().splitlines()
             f.close()
-        for x in ww:
-            y = re.search("errors: 0", x)
-            if y is not None:
-                file.points=ltl.max_points
+        for a in ww:
+            b = re.search(r'errors: [123456789]', a)
+            print(b)
+            if b:
+                file.points = 0
                 break
             else:
-                file.points = -1
+                file.points = ltl.max_points
+
         file.has_been_tested=True
         file.save()

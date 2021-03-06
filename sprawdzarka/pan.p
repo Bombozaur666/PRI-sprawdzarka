@@ -2366,7 +2366,7 @@ bfs_uerror(char *str)
 
 	errors++;
 	if (strncmp(str, laststr, 254) != 0)
-	{	bfs_printf("pan:%lu: %s (at depth %ld)\n",
+	{	bfs_printf("pan:%d: %s (at depth %ld)\n",
 			errors, str, ((depthfound == -1)?depth:depthfound));
 		strncpy(laststr, str, 254);
 	}
@@ -2385,7 +2385,7 @@ bfs_uerror(char *str)
 void
 bfs_Uerror(char *str)
 {	/* bfs_uerror(str); */
-	bfs_printf("pan:%lu: %s (at depth %ld)\n", ++errors, str,
+	bfs_printf("pan:%d: %s (at depth %ld)\n", ++errors, str,
 		((depthfound == -1)?depth:depthfound));
 	bfs_shutdown("bfs_Uerror");
 }

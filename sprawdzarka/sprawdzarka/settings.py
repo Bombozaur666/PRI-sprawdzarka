@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'forum.apps.ForumConfig',
     'Promela.apps.PromelaConfig',
     'tests.apps.TestsConfig',
+    'captcha',
 ]
 
 MIDDLEWARE = [

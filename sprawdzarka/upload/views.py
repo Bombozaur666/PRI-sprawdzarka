@@ -1,5 +1,5 @@
 import codecs, re
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from .forms import *
 from .RabinKarp import *
 from django.contrib.admin.views.decorators import staff_member_required
@@ -9,26 +9,44 @@ from .models import *
 from .xml_metric import *
 
 @staff_member_required(login_url='login')
+def change_points_xml(request,snumber_in_url,task_id_in_url):
+    PointsToShow=StudentsPoints.objects.filter(snumber=snumber_in_url, taskid=task_id_in_url)
+    suma=0
+    print(task_id_in_url)
+    for point in PointsToShow:
+        suma+=point.points
+    return render(request,'upload/changepointsxml.html', {'PointsToShow':PointsToShow,'suma':suma})
+
+@staff_member_required(login_url='login')
+def change_points_xml_direct(request,snumber_in_url,task_id_in_url,number_task_in_url):
+    if request.method=='POST':
+        form = TransformersForm(request.POST)
+        if form.is_valid():
+            object=StudentsPoints.objects.get(snumber=snumber_in_url,taskid=task_id_in_url,number_task=number_task_in_url)
+            object.points=form.cleaned_data['NewPoints']
+            object.save()
+            return redirect('change-points-xml', snumber_in_url=snumber_in_url, task_id_in_url=task_id_in_url )
+    else:
+        form=TransformersForm()
+    return render(request,'upload/transformers.html', {'form': form,'snumber':snumber_in_url,'zadanie':task_id_in_url})
+@staff_member_required(login_url='login')
 def task_sended_list(request):
-    sended=SendedTasks.objects.filter(max_point="0", has_been_tested=False)
+    sended=SendedTasks.objects.filter(has_been_tested=False)
     for x in sended:
-        suma=0
         lista = ""
         f = open(x.task.name, encoding="utf-8")
         for line in f:
             y = re.search(r'^<zadanie nr="(.+)" pkt="([0-9]+)">', line)
             if y is not None:
                 temp=StudentsPoints()
-                print("-----------------------------")
-                print(request.user.snumber)
-                temp.snumber=request.user.snumber
+                temp.snumber=x.snumber
                 temp.taskid=x.taskid
                 temp.number_task=str(y.group(1))
                 temp.points=int(y.group(2))
                 temp.save()
-                suma+=int(y.group(2))
+        x.has_been_tested=True
+        x.save()
         f.close()
-        sended.update(max_point=suma)
     sended2 = SendedTasks.objects.all()
     return render(request,'upload/task_sended_list.html',{'sended': sended2})
     
@@ -52,20 +70,20 @@ def task_sended_upload(request):
         form=SendedTasksForm()
     return render(request,'upload/task_sended_upload.html', {'form': form})
 
-
+@login_required
 def task_list(request):
     sended=TaskList.objects.all
     return render(request,'upload/task_List.html',{'sended': sended})
-
+@login_required
 def task_list_choose(request):
     return render(request,'upload/task_list_choose.html')
-
+@login_required
 def task_upload_choose(request):
     return render(request,'upload/task_upload_choose.html')
-
+@login_required
 def task_sended_choose(request):
     return render(request,'upload/task_sended_choose.html')
-
+@login_required
 def task_student_sended_choose(request):
     return render(request,'upload/task_student_upload_choose.html')
 
@@ -80,6 +98,7 @@ def task_List_upload(request):
     else:
         form=TasksListForm()
     return render(request,'upload/task_sended_upload.html', {'form': form})
+
 @login_required
 def read_file1(request, file_to_open):
     f = open(r'task/sendedtasks/'+file_to_open, encoding="utf-8")

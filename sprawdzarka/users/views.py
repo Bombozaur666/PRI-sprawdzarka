@@ -5,30 +5,39 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from .forms import *
 from .models import *
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 
 def register(request):
     if request.method == "POST":
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(request,f'Konto stworzone dla {username}!')
-            return redirect('login')
+            mo = re.compile(r'[0-9]{6}')
+            check_snumber = form.cleaned_data['snumber']
+            res = re.findall(mo, check_snumber)
+            if not res:
+                messages.warning(request, "Niepoprawny format numeru indeksu.")
+            else:
+                form.save()
+                username = form.cleaned_data.get('username')
+                messages.success(request, f'Konto stworzone dla {username}!')
+                return redirect('login')
     else:
         form = RegistrationForm()
     return render(request, 'users/register.html', {'form': form})
 
 @login_required
 def profile(request):
-    punkty=0
-    print("elo")
-    points=[str(elem) for elem in list(StudentsPoints.objects.filter(snumber = request.user.snumber).values_list('points', flat=True))]
-    print(points)
-    for x in points:
-        punkty+=int(x)
-        print(x)
-    Account.objects.filter(snumber = request.user.snumber).update(points = punkty)
-    return render(request, 'users/profile.html')
+    group = Group.objects.get(id = request.user.group_id)
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user,request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Pomyślnie zmieniono hasło!')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'users/profile.html', {'group':group, 'form':form})
 
 
 def groups(request):
@@ -42,29 +51,25 @@ def new_group(request):
     if request.method == 'POST':
         form = GroupForm(request.POST)
         if form.is_valid():
-            group = Group()
-            group.name = form.data['name']
-            group.year = form.data['year']
-            group.term = form.data['term']
-            group.save()
-            return redirect('all_groups')
+            mo = re.compile(r'[0-9]{4}\/[0-9]{4}')
+            check_year = form.cleaned_data['year']
+            res = re.findall(mo, check_year)
+            if not res:
+                messages.warning(request, "Niepoprawny format.")
+            else:
+                group = Group()
+                group.name = form.data['name']
+                group.year = form.data['year']
+                group.term = form.data['term']
+                group.save()
+                return redirect('all_groups')
     else:
         form = GroupForm()
     return render(request, 'users/new_group.html', {'form': form})
 
-
+@login_required
 def all_students(request, group_id):
-    all = [str(elem) for elem in list(Account.objects.filter(group_id = group_id).values_list('snumber', flat=True))]
-    result = []
-    
-    for student in all:
-        points = 0
-        all_points =[int(elem) for elem in list(SendedTasks.objects.filter(snumber = student).values_list('max_point', flat=True))]
-        for point in all_points:
-            points += point
-        result.append({'student':student,'points':points})
-        Account.objects.filter(snumber = student).update(points = points)
-
+    result = Account.objects.filter(group_id = group_id)
     return render(request, 'users/group.html', {'result':result})
 
     

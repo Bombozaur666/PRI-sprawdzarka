@@ -10,7 +10,11 @@
 			{% endif %}
 			{% csrf_token %}
 			{{form|crispy}}
+			{% if user.is_staff %}
+			<button type="submit" class="btn btn-primary">Dodaj zadanie</button>
+			{% else %}
 			<button type="submit" class="btn btn-primary">Oddaj zadanie</button>
+			{% endif %}
 		</form>
 {% endblock %}
         

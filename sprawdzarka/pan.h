@@ -1,8 +1,8 @@
 #ifndef PAN_H
 #define PAN_H
 
-#define SpinVersion	"Spin Version 6.5.1 -- 20 December 2019"
-#define PanSource	"C:\\PRI-sprawdzarka\\sprawdzarka\\task\\promela\\student_files\\np02b.pml"
+#define SpinVersion	"Spin Version 6.4.9 -- 17 December 2018"
+#define PanSource	"C:\\PRI-sprawdzarka\\sprawdzarka\\task\\promela\\student_files\\np02b_CeDG6Xi.pml"
 
 #define G_long	4
 #define G_int	4
@@ -609,9 +609,9 @@ void wrap_stats(void);
 #ifndef XUSAFE
 	int q_S_check(int, int);
 	int q_R_check(int, int);
-	extern uchar q_claim[MAXQ+1];
-	extern char *q_name[MAXQ+1];
-	extern char *p_name[MAXPROC+1];
+	uchar q_claim[MAXQ+1];
+	char *q_name[MAXQ+1];
+	char *p_name[MAXPROC+1];
 #endif
 
 #ifndef NO_V_PROVISO
