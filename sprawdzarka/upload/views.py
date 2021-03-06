@@ -145,16 +145,23 @@ def plagiat(request):
                     plagiarism_coefficient = round(count_of_the_same_or_similar * 100 / total, 2)
             snum1=[str(elem) for elem in list(SendedTasks.objects.filter(task = first_file).values_list('snumber', flat=True))]
             snum2 = [str(elem) for elem in list(SendedTasks.objects.filter(task = second_file).values_list('snumber', flat=True))]
+            group_id = SendedTasks.objects.get(task = first_file)
             plagiat = Plagiat()
             plagiat.snumber1= snum1[0]
             plagiat.snumber2=snum2[0]
             plagiat.name1= first_file.lstrip('task/sendedtasks/')
             plagiat.name2= second_file.lstrip('task/sendedtasks/')
             plagiat.plagiat=plagiarism_coefficient
+            plagiat.group_id = int(group_id.group)
             plagiat.save()
         task = SendedTasks.objects.filter(task = first_file)
         task.update(has_been_tested = True)
-    
-    plagiaty = Plagiat.objects.all()
-    
-    return render(request, 'upload/plagiat.html', {'plagiaty':plagiaty})
+    if request.method == "POST":
+        form = ChooseGroup(request.POST)
+        if form.is_valid():
+            form_plagiaty = form.save(commit=False)
+            plagiaty = Plagiat.objects.filter(group_id = form_plagiaty.group_id.id)
+    else:
+        form = ChooseGroup()
+        plagiaty=[]
+    return render(request, 'upload/plagiat.html', {'plagiaty':plagiaty,'form':form})

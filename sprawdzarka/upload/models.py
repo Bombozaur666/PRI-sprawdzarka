@@ -30,6 +30,7 @@ class Plagiat(models.Model):
     name1 = models.CharField(max_length=100)
     name2 = models.CharField(max_length=100)
     plagiat = models.FloatField()
+    group_id = models.IntegerField(default=-1)
     
 class StudentsPoints(models.Model):
     id = models.IntegerField(primary_key=True)
