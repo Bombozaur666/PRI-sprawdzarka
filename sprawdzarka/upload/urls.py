@@ -17,6 +17,8 @@ urlpatterns = [
     path('tasklist/<str:file_to_open>',views.read_file2, name='task-list-teacher'),
 
     path('tasksendedchoose/', views.task_sended_choose, name='task-sended-choose'),
+    path('changepoints/<str:snumber_in_url>/<int:task_id_in_url>/',views.change_points_xml, name='change-points-xml'),
+    path('changepoints/<str:snumber_in_url>/<int:task_id_in_url>/<str:number_task_in_url>',views.change_points_xml_direct, name='change-points-xml-direct'),
 
     path('plagiat',views.plagiat, name='plagiat'),
     path('plagiat/podglad/<str:file_to_open>', views.read_file1, name='open')

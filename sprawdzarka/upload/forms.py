@@ -13,5 +13,8 @@ class TasksListForm(forms.ModelForm):
 		model = TaskList
 		fields = ('taskname','task','group_id')
 
-
+class TransformersForm(forms.Form):
+    NewPoints=forms.IntegerField(label='Nowe punkty')
+    class Meta:
+	    fields = ('NewPoints',)
 
