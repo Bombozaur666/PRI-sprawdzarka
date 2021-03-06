@@ -16,8 +16,8 @@
                     <td><center>{{ line.snumber1 }}</center></td>
                     <td><center>{{ line.snumber2 }}</center></td>
                     <td><center>{{ line.plagiat }}</center></td>
-                    <td><center><a class="btn btn-primary btn-sm" href="{% url 'open' file_to_open=line.name1 %}">Open file</a></center></td>
-                    <td><center><a class="btn btn-primary btn-sm" href="{% url 'open' file_to_open=line.name2 %}">Open file</a></center></td>
+                    <td><center><a class="btn btn-primary btn-sm" href="{% url 'open' file_to_open=line.name1 %}">Otwórz plik</a></center></td>
+                    <td><center><a class="btn btn-primary btn-sm" href="{% url 'open' file_to_open=line.name2 %}">Otwórz plik</a></center></td>
                 </tr>   
             {% endfor %}
         </table>

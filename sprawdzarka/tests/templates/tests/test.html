@@ -4,7 +4,11 @@
 <table>
 	<tr>
 		{% for id in all_ids %}
-			<td style="padding: 3px;"><a class="btn btn-outline-info" href="{% url 'test' test_id=test_id question_id=id.question_id %}">{{ id.question_id }}</a></td>
+			{% if color == 'LimeGreen' %}
+				<td style="padding: 3px;"><a style="background-color:LimeGreen" class="btn btn-outline-info" href="{% url 'test' test_id=test_id question_id=id.question_id %}">{{ id.question_id }}</a></td>
+			{% else %}
+				<td style="padding: 3px;"><a style="background-color:LightSteelBlue" class="btn btn-outline-info" href="{% url 'test' test_id=test_id question_id=id.question_id %}">{{ id.question_id }}</a></td>
+			{% endif %}
 		{% endfor %}
 	</tr>
 </table>

@@ -13,12 +13,21 @@
             {% endfor %}
         <h2>Pozostałe odpowiedzi:</h2>
     {% endif %}
-    
-    {% for answer in answers %}
-        {{ answer.content }}
+    <table>
+        {% for answer in answers %}
+        <tr>
+            <td>
+                {{ answer.who_answered }}
+            </td>
+            <td>
+                {{ answer.content  }}
+            </td>  
+        </tr>
         <br>
         <br>
     {% endfor %}
+    </table>
+    
         {{ no_answer }}
         <br>
         <br>

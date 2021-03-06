@@ -3,25 +3,20 @@
 	<table class="table">
 			<thead>
 			<tr>
-				<th>task id </th>
-				<th>snumber </th>
+				<th>Numer zadania </th>
+				<th>Numer studenta </th>
 				<th>Lista zadan</th>
-				<th>suma pkt</th>
-				<th>task</th>
+				<th>Suma pkt</th>
+				<th>Zadanie</th>
 			</tr>
 			<tbody>
 				{% for data in sended %}
-
 					<tr>
 						<td>{{data.taskid}}</td>
 						<td>{{data.snumber}}</td>
 						<td>{{data.point}}</td>
 						<td>{{data.max_point}}</td>
-						<td>
-							<a href="/{{data.task.name}}" class="btn btn-primary btn-sm"> 
-                                open file
-                            </a>
-						</td>
+						<td><a href="/{{data.task}}" class="btn btn-primary btn-sm">Otwórz plik</a></td>
 					</tr>
 				{% endfor %}
 			</tbody>

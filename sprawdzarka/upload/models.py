@@ -1,24 +1,29 @@
 from django.db import models
+from django.db.models.fields import IntegerField
+from users.models import *
 
-# Create your models here.
+
 class SendedTasks(models.Model):
     id = models.IntegerField(primary_key=True)
-    taskid = models.CharField(max_length=5)
+    taskid = models.CharField("Zadanie nr", max_length=5)
     snumber = models.CharField(max_length=6)
-    task = models.FileField(upload_to='task/sendedtasks/')
-    max_point=models.CharField(max_length=3,default="0")
-    point=models.CharField(max_length=100,default="0")
+    task = models.FileField("Plik",upload_to='task/sendedtasks/')
     has_been_tested = models.BooleanField(default=False)
-    group = models.CharField(max_length=10, default="0")
-
+    group = models.CharField(max_length=100, default="0")
+    max_point=models.IntegerField(default=0)
     class Meta:
         ordering = ('group','taskid',)
 
 class TaskList(models.Model):
     id = models.IntegerField(primary_key=True)
-    taskname = models.CharField(max_length=200, default='Brak tytułu')
+    taskname = models.CharField("Nazwa zadania", max_length=200, blank=False, default=None)
     tname = models.CharField(max_length=100)
-    task = models.FileField(upload_to='task/tasklist/')
+    task = models.FileField("Plik", upload_to='task/tasklist/')
+    group_id = models.ForeignKey(Group,on_delete=CASCADE, default='0')
+
+    def __str__(self) -> str:
+        return self.taskname
+
 
 class Plagiat(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -27,4 +32,12 @@ class Plagiat(models.Model):
     name1 = models.CharField(max_length=100)
     name2 = models.CharField(max_length=100)
     plagiat = models.FloatField()
-
+    
+class StudentsPoints(models.Model):
+    id = models.IntegerField(primary_key=True)
+    snumber=models.CharField(max_length=6)
+    taskid=models.CharField(max_length=3)
+    number_task=models.CharField(max_length=3)
+    points=models.IntegerField(default=0)
+    class Meta:
+        ordering=('taskid','snumber')

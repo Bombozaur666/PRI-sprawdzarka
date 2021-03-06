@@ -1,6 +1,7 @@
-from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.db import models
 from django.db.models.deletion import CASCADE, SET_NULL
+
 
 class Group(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -9,10 +10,12 @@ class Group(models.Model):
     term = models.CharField(max_length=4)
 
     def __str__(self) -> str:
-        return self.name
+        return self.name + '_' + self.year.replace('/','_') + '_' + self.term
 
-    def id(self):
-        return self.id
+    @property
+    def group(self):
+        return self.name + '_' + self.year.replace('/','_') + '_' + self.term
+        
 
 class MyAccountManager(BaseUserManager):
     def create_user(self, username, password, snumber):
@@ -48,7 +51,7 @@ class Account(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-    group_id = models.IntegerField(verbose_name='Grupa', default=0)
+    group_id = models.CharField(verbose_name='Grupa', max_length=100, default = '0')
     points = models.IntegerField(default=0)
 
 
@@ -67,5 +70,3 @@ class Account(AbstractBaseUser):
 	# Does this user have permission to view this app? (ALWAYS YES FOR SIMPLICITY)
     def has_module_perms(self, app_label):
         return True
-
-

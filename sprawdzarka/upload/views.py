@@ -1,30 +1,37 @@
-from rest_framework import viewsets
+import codecs, re
 from django.shortcuts import render
 from .forms import *
-from api import serializers
 from .RabinKarp import *
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
-from .models import SendedTasks,Plagiat
-from users.models import Account
 from django.contrib import messages
+from .models import *
 from .xml_metric import *
-import codecs
-
-
-class StudentViewSet(viewsets.ModelViewSet):
-
-    queryset = Account.objects.all()
-    serializer_class = serializers.StudentSerializer
 
 @staff_member_required(login_url='login')
 def task_sended_list(request):
-    sended=SendedTasks.objects.filter(max_point="0")
+    sended=SendedTasks.objects.filter(max_point="0", has_been_tested=False)
     for x in sended:
-        listapkt, punkty = return_points(x.task.name)
-        sended.update(max_point=punkty, point=listapkt)
+        suma=0
+        lista = ""
+        f = open(x.task.name, encoding="utf-8")
+        for line in f:
+            y = re.search(r'^<zadanie nr="(.+)" pkt="([0-9]+)">', line)
+            if y is not None:
+                temp=StudentsPoints()
+                print("-----------------------------")
+                print(request.user.snumber)
+                temp.snumber=request.user.snumber
+                temp.taskid=x.taskid
+                temp.number_task=str(y.group(1))
+                temp.points=int(y.group(2))
+                temp.save()
+                suma+=int(y.group(2))
+        f.close()
+        sended.update(max_point=suma)
     sended2 = SendedTasks.objects.all()
     return render(request,'upload/task_sended_list.html',{'sended': sended2})
+    
 
 @login_required
 def task_sended_upload(request):
@@ -35,11 +42,9 @@ def task_sended_upload(request):
             if SendedTasks.objects.filter(snumber = request.user.snumber, taskid = object.taskid).exists():
                 messages.warning(request,"Nie można dodać 2 razy tego samego zadania.")
             else:
-                """ plik_do_obrobki=request.FILES['task']
-                print(plik_do_obrobki.content)"""
-                handle_uploaded_file(request.FILES['task'])
-                if xmlmetricf():
+                if xmlmetricf(codecs.EncodedFile(request.FILES['task'],"utf-8")):
                     object.snumber = request.user.snumber
+                    object.group = request.user.group_id
                     object.save()
                 else:
                     messages.warning(request, "Niepoprawna metryczna XML.")
@@ -47,14 +52,6 @@ def task_sended_upload(request):
         form=SendedTasksForm()
     return render(request,'upload/task_sended_upload.html', {'form': form})
 
-@login_required
-def read_file1(request, file_to_open):
-    f = open(r'task/sendedtasks/'+file_to_open, encoding="utf-8")
-    result = []
-    for line in f:
-        result.append(line)
-    f.close()
-    return render(request,'upload/wyswietlanie.html',{'result': result},)
 
 def task_list(request):
     sended=TaskList.objects.all
@@ -64,7 +61,7 @@ def task_list_choose(request):
     return render(request,'upload/task_list_choose.html')
 
 def task_upload_choose(request):
-    return render(request,'upload/task_student_upload_choose.html')
+    return render(request,'upload/task_upload_choose.html')
 
 def task_sended_choose(request):
     return render(request,'upload/task_sended_choose.html')
@@ -83,6 +80,14 @@ def task_List_upload(request):
     else:
         form=TasksListForm()
     return render(request,'upload/task_sended_upload.html', {'form': form})
+@login_required
+def read_file1(request, file_to_open):
+    f = open(r'task/sendedtasks/'+file_to_open, encoding="utf-8")
+    result = []
+    for line in f:
+        result.append(line)
+    f.close()
+    return render(request,'upload/wyswietlanie.html',{'result': result},)
 
 @login_required
 def read_file2(request, file_to_open):

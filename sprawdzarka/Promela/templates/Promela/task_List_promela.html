@@ -1,26 +1,27 @@
 {% extends "api/base.html" %}
 {% block content %}
-	<table class="table">
-			<thead>
-			<tr>
-				<th>task name | </th>
-				<th>task | </th>
-				<th>Zadaj pytanie</th>
-			</tr>
-			<tbody>
-				{% for data in sended %}
-					<tr>
-						<td>{{data.taskname}}</td>
-						<td>
-							<a href="/{{data.task.name}}" class="btn btn-primary btn-sm"> 
-                                open file
-                            </a>
-						</td>
-						<td><a class="btn btn-outline-info" href="{% url 'ask_question' id=data.id %}">Zadaj pytanie prowadzącemu</a></td>
-					</tr>
-				{% endfor %}
-			</tbody>
-			</thead>
-		</table>
+<table class="table">
+	<thead>
+	<tr>
+		<th>Nazwa zadania | </th>
+		{% if user.is_staff %}
+		<th>LTL plik</th>
+		{% else %}
+		<th>Zadaj pytanie</th>
+		{% endif %}
+	</tr>
+	<tbody>
+	{% for data in sended %}
+	<tr>
+		<td>{{data.task_name}}</td>
+			{% if user.is_staff %}
+			<td><a href="{% url 'ltl-open' file_to_open=data.file.name %}" class="btn btn-primary btn-sm">Otwórz plik</a></td>
+			{% else %}
+			<td><a class="btn btn-outline-info" href="{% url 'ask_question' id=data.id %}">Zadaj pytanie prowadzącemu</a></td>
+			{% endif %}
+	</tr>
+	{% endfor %}
+	</tbody>
+</thead>
+</table>
 {% endblock %}
-

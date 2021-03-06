@@ -2,11 +2,6 @@ from upload import views
 from django.urls import path
 from rest_framework import routers
 
-router = routers.DefaultRouter()
-router.register(r'students', views.StudentViewSet)
-
-# Wire up our API using automatic URL routing.
-# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('upload/',views.task_student_sended_choose, name='upload'),
     path('uploadxml/', views.task_sended_upload, name='uploadxml'),
