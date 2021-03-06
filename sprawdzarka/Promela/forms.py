@@ -13,3 +13,7 @@ class StudentTaskForm(forms.ModelForm):
     class Meta:
         model = StudentTask
         fields = ('task_file','task_id')
+class TransformersForm(forms.Form):
+    NewPoints=forms.IntegerField(label='Nowe punkty')
+    class Meta:
+	    fields = ('NewPoints',)

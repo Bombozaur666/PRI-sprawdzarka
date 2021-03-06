@@ -22,7 +22,10 @@ def register(request):
 
 @login_required
 def profile(request):
-    group = Group.objects.get(id = request.user.group_id)
+    if not request.user.is_staff:
+        group = Group.objects.get(id = request.user.group_id)
+    else:
+        group = ''
     if request.method == 'POST':
         form = PasswordChangeForm(request.user,request.POST)
         if form.is_valid():

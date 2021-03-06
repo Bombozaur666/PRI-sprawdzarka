@@ -1,5 +1,5 @@
 import codecs, re
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from .forms import *
 from .RabinKarp import *
 from django.contrib.admin.views.decorators import staff_member_required
@@ -31,22 +31,25 @@ def change_points_xml_direct(request,snumber_in_url,task_id_in_url,number_task_i
     return render(request,'upload/transformers.html', {'form': form,'snumber':snumber_in_url,'zadanie':task_id_in_url})
 @staff_member_required(login_url='login')
 def task_sended_list(request):
-    sended=SendedTasks.objects.filter(has_been_tested=False)
+    sended=SendedTasks.objects.filter(max_point="0", has_been_tested=False)
     for x in sended:
+        suma=0
         lista = ""
         f = open(x.task.name, encoding="utf-8")
         for line in f:
             y = re.search(r'^<zadanie nr="(.+)" pkt="([0-9]+)">', line)
             if y is not None:
                 temp=StudentsPoints()
-                temp.snumber=x.snumber
+                print("-----------------------------")
+                print(request.user.snumber)
+                temp.snumber=request.user.snumber
                 temp.taskid=x.taskid
                 temp.number_task=str(y.group(1))
                 temp.points=int(y.group(2))
                 temp.save()
-        x.has_been_tested=True
-        x.save()
+                suma+=int(y.group(2))
         f.close()
+        sended.update(max_point=suma)
     sended2 = SendedTasks.objects.all()
     return render(request,'upload/task_sended_list.html',{'sended': sended2})
     
@@ -70,20 +73,20 @@ def task_sended_upload(request):
         form=SendedTasksForm()
     return render(request,'upload/task_sended_upload.html', {'form': form})
 
-@login_required
+
 def task_list(request):
     sended=TaskList.objects.all
     return render(request,'upload/task_List.html',{'sended': sended})
-@login_required
+
 def task_list_choose(request):
     return render(request,'upload/task_list_choose.html')
-@login_required
+
 def task_upload_choose(request):
     return render(request,'upload/task_upload_choose.html')
-@login_required
+
 def task_sended_choose(request):
     return render(request,'upload/task_sended_choose.html')
-@login_required
+
 def task_student_sended_choose(request):
     return render(request,'upload/task_student_upload_choose.html')
 
@@ -98,7 +101,6 @@ def task_List_upload(request):
     else:
         form=TasksListForm()
     return render(request,'upload/task_sended_upload.html', {'form': form})
-
 @login_required
 def read_file1(request, file_to_open):
     f = open(r'task/sendedtasks/'+file_to_open, encoding="utf-8")
@@ -164,16 +166,23 @@ def plagiat(request):
                     plagiarism_coefficient = round(count_of_the_same_or_similar * 100 / total, 2)
             snum1=[str(elem) for elem in list(SendedTasks.objects.filter(task = first_file).values_list('snumber', flat=True))]
             snum2 = [str(elem) for elem in list(SendedTasks.objects.filter(task = second_file).values_list('snumber', flat=True))]
+            group_id = SendedTasks.objects.get(task = first_file)
             plagiat = Plagiat()
             plagiat.snumber1= snum1[0]
             plagiat.snumber2=snum2[0]
             plagiat.name1= first_file.lstrip('task/sendedtasks/')
             plagiat.name2= second_file.lstrip('task/sendedtasks/')
             plagiat.plagiat=plagiarism_coefficient
+            plagiat.group_id = int(group_id.group)
             plagiat.save()
         task = SendedTasks.objects.filter(task = first_file)
         task.update(has_been_tested = True)
-    
-    plagiaty = Plagiat.objects.all()
-    
-    return render(request, 'upload/plagiat.html', {'plagiaty':plagiaty})
+    if request.method == "POST":
+        form = ChooseGroup(request.POST)
+        if form.is_valid():
+            form_plagiaty = form.save(commit=False)
+            plagiaty = Plagiat.objects.filter(group_id = form_plagiaty.group_id.id)
+    else:
+        form = ChooseGroup()
+        plagiaty=[]
+    return render(request, 'upload/plagiat.html', {'plagiaty':plagiaty,'form':form})

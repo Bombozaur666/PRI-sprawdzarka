@@ -7,20 +7,26 @@
     {% if check %}
         <h2>Odpowiedzi prowadzącego:</h2>
             {% for answer in teacher_answers %}
-                {{ answer.content }}
+                <p style="color: yellow; background-color:Maroon;font-size:x-large;text-align:center">{{ answer.content }}</p>
                 <br>
                 <br>
             {% endfor %}
         <h2>Pozostałe odpowiedzi:</h2>
     {% endif %}
-    <table>
+    <table style="width: 50%;">
+        <th>Kto odpowiedział</th>
+        <th>   |Odpowiedź</th>
+        <th>   |Data odpowiedzi  </th>
         {% for answer in answers %}
         <tr>
             <td>
                 {{ answer.who_answered }}
             </td>
             <td>
-                {{ answer.content  }}
+                {{ answer.content }}
+            </td>  
+            <td>
+                {{ answer.date }}
             </td>  
         </tr>
         <br>
@@ -31,5 +37,5 @@
         {{ no_answer }}
         <br>
         <br>
-    <a class="btn btn-outline-info" href= "{% url 'add_answer' id=this_question.id %}">Dodaj odpowiedź</a>
+    <a class="btn btn-outline-info" href= "{% url 'add_answer' choose=choose id=this_question.id %}">Dodaj odpowiedź</a>
 {% endblock %}

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from .forms import *
@@ -8,6 +8,19 @@ import os
 
 def filename(value):
     return os.path.basename(value.file.name)
+
+@staff_member_required(login_url='login')
+def change_points_promela_direct(request,id_in_url):
+    if request.method=='POST':
+        form = TransformersForm(request.POST)
+        if form.is_valid():
+            object=StudentTask.objects.get(id=id_in_url)
+            object.points=form.cleaned_data['NewPoints']
+            object.save()
+            return redirect('promela-sended-list' )
+    else:
+        form=TransformersForm()
+    return render(request,'upload/transformers.html', {'form': form})
 
 @staff_member_required(login_url='login')
 def task_promela_upload_teacher(request):

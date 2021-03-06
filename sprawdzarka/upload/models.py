@@ -8,6 +8,7 @@ class TaskList(models.Model):
     tname = models.CharField(max_length=100)
     task = models.FileField("Plik", upload_to='task/tasklist/')
     group_id = models.ForeignKey(Group,on_delete=CASCADE, default='0')
+
     def __str__(self) -> str:
         return self.taskname
 
@@ -18,17 +19,10 @@ class SendedTasks(models.Model):
     task = models.FileField("Plik",upload_to='task/sendedtasks/')
     has_been_tested = models.BooleanField(default=False)
     group = models.CharField(max_length=100, default="0")
+    max_point=models.IntegerField(default=0)
     class Meta:
         ordering = ('group','taskid',)
-
-class Plagiat(models.Model):
-    id = models.IntegerField(primary_key=True)
-    snumber1 = models.CharField(max_length=6)
-    snumber2 = models.CharField(max_length=6)
-    name1 = models.CharField(max_length=100)
-    name2 = models.CharField(max_length=100)
-    plagiat = models.FloatField()
-    
+        
 class StudentsPoints(models.Model):
     id = models.IntegerField(primary_key=True)
     snumber=models.CharField(max_length=6)
@@ -37,3 +31,15 @@ class StudentsPoints(models.Model):
     points=models.IntegerField(default=0)
     class Meta:
         ordering=('taskid','snumber')
+
+class Plagiat(models.Model):
+    id = models.IntegerField(primary_key=True)
+    snumber1 = models.CharField(max_length=6)
+    snumber2 = models.CharField(max_length=6)
+    name1 = models.CharField(max_length=100)
+    name2 = models.CharField(max_length=100)
+    plagiat = models.FloatField()
+    group_id = models.IntegerField(default=-1)
+    class Meta:
+        ordering=('-plagiat',)
+    

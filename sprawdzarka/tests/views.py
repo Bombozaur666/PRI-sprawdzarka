@@ -4,7 +4,6 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from .models import *
 from .forms import *
-from django.contrib import messages
 from django.utils import timezone
 
 def check_metric(path):
@@ -51,9 +50,11 @@ def load_data_from_txt(path):
                 answers.append([question_id,line,chr(letter),False])
             letter += 1
     return (questions,answers)
+
 @login_required
 def tests_home(request):
     return render(request, 'tests/home.html')
+
 @login_required
 def all_tests(request):
     if request.user.is_staff:
@@ -61,6 +62,7 @@ def all_tests(request):
     else:
         all = TestFileModel.objects.filter(group_id = request.user.group_id)
     return render(request, 'tests/all.html', {'all': all})
+
 @staff_member_required
 def new_test(request):
     if request.method=='POST':
@@ -68,28 +70,26 @@ def new_test(request):
         if form.is_valid():
             test_file = form.save(commit=False)
             path = str(test_file.file)
-            #if check_metric(path):
-            form.save()
-            questions, answers = load_data_from_txt(path)
-            id = TestFileModel.objects.get(name = test_file.name)
-            for line in questions:
-                new_question = TestQuestionModel()
-                new_question.test_id = int(id.id)
-                new_question.question_id = line[0]
-                new_question.content = line[1]
-                new_question.save()
-            for line in answers:
-                new_answer = QuestionAnswerModel()
-                new_answer.test_id = int(id.id)
-                new_answer.question_id = line[0]
-                new_answer.content = line[1]
-                new_answer.letter = line[2]
-                new_answer.is_right = line[3]
-                new_answer.save()
-                
-            return redirect('tests_home')
-            #else:
-            #    messages.warning('Niepoprawna metryczka.')
+            if check_metric(path):
+                form.save()
+                questions, answers = load_data_from_txt(path)
+                id = TestFileModel.objects.get(name = test_file.name)
+                for line in questions:
+                    new_question = TestQuestionModel()
+                    new_question.test_id = int(id.id)
+                    new_question.question_id = line[0]
+                    new_question.content = line[1]
+                    new_question.save()
+                for line in answers:
+                    new_answer = QuestionAnswerModel()
+                    new_answer.test_id = int(id.id)
+                    new_answer.question_id = line[0]
+                    new_answer.content = line[1]
+                    new_answer.letter = line[2]
+                    new_answer.is_right = line[3]
+                    new_answer.save()
+                    
+                return redirect('tests_home')
     else:
         form = TestFileForm()
     return render(request, 'tests/new_test.html', {'form':form})
@@ -119,11 +119,9 @@ def test(request, test_id, question_id):
                         obj.test_id = test_id
                         obj.question_id = question_id
                         obj.save()
-                        #form.save()
                     if timezone.now() >= date_start and timezone.now() <= date_end:
                         if TestQuestionModel.objects.filter(test_id = test_id, question_id = question_id+1).exists():
                             return redirect('/tests/'+str(test_id)+'/'+str(question_id+1))
-                
                         else:
                             '''
                             points = 0
@@ -156,6 +154,7 @@ def test(request, test_id, question_id):
         return render(request, 'tests/denied.html')
 
     return render(request,'tests/test.html', {'form':form, 'question':question, 'all_ids':all_ids, 'test_id':test_id, 'color':color})
+
 @login_required
 def confirm_test(request, test_id):
     if not StudentPointsTest.objects.filter(test_id = test_id, snumber = request.user.snumber).exists():
@@ -164,6 +163,7 @@ def confirm_test(request, test_id):
     else:
         return render(request, 'tests/denied.html')
     return render(request, 'tests/confirm.html', {'answers':answers,'test_id':test_id, 'all_ids':all_ids})
+
 @login_required
 def end_test(request, test_id):
     if not StudentPointsTest.objects.filter(test_id = test_id, snumber = request.user.snumber).exists():

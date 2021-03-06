@@ -15,6 +15,10 @@ class Group(models.Model):
     @property
     def group(self):
         return self.name + '_' + self.year.replace('/','_') + '_' + self.term
+
+    @property
+    def str_id(self):
+        return str(self.id)
         
 
 class MyAccountManager(BaseUserManager):

@@ -9,16 +9,16 @@
             <th>Wyświetl  </th>
         </tr>
         {% for data in all %}
-        <tr>
+       <tr>
             <td>{{data.task_id }}</td>
             <td>{{data.asking_student}}</td>
-            <td>{{data.date}}</td>
+        <td>{{data.date}}</td>
             {% if data.has_teacher_answer == True %}
             <td>Tak</td>
             {% else %}
             <td>Nie</td>
             {% endif %}
-            <td><a class="btn btn-outline-info" href="{% url 'question' id=data.id %}">Zobacz pytanie</a></td>
+            <td><a class="btn btn-outline-info" href="{% url 'question' choose=choose id=data.id %}">Zobacz pytanie</a></td>
         </tr>
         {% endfor %}
     </table>
