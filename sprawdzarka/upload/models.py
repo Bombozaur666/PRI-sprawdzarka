@@ -2,18 +2,6 @@ from django.db import models
 from django.db.models.fields import IntegerField
 from users.models import *
 
-
-class SendedTasks(models.Model):
-    id = models.IntegerField(primary_key=True)
-    taskid = models.CharField("Zadanie nr", max_length=5)
-    snumber = models.CharField(max_length=6)
-    task = models.FileField("Plik",upload_to='task/sendedtasks/')
-    has_been_tested = models.BooleanField(default=False)
-    group = models.CharField(max_length=100, default="0")
-    max_point=models.IntegerField(default=0)
-    class Meta:
-        ordering = ('group','taskid',)
-
 class TaskList(models.Model):
     id = models.IntegerField(primary_key=True)
     taskname = models.CharField("Nazwa zadania", max_length=200, blank=False, default=None)
@@ -24,6 +12,16 @@ class TaskList(models.Model):
     def __str__(self) -> str:
         return self.taskname
 
+class SendedTasks(models.Model):
+    id = models.IntegerField(primary_key=True)
+    taskid = models.ForeignKey(TaskList, on_delete=CASCADE)
+    snumber = models.CharField(max_length=6)
+    task = models.FileField("Plik",upload_to='task/sendedtasks/')
+    has_been_tested = models.BooleanField(default=False)
+    group = models.CharField(max_length=100, default="0")
+    max_point=models.IntegerField(default=0)
+    class Meta:
+        ordering = ('group','taskid',)
 
 class Plagiat(models.Model):
     id = models.IntegerField(primary_key=True)
