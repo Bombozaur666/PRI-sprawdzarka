@@ -1,18 +1,9 @@
 {% extends "api/base.html" %}
+{% load crispy_forms_tags  %}
 {% block content %}
-<form method="POST" name='question_choose_form'>
-    {% csrf_token %}
-    <p>Wybierz zadanie:</p>
-    <select name="ftask_id">
-        {% for task in tasks %}
-            <option value = '{{task.id}}'>{{task.id}}</option>
-        {% endfor %}
-    </select>
-    <br>
-    <br>
-    <textarea rows="4" cols="50" id="fcontent" name="fcontent">Treść pytania.</textarea>
-    <br>
-    <br>
-    <input type="submit" class="btn btn-outline-info" value="Zadaj pytanie">
-</form>
+    <form method="POST" >
+        {% csrf_token %}
+        {{ form|crispy }}
+        <input type="submit" class="btn btn-outline-info" value="Zadaj pytanie">
+    </form>
 {% endblock %}

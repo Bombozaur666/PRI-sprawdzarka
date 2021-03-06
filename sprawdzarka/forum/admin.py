@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import *
 
-admin.site.register(QuestionXML)
-admin.site.register(AnswerXML)
+admin.site.register(QuestionXml)
+admin.site.register(QuestionPromela)
+admin.site.register(Answer)

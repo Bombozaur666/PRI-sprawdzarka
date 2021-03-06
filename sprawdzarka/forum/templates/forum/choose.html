@@ -1,5 +1,5 @@
 {% extends "api/base.html" %}
 {% block content %}
-<a class="btn btn-outline-info" href="{% url 'home'%}">Pytania do sprawozdań</a><br><br>
-<a class="btn btn-outline-info" href="{% url 'home_promela'%}">Pytania do promeli</a><br><br>
+<a class="btn btn-outline-info" href="{% url 'home' choose='xml'%}">Sprawozdania</a><br><br>
+<a class="btn btn-outline-info" href="{% url 'home' choose='promela'%}">Promela</a><br><br>
 {% endblock %}

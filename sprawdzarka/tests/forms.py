@@ -1,5 +1,4 @@
 from django.db.models import fields
-from forum.views import question
 from django import forms
 from .models import *
 

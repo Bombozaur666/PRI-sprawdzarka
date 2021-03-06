@@ -1,27 +1,51 @@
+
+
 {% extends "api/base.html" %}
 {% block content %}
+{% if user.is_staff %}
 <table class="table">
 	<thead>
 	<tr>
 		<th>Nazwa zadania | </th>
-		{% if user.is_staff %}
-		<th>LTL plik</th>
-		{% else %}
-		<th>Zadaj pytanie</th>
-		{% endif %}
+		<th>Zadanie | </th>
+		<th>Grupa</th>
 	</tr>
 	<tbody>
-	{% for data in sended %}
-	<tr>
-		<td>{{data.task_name}}</td>
-			{% if user.is_staff %}
-			<td><a href="{% url 'ltl-open' file_to_open=data.file.name %}" class="btn btn-primary btn-sm">Otwórz plik</a></td>
-			{% else %}
-			<td><a class="btn btn-outline-info" href="{% url 'ask_question' id=data.id %}">Zadaj pytanie prowadzącemu</a></td>
-			{% endif %}
-	</tr>
-	{% endfor %}
+		{% for data in sended %}
+			<tr>
+
+					<td>{{data.task_name}}</td>
+					<td><a href="/{{data.task.name}}" class="btn btn-primary btn-sm">Otwórz plik</a></td>
+					<td>{{data.group_id}}</td>
+
+			</tr>
+		{% endfor %}
 	</tbody>
-</thead>
+	</thead>
 </table>
+
+{% else %}
+
+	<table class="table">
+			<thead>
+			<tr>
+				<th>Nazwa zadania | </th>
+				<th>Zadanie | </th>
+				<th>Zadaj pytanie</th>
+
+			</tr>
+			<tbody>
+				{% for data in sended %}
+					<tr>
+						{% if data.group_id.str_id == user.group_id %}
+							<td>{{data.task_name}}</td>
+							<td><a class="btn btn-outline-info" href="{% url 'ask_question' choose='xml' id=data.id %}">Zadaj pytanie prowadzącemu</a></td>
+							<td><a href="/{{data.task.name}}" class="btn btn-primary btn-sm">Otwórz plik</a></td>
+						{% endif %}
+					</tr>
+				{% endfor %}
+			</tbody>
+			</thead>
+		</table>
+{% endif %}
 {% endblock %}
