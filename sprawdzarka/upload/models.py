@@ -19,7 +19,6 @@ class SendedTasks(models.Model):
     task = models.FileField("Plik",upload_to='task/sendedtasks/')
     has_been_tested = models.BooleanField(default=False)
     group = models.CharField(max_length=100, default="0")
-    max_point=models.IntegerField(default=0)
     class Meta:
         ordering = ('group','taskid',)
         

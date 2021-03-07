@@ -52,7 +52,6 @@ def task_sended_list(request):
         x.has_been_tested= True
         x.save()
         f.close()
-        sended.update(max_point=suma)
     sended2 = SendedTasks.objects.all()
     return render(request,'upload/task_sended_list.html',{'sended': sended2})
     
@@ -98,9 +97,15 @@ def task_List_upload(request):
     if request.method=='POST':
         form = TasksListForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save(commit=False)
-            form.tname = request.user.username
-            form.save()
+            mo = re.compile(r'^[\w_\s]*$')
+            check_name = form.cleaned_data['taskname']
+            res = re.findall(mo, check_name)
+            if not res:
+                messages.warning(request, "Niepoprawna nazwa zadania.")
+            else:
+                form.save(commit=False)
+                form.tname = request.user.username
+                form.save()
     else:
         form=TasksListForm()
     return render(request,'upload/task_sended_upload.html', {'form': form})

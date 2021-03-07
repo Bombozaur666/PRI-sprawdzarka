@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import *
 from .promeli_filechcker import *
 from django.contrib import messages
-import os
+import os, re
 
 def filename(value):
     return os.path.basename(value.file.name)
@@ -31,9 +31,15 @@ def task_promela_upload_teacher(request):
     if request.method=='POST':
         form = TeacherTaskForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save(commit=False)
-            form.tname = request.user.username
-            form.save()
+            mo = re.compile(r'^[\w_\s]*$')
+            check_name = form.cleaned_data['task_name']
+            res = re.findall(mo, check_name)
+            if not res:
+                messages.warning(request, "Niepoprawna nazwa zadania.")
+            else:
+                form.save(commit=False)
+                form.tname = request.user.username
+                form.save()
     else:
         form=TeacherTaskForm()
     return render(request,'Promela/task_promela_upload.html', {'form': form})
