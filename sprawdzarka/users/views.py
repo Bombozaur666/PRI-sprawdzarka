@@ -32,16 +32,20 @@ def profile(request):
         group = Group.objects.get(id = request.user.group_id)
     else:
         group = ''
+    return render(request, 'users/profile.html', {'group':group})
+@login_required
+def change_password(request):
     if request.method == 'POST':
         form = PasswordChangeForm(request.user,request.POST)
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)
             messages.success(request, 'Pomyślnie zmieniono hasło!')
+            return redirect('profile')
+            
     else:
         form = PasswordChangeForm(request.user)
-    return render(request, 'users/profile.html', {'group':group, 'form':form})
-
+    return render(request, 'users/changepasswd.html', {'form':form})
 
 def groups(request):
     all = Group.objects.all()

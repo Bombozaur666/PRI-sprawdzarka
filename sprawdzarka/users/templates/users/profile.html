@@ -8,10 +8,6 @@
         <h1>Grupa: {{ group.group }}</h1>
         <h1>Liczba punktów: {{ user.points }}</h1>
     {% endif %}
-
-    <form method="POST">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <button class="btn btn-outline-info" type="submit">Zmień hasło</button>
-    </form>
+<a class="btn btn-outline-info" href="{% url 'change-password'%}">Zmień hasło</a>
 {% endblock content %}
+

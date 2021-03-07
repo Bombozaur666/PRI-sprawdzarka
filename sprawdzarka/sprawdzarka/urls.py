@@ -8,6 +8,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', user_views.register, name='register'),
     path('profile/', user_views.profile, name='profile'),
+    path('profile/changepassword', user_views.change_password, name='change-password'),
     path('grupy/',user_views.groups, name = 'all_groups'),
     path('grupy/<str:group_id>',user_views.all_students, name = 'group'),
     path('nowa_grupa',user_views.new_group, name = 'new_group'),
