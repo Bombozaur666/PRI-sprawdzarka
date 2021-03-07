@@ -1,12 +1,12 @@
 {% extends "api/base.html" %}
 {% block content %}
 <a class="btn btn-outline-info" href="{% url 'tests_home' %}">Wróć</a></td>
-<table>
+<table class="table">
     <tr>
         <th>Nazwa testu</th>
-        <th> | Data rozpoczęcia</th>
-        <th> | Data zakończenia</th>
-        <th> | Rozwiąż test</th>
+        <th>  Data rozpoczęcia</th>
+        <th>  Data zakończenia</th>
+        <th>  Rozwiąż test</th>
     </tr>
     {% for test in all %}
     <tr>

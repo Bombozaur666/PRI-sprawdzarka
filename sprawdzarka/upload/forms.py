@@ -8,11 +8,11 @@ class DateInput(forms.DateInput):
 
 class ChooseGroup(forms.Form):
     this_choices = []
-    group_names=[str(elem) for elem in list(Group.objects.all().values_list('name', flat=True))]
+    group_names=Group.objects.all()
     group_ids=[str(elem) for elem in list(Group.objects.all().values_list('id', flat=True))]
     if len(group_ids) != 0:
         for i,j in zip(group_names,group_ids):
-            this_choices.append((j,i))
+            this_choices.append((j,i.group))
     group = forms.ChoiceField(choices=this_choices)
     plagiarism = forms.FloatField()
     class Meta:

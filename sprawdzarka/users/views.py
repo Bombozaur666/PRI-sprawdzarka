@@ -49,6 +49,7 @@ def change_password(request):
         form = PasswordChangeForm(request.user)
     return render(request, 'users/changepasswd.html', {'form':form})
 
+@staff_member_required
 def groups(request):
     all = Group.objects.all()
     return render(request, 'users/groups.html', {'all': all})
@@ -64,7 +65,7 @@ def new_group(request):
             if not res:
                 messages.warning(request, "Niepoprawna nazwa grupy.")
             else:
-                mo_n = re.compile(r'[0-9]{4}\/[0-9]{4}')
+                mo_n = re.compile(r'^[0-9]{4}\/[0-9]{4}$')
                 check_year = form.cleaned_data['year']
                 res_n = re.findall(mo_n, check_year)
                 if not res_n:

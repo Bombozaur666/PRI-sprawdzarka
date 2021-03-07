@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import *
 from .xml_metric import *
+from django.utils import timezone
 
 @staff_member_required(login_url='login')
 def change_points_xml(request,snumber_in_url,task_id_in_url):
@@ -64,6 +65,8 @@ def task_sended_upload(request):
             object = form.save(commit=False)
             if SendedTasks.objects.filter(snumber = request.user.snumber, taskid = object.taskid).exists():
                 messages.warning(request,"Nie można dodać 2 razy tego samego zadania.")
+            elif TaskList.objects.get(id = object.taskid.id).date_end < timezone.now():
+                messages.warning(request,"Nie można oddać zadania po czasie.")
             else:
                 if xmlmetricf(codecs.EncodedFile(request.FILES['task'],"utf-8")):
                     object.snumber = request.user.snumber
