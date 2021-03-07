@@ -1,4 +1,5 @@
 import codecs, re
+from sys import stdout
 from django.shortcuts import render, redirect
 from .forms import *
 from .RabinKarp import *
@@ -11,27 +12,29 @@ from .xml_metric import *
 @staff_member_required(login_url='login')
 def change_points_xml(request,snumber_in_url,task_id_in_url):
     PointsToShow=StudentsPoints.objects.filter(snumber=snumber_in_url, taskid=task_id_in_url)
+    task_to_html=StudentsPoints.objects.filter(snumber=snumber_in_url, taskid=task_id_in_url).first()
     suma=0
     print(task_id_in_url)
     for point in PointsToShow:
         suma+=point.points
-    return render(request,'upload/changepointsxml.html', {'PointsToShow':PointsToShow,'suma':suma})
+    return render(request,'upload/changepointsxml.html', {'PointsToShow':PointsToShow,'suma':suma, 'snumber':snumber_in_url, 'task_to_html':task_to_html})
 
 @staff_member_required(login_url='login')
 def change_points_xml_direct(request,snumber_in_url,task_id_in_url,number_task_in_url):
+    object=StudentsPoints.objects.get(snumber=snumber_in_url,taskid=task_id_in_url,number_task=number_task_in_url)
+    old_points=object.points
     if request.method=='POST':
         form = TransformersForm(request.POST)
-        if form.is_valid():
-            object=StudentsPoints.objects.get(snumber=snumber_in_url,taskid=task_id_in_url,number_task=number_task_in_url)
+        if form.is_valid():         
             object.points=form.cleaned_data['NewPoints']
             object.save()
             return redirect('change-points-xml', snumber_in_url=snumber_in_url, task_id_in_url=task_id_in_url )
     else:
         form=TransformersForm()
-    return render(request,'upload/transformers.html', {'form': form,'snumber':snumber_in_url,'zadanie':task_id_in_url})
+    return render(request,'upload/transformers.html', {'form': form,'snumber':snumber_in_url,'zadanie':task_id_in_url, 'old_points':old_points})
 @staff_member_required(login_url='login')
 def task_sended_list(request):
-    sended=SendedTasks.objects.filter(max_point="0", has_been_tested=False)
+    sended=SendedTasks.objects.filter( has_been_tested=False)
     for x in sended:
         suma=0
         lista = ""
@@ -40,14 +43,14 @@ def task_sended_list(request):
             y = re.search(r'^<zadanie nr="(.+)" pkt="([0-9]+)">', line)
             if y is not None:
                 temp=StudentsPoints()
-                print("-----------------------------")
-                print(request.user.snumber)
-                temp.snumber=request.user.snumber
+                temp.snumber=x.snumber
                 temp.taskid=x.taskid
                 temp.number_task=str(y.group(1))
                 temp.points=int(y.group(2))
                 temp.save()
                 suma+=int(y.group(2))
+        x.has_been_tested= True
+        x.save()
         f.close()
         sended.update(max_point=suma)
     sended2 = SendedTasks.objects.all()

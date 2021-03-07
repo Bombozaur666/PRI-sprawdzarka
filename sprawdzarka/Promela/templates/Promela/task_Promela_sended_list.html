@@ -8,6 +8,7 @@
 				<th>Suma pkt</th>
 				<th>Oddane zadanie</th>
 				<th>Plik wyjściowy</th>
+				<th>Edycja zadania</th>
 			</tr>
 			<tbody>
 				{% for data in sended %}
@@ -15,8 +16,9 @@
 						<td>{{data.task_id}}</td>
 						<td>{{data.snumber}}</td>
 						<td>{{data.points}}</td>
-						<td><a href="{% url 'promela-sended-task' file_to_open=data.task_file.name %}" class="btn btn-primary btn-sm">Otwórz plik</a></td>
-						<td><a href="{% url 'promela-sended-task' file_to_open=data.output_file.name %}" class="btn btn-primary btn-sm">Otwórz plik</a></td>
+						<td><a class="btn btn-outline-info" href="{% url 'promela-sended-task' file_to_open=data.task_file.name %}" class="btn btn-primary btn-sm">Otwórz plik</a></td>
+						<td><a class="btn btn-outline-info" href="{% url 'promela-sended-task' file_to_open=data.output_file.name %}" class="btn btn-primary btn-sm">Otwórz plik</a></td>
+						<td><a class="btn btn-outline-info" href="{% url 'change-points-promela-direct' id_in_url=data.id  %}">Zobacz punktację</a></td>
 					</tr>
 				{% endfor %}
 			</tbody>

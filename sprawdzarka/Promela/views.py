@@ -11,6 +11,10 @@ def filename(value):
 
 @staff_member_required(login_url='login')
 def change_points_promela_direct(request,id_in_url):
+    object=StudentTask.objects.get(id=id_in_url)
+    snumber_in_url=object.snumber
+    task_id_in_url=object.task_id
+    old_points=object.points
     if request.method=='POST':
         form = TransformersForm(request.POST)
         if form.is_valid():
@@ -20,7 +24,7 @@ def change_points_promela_direct(request,id_in_url):
             return redirect('promela-sended-list' )
     else:
         form=TransformersForm()
-    return render(request,'upload/transformers.html', {'form': form})
+    return render(request,'upload/transformers.html', {'form': form,'snumber':snumber_in_url,'zadanie':task_id_in_url, 'old_points':old_points})
 
 @staff_member_required(login_url='login')
 def task_promela_upload_teacher(request):

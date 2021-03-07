@@ -5,18 +5,16 @@
 			<tr>
 				<th>Numer zadania </th>
 				<th>Numer studenta </th>
-				<th>Lista zadan</th>
-				<th>Suma pkt</th>
 				<th>Zadanie</th>
+				<th>Zobacz punktację</th>
 			</tr>
 			<tbody>
 				{% for data in sended %}
 					<tr>
 						<td>{{data.taskid}}</td>
 						<td>{{data.snumber}}</td>
-						<td>{{data.point}}</td>
-						<td>{{data.max_point}}</td>
 						<td><a href="/{{data.task}}" class="btn btn-primary btn-sm">Otwórz plik</a></td>
+						<td><a class="btn btn-outline-info" href="{% url 'change-points-xml' snumber_in_url=data.snumber task_id_in_url=data.taskid.id %}">Zobacz punktację</a></td>
 					</tr>
 				{% endfor %}
 			</tbody>
