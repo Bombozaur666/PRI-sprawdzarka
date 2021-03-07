@@ -29,7 +29,7 @@
           {% if user.is_staff %}
           <a class="nav-item nav-link" href="{% url 'plagiat' %}">Plagiat</a>
           <a class="nav-item nav-link" href="{% url 'task-list-choose' %}">Lista zadań</a>
-          <a class="nav-item nav-link" href="{% url 'all_groups' %}">Grupy zajęciowe</a>
+          <a class="nav-item nav-link" href="{% url 'groups_choose' %}">Grupy zajęciowe</a>
           <a class="nav-item nav-link" href="{% url 'task-upload-choose' %}">Nowe zadanie otwarte</a>
           <a class="nav-item nav-link" href="{% url 'task-sended-choose' %}">Oddane zadania studentów</a>
           <a class="nav-item nav-link" href="{% url 'forum' %}">Forum</a>
@@ -40,7 +40,6 @@
           <a class="nav-item nav-link" href="{% url 'forum' %}">Forum</a>
           <a class="nav-item nav-link" href="{% url 'tests_home' %}">Testy</a>
           {% else %}
-          <a class="nav-item nav-link" href="{% url 'about'%}">Twórcy</a> 
           {% endif %}
         </div>
         <!-- Navbar Right Side -->

@@ -11,6 +11,10 @@ class TestFileForm(forms.ModelForm):
     class Meta:
         model = TestFileModel
         fields = ('file', 'name', 'date_start', 'date_end', 'group_id')
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        active_groups = Group.objects.filter(is_active = True)
+        self.fields['group_id'].queryset  = active_groups
 
 class TestViewForm(forms.ModelForm):
 

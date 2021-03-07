@@ -14,7 +14,7 @@ def register(request):
     if request.method == "POST":
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            mo = re.compile(r'[0-9]{6}')
+            mo = re.compile(r'^[0-9]{6}$')
             check_snumber = form.cleaned_data['snumber']
             res = re.findall(mo, check_snumber)
             if not res:
@@ -34,12 +34,12 @@ def profile(request):
         group = Group.objects.get(id = request.user.group_id)
     else:
         group = ''
-    students = Account.objects.filter(group_id = group)
+    students = Account.objects.filter(group_id = request.user.group_id)
     result = []
+    student_points = 0
     for student in students:
         all_points_xml = StudentsPoints.objects.filter(snumber = student.snumber)
-        all_points_promela = StudentTask.objects.filter(snumber = student.snumber)
-        student_points = 0
+        all_points_promela = StudentTask.objects.filter(snumber = student.snumber) 
         for i in all_points_xml:
             student_points += i.points
         for i in all_points_promela:
@@ -47,6 +47,7 @@ def profile(request):
         student_points+=student.points
         result.append([student.snumber,student_points])
     return render(request, 'users/profile.html', {'group':group, 'student_points':student_points})
+
 @login_required
 def change_password(request):
     if request.method == 'POST':
@@ -62,9 +63,18 @@ def change_password(request):
     return render(request, 'users/changepasswd.html', {'form':form})
 
 @staff_member_required
-def groups(request):
+def active_groups(request):
+    all = Group.objects.filter(is_active = True)
+    return render(request, 'users/groups.html', {'all': all})
+
+@staff_member_required
+def all_groups(request):
     all = Group.objects.all()
     return render(request, 'users/groups.html', {'all': all})
+
+@staff_member_required
+def groups_choose(request):
+    return render(request, 'users/groups_choose.html')
 
 @staff_member_required(login_url='login')
 def new_group(request):
@@ -110,5 +120,17 @@ def all_students(request, group_id):
         result.append([student.snumber,student_points])
 
     return render(request, 'users/group.html', {'result':result})
+
+def delete_group(request, group_id):
+
+    if request.method == "POST":
+        form = DeleteGroup(request.POST)
+        if form.is_valid:
+            Group.objects.filter(id = group_id).update(is_active=False)
+            return redirect('active_groups')
+    else:
+        form = DeleteGroup()
+
+    return render(request, 'users/delete.html')
 
     

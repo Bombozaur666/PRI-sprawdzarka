@@ -5,11 +5,17 @@ from django.contrib.auth.decorators import login_required
 from .models import *
 from .forms import *
 from django.utils import timezone
+import codecs
+from django.contrib import messages
 
-def check_metric(path):
-    file = open('task/tests/'+path,'r',encoding='utf-8')
+def check_metric(file):
+    test = []
     for line in file:
-        if not (line.startswith('<pytanie>') and line.endswith('</pytanie>')) or (line.startswith('<odp>') and line.endswith('</odp>')):
+        sline = str(line.decode("utf-8"))
+        test.append(sline)
+        print(sline)
+        if not ((sline.startswith('<pytanie>') and sline.endswith('</pytanie>\r\n')) or (sline.startswith('<odp>') and sline.endswith('</odp>\r\n')) or (sline.startswith('<odp>') and sline.endswith('</odp>'))):
+            print(test)
             return False
     return True
 
@@ -70,7 +76,7 @@ def new_test(request):
         if form.is_valid():
             test_file = form.save(commit=False)
             path = str(test_file.file)
-            if check_metric(path):
+            if check_metric(codecs.EncodedFile(request.FILES['file'],"utf-8")):
                 form.save()
                 questions, answers = load_data_from_txt(path)
                 id = TestFileModel.objects.get(name = test_file.name)
@@ -88,8 +94,10 @@ def new_test(request):
                     new_answer.letter = line[2]
                     new_answer.is_right = line[3]
                     new_answer.save()
-                    
+                messages.success(request,'Dodano nowy test.')
                 return redirect('tests_home')
+            else:
+                messages.warning(request,'Niepoprawna metryczka.')
     else:
         form = TestFileForm()
     return render(request, 'tests/new_test.html', {'form':form})

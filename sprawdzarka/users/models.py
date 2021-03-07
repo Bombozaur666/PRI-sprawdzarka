@@ -8,6 +8,7 @@ class Group(models.Model):
     name = models.CharField(max_length=255)
     year = models.CharField(max_length=10)
     term = models.CharField(max_length=4)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self) -> str:
         return self.name + '_' + self.year.replace('/','_') + '_' + self.term
