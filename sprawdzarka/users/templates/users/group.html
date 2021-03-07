@@ -8,8 +8,9 @@
     </tr>
     {% for student in result %}
         <tr>
-            <td>{{ student.snumber }}</td>
-            <td>{{ student.points }}</td>
+            {% for i in student %}
+            <td>{{ i }}</td>
+            {%endfor%}
         </tr>
     {% endfor %}
 </table>

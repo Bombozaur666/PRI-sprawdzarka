@@ -21,6 +21,7 @@ def change_points_promela_direct(request,id_in_url):
             object=StudentTask.objects.get(id=id_in_url)
             object.points=form.cleaned_data['NewPoints']
             object.save()
+            messages.success(request, 'Pomyślnie zmieniono punkty.')
             return redirect('promela-sended-list' )
     else:
         form=TransformersForm()
@@ -40,6 +41,7 @@ def task_promela_upload_teacher(request):
                 form.save(commit=False)
                 form.tname = request.user.username
                 form.save()
+                messages.success(request, 'Pomyślnie dodano zadanie.')
     else:
         form=TeacherTaskForm()
     return render(request,'Promela/task_promela_upload.html', {'form': form})
@@ -57,7 +59,7 @@ def task_promela_upload(request):
                 object.snumber = request.user.snumber
                 object.group_id = request.user.group_id               
                 object.save()
-
+                messages.success(request, 'Pomyślnie oddano zadanie.')
     else:
         form= StudentTaskForm()
     return render(request, 'upload/task_sended_upload.html', {'form': form})

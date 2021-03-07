@@ -6,14 +6,16 @@
 <table class="table">
 	<thead>
 	<tr>
-		<th>Nazwa zadania | </th>
-		<th>Grupa</th>
-		<th>Zadanie | </th>		
+		<th>Nazwa zadania  </th>
+		<th>Treść  </th>
+		<th>Grupa  </th>
+		<th>Zadanie  </th>		
 	</tr>
 	<tbody>
 		{% for data in sended %}
 			<tr>
 					<td>{{data.task_name}}</td>
+					<td>{{data.task_content}}</td>
 					<td>{{data.group_id}}</td>
 					<td><a href="{{data.file.name}}" class="btn btn-primary btn-sm">Otwórz plik</a></td>
 			</tr>
@@ -27,8 +29,8 @@
 	<table class="table">
 			<thead>
 			<tr>
-				<th>Nazwa zadania | </th>
-				<th>Zadanie | </th>
+				<th>Nazwa zadania  </th>
+				<th>Treść </th>
 				<th>Zadaj pytanie</th>
 
 			</tr>
@@ -37,8 +39,8 @@
 					<tr>
 						{% if data.group_id.str_id == user.group_id %}
 							<td>{{data.task_name}}</td>
-							<td><a class="btn btn-outline-info" href="{% url 'ask_question' choose='xml' id=data.id %}">Zadaj pytanie prowadzącemu</a></td>
-							<td><a href="{{data.file.name}}" class="btn btn-primary btn-sm">Otwórz plik</a></td>
+							<td>{{data.task_content}}</td>
+							<td><a class="btn btn-outline-info" href="{% url 'ask_question' choose='promela' id=data.id %}">Zadaj pytanie prowadzącemu</a></td>
 						{% endif %}
 					</tr>
 				{% endfor %}

@@ -1,3 +1,4 @@
+from Promela.models import StudentTask
 from upload.models import SendedTasks, StudentsPoints
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -7,6 +8,7 @@ from .forms import *
 from .models import *
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+import re
 
 def register(request):
     if request.method == "POST":
@@ -49,8 +51,6 @@ def change_password(request):
 
 def groups(request):
     all = Group.objects.all()
-    for group in all:
-        print(group.group)
     return render(request, 'users/groups.html', {'all': all})
 
 @staff_member_required(login_url='login')
@@ -82,7 +82,20 @@ def new_group(request):
 
 @login_required
 def all_students(request, group_id):
-    result = Account.objects.filter(group_id = group_id)
+    students = Account.objects.filter(group_id = group_id)
+    result = []
+    for student in students:
+        all_points_xml = StudentsPoints.objects.filter(snumber = student.snumber)
+        all_points_promela = StudentTask.objects.filter(snumber = student.snumber)
+        student_points = 0
+        for i in all_points_xml:
+            student_points += i.points
+        for i in all_points_promela:
+            student_points += i.points
+        student_points+=student.points
+
+        result.append([student.snumber,student_points])
+
     return render(request, 'users/group.html', {'result':result})
 
     

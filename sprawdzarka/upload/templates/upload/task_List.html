@@ -33,9 +33,9 @@
 				{% for data in sended %}
 					{% if data.group_id.str_id == user.group_id %}
 						<tr>
-							<td>{{data.taskname}}</td>
-							<td><a href="/{{data.task.name}}" class="btn btn-primary btn-sm">Otwórz plik</a></td>
+							<td>{{data.taskname}}</td>	
 							<td><a class="btn btn-outline-info" href="{% url 'ask_question' choose='xml' id=data.id %}">Zadaj pytanie prowadzącemu</a></td>
+							<td><a href="/{{data.task.name}}" class="btn btn-primary btn-sm">Otwórz plik</a></td>
 						</tr>
 					{% endif %}
 				{% endfor %}

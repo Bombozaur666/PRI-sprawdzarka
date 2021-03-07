@@ -2,13 +2,16 @@ from django.db.models.expressions import Case
 from users.models import Group
 from django.db import models
 from django.db.models.deletion import CASCADE, SET_NULL
+from datetime import datetime
 
 class TeacherTask(models.Model):
     id = models.IntegerField(primary_key=True)
     task_name = models.CharField("Nazwa zadania", max_length=100, blank=False, default=None)
+    task_content = models.TextField('Treść zadania', max_length=500, blank=False,default=None)
     max_points = models.IntegerField("Maksymalne punkty", default=0)
     file = models.FileField("Plik", upload_to="task/promela/teacher_ltl")
     group_id = models.ForeignKey(Group,on_delete=CASCADE)
+    date_end = models.DateTimeField(auto_now=False, auto_now_add=False,)
 
     def __str__(self) -> str:
         return self.task_name

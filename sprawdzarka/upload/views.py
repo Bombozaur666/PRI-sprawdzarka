@@ -69,6 +69,7 @@ def task_sended_upload(request):
                     object.snumber = request.user.snumber
                     object.group = request.user.group_id
                     object.save()
+                    messages.success(request, 'Pomyślnie oddano zadanie.')
                 else:
                     messages.warning(request, "Niepoprawna metryczna XML.")
     else:
@@ -106,6 +107,7 @@ def task_List_upload(request):
                 form.save(commit=False)
                 form.tname = request.user.username
                 form.save()
+                messages.success(request, "Pomyślnie dodano zadanie!")
     else:
         form=TasksListForm()
     return render(request,'upload/task_sended_upload.html', {'form': form})
@@ -129,6 +131,7 @@ def read_file2(request, file_to_open):
 
 @staff_member_required(login_url='login')
 def plagiat(request):
+    plagiaty=[]
     files_to_check = [str(elem) for elem in list(SendedTasks.objects.filter(has_been_tested=False).values_list('task', flat=True))]
     all_files = [str(elem) for elem in list(SendedTasks.objects.all().values_list('task', flat=True))]
     for first_file in files_to_check:
@@ -188,9 +191,9 @@ def plagiat(request):
     if request.method == "POST":
         form = ChooseGroup(request.POST)
         if form.is_valid():
-            form_plagiaty = form.save(commit=False)
-            plagiaty = Plagiat.objects.filter(group_id = form_plagiaty.group_id.id)
+            group = form.cleaned_data['group']
+            plagiat_level = int(form.cleaned_data['plagiarism'])
+            plagiaty = Plagiat.objects.filter(group_id = group, plagiat__gt=plagiat_level)
     else:
         form = ChooseGroup()
-        plagiaty=[]
     return render(request, 'upload/plagiat.html', {'plagiaty':plagiaty,'form':form})

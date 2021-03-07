@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models.fields import IntegerField
 from users.models import *
+from datetime import datetime
 
 class TaskList(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -8,7 +9,8 @@ class TaskList(models.Model):
     tname = models.CharField(max_length=100)
     task = models.FileField("Plik", upload_to='task/tasklist/')
     group_id = models.ForeignKey(Group,on_delete=CASCADE, default='0')
-
+    date_end = models.DateTimeField(auto_now=False, auto_now_add=False)
+    
     def __str__(self) -> str:
         return self.taskname
 

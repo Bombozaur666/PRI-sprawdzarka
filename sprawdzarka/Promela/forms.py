@@ -3,11 +3,14 @@ from django import forms
 from .models import *
 from django.forms import fields
 
+class DateInput(forms.DateInput):
+    input_type = 'datetime-local'
 
 class TeacherTaskForm(forms.ModelForm):
+    date_end = forms.DateTimeField(widget=DateInput)
     class Meta:
         model = TeacherTask
-        fields = ('task_name','max_points','file','group_id',)
+        fields = ('task_name','task_content','max_points','file','group_id','date_end',)
 
 class StudentTaskForm(forms.ModelForm):
     class Meta:
