@@ -6,7 +6,7 @@
     {% elif user.is_authenticated  %}
         <h1>Numer Studenta: {{ user.snumber }}</h1>
         <h1>Grupa: {{ group.group }}</h1>
-        <h1>Liczba punktów: {{ user.points }}</h1>
+        <h1>Liczba punktów: {{ student_points }}</h1>
     {% endif %}
 <a class="btn btn-outline-info" href="{% url 'change-password'%}">Zmień hasło</a>
 {% endblock content %}

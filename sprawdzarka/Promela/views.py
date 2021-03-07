@@ -56,7 +56,7 @@ def task_promela_upload(request):
             object = form.save(commit=False)
             if StudentTask.objects.filter(snumber = request.user.snumber, task_id = object.task_id).exists():
                 messages.warning(request,"Nie można dodać 2 razy tego samego zadania.")
-            elif TeacherTask.objects.get(id = object.taskid.id).date_end < timezone.now():
+            elif TeacherTask.objects.get(id = object.task_id.id).date_end < timezone.now():
                 messages.warning(request,"Nie można oddać zadania po czasie.")
             else:
                 object.snumber = request.user.snumber

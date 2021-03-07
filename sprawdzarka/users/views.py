@@ -34,7 +34,19 @@ def profile(request):
         group = Group.objects.get(id = request.user.group_id)
     else:
         group = ''
-    return render(request, 'users/profile.html', {'group':group})
+    students = Account.objects.filter(group_id = group)
+    result = []
+    for student in students:
+        all_points_xml = StudentsPoints.objects.filter(snumber = student.snumber)
+        all_points_promela = StudentTask.objects.filter(snumber = student.snumber)
+        student_points = 0
+        for i in all_points_xml:
+            student_points += i.points
+        for i in all_points_promela:
+            student_points += i.points
+        student_points+=student.points
+        result.append([student.snumber,student_points])
+    return render(request, 'users/profile.html', {'group':group, 'student_points':student_points})
 @login_required
 def change_password(request):
     if request.method == 'POST':
